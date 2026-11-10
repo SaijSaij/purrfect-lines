@@ -12,7 +12,9 @@ are in German.
 
 ## Requirements
 
-- Node.js 26 LTS (on Windows: `winget install OpenJS.NodeJS.LTS`)
+- Windows (the setup is only tested there) and Node.js 26 LTS
+  (`winget install OpenJS.NodeJS.LTS`)
+- Free ports 5173 (dev server, also used by `npm run e2e`) and 4173 (`npm run preview`)
 - For browser tests: Playwright's Chromium, installed once (and again after
   upgrading `@playwright/test`) with `npx playwright install chromium`
 
