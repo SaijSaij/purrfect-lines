@@ -19,6 +19,8 @@ Liste der geänderten Dateien, `docs-reviewer`, Abnahme, Commit.
 
 ## M1 – Spielbare Grundversion
 
+**Status:** erledigt am 2026-11-10 (Commit `b896005`).
+
 **Ziel:** Man kann im Browser ein einfaches, vollständiges Spiel spielen, das
 irgendwann endet.
 
@@ -42,14 +44,14 @@ Formfolge grün. E2E-Tests 2 (ohne Punkte) und 4 grün. `npm run check:release`
 existiert und ist grün.
 
 **Abnahme-Checkliste:**
-- [ ] `npm run serve` öffnen: Eine Form erscheint oben mittig und fällt etwa
+- [x] `npm run serve` öffnen: Eine Form erscheint oben mittig und fällt etwa
       eine Reihe pro Sekunde.
-- [ ] ← und → schieben, an der Wand geht es nicht weiter.
-- [ ] ↑ dreht, ↓ beschleunigt, Leertaste lässt sofort fallen.
-- [ ] Eine volle Reihe verschwindet, darüber rutscht alles nach.
-- [ ] Stapeln bis oben beendet das Spiel, Enter startet neu.
-- [ ] `?seed=1` zweimal laden: gleiche Formfolge.
-- [ ] Gebaute Version (`npm run build`, dann `npm run preview` und
+- [x] ← und → schieben, an der Wand geht es nicht weiter.
+- [x] ↑ dreht, ↓ beschleunigt, Leertaste lässt sofort fallen.
+- [x] Eine volle Reihe verschwindet, darüber rutscht alles nach.
+- [x] Stapeln bis oben beendet das Spiel, Enter startet neu.
+- [x] `?seed=1` zweimal laden: gleiche Formfolge.
+- [x] Gebaute Version (`npm run build`, dann `npm run preview` und
       http://localhost:4173 öffnen): `?seed` hat keine Wirkung.
 
 ## M2 – Steuerung mit gutem Gefühl
