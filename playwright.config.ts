@@ -9,6 +9,6 @@ export default defineConfig({
   webServer: {
     command: 'npm run serve',
     url: 'http://localhost:5173',
-    reuseExistingServer: false,
+    reuseExistingServer: true,
   },
 });
