@@ -1,6 +1,22 @@
-Status: stack (setup-stack, 2026-11-10)
+Status: fein (project-details, 2026-11-10)
 
 # SPEC: Purrfect Lines
+
+## Inhalt
+
+Diese Datei enthält Projekt, Ziele, Entscheidungen und die Definition of Done.
+Die Details stehen in Teilspecs:
+
+| Teil | Datei |
+|---|---|
+| Anforderungen A1–A44 mit Randfällen und Prüfung | [docs/spec/anforderungen.md](docs/spec/anforderungen.md) |
+| Teststrategie (fein), Testhilfen, Konstanten | [docs/spec/teststrategie.md](docs/spec/teststrategie.md) |
+| Meilensteine M1–M8 mit Abnahme-Checklisten | [docs/spec/meilensteine.md](docs/spec/meilensteine.md) |
+| Definition of Done | Abschnitt 10 unten |
+
+Die Spec wurde aufgeteilt, weil sie sonst über 600 Zeilen lang wäre. Eine
+Session, die einen Meilenstein umsetzt, liest diese Datei, den Meilenstein und
+die darin genannten Anforderungen.
 
 ## 1. Projekt
 
@@ -231,8 +247,11 @@ eigene sind (siehe Abschnitt 1).
 | Annahme | Vorläufiger Standard |
 |---|---|
 | Herkunft von Ton und Musik | Klänge und Musik werden zur Laufzeit per Web Audio synthetisiert. Es gibt keine Audiodateien und damit keine Lizenzfragen. Die Musik ist eine eigene Komposition. |
-| Grafik | Sie wird im Code gezeichnet, ohne Bilddateien, mit einer eigenen Farbpalette, gern mit Katzenbezug. |
-| Spielfeldgröße und Regeln | 10×20 Felder und sieben Formen aus je vier Blöcken. Rotationssystem, Punktevergabe, Vorschau und das Halten einer Form klärt das feine Interview. |
+| Grafik | Sie wird im Code gezeichnet, ohne Bilddateien, mit einer eigenen, warmen Farbpalette und dezentem Katzenbezug (A35). |
+| Musikstil | Ruhige, verspielte Schleife von etwa 30 Sekunden, die beim Spielen nicht ermüdet. Wird in M6 nach Gehör abgenommen. |
+| Konkrete Farben | Werden in M7 festgelegt. Bis dahin reicht eine schlichte, gut unterscheidbare Palette. |
+| Zahlenwerte für das Spielgefühl | Die Startwerte der Konstanten (teststrategie.md) sind Schätzungen und werden bei den Abnahmen nachjustiert. |
+| Standardname | EN „Kitty“, DE „Katze“, wenn das Namensfeld leer bleibt (A27). |
 | Repo-Name | Der Name `tetris` bleibt vorerst. Eine Umbenennung (z. B. in `purrfect-lines`) ist jederzeit möglich, GitHub leitet dann um. |
 | Unterstützte Browser | Aktuelle Desktop-Versionen von Chromium-Browsern und Firefox. Getestet wird automatisch mit Chromium. |
 
@@ -258,25 +277,37 @@ muss dieser Abschnitt ergänzt und `.gitignore` geprüft werden.
   Desktop-App.
 - Spielgefühl, Aussehen und Ton nehme ich manuell ab.
 
-Einzelheiten (welche Fälle, Testdaten, Abdeckung) klärt das feine Interview.
+Die Einzelheiten stehen in
+[docs/spec/teststrategie.md](docs/spec/teststrategie.md).
 
-## 10. Noch offen für das feine Interview
+## 10. Definition of Done
 
-- Spielregeln im Detail: Rotationssystem, Zufall bei der Auswahl der Formen,
-  Punktevergabe, Levelkurve, Vorschau auf die nächste Form, Halten einer Form,
-  harter und weicher Fall
-- Tastenbelegung und Pause
-- Bildschirme: Start, Pause, Spielende, Bestenliste (wie viele Einträge, mit
-  Namen?)
-- Gestaltung: Farbpalette, Katzenbezug, Musik und Klänge
-- Meilensteine mit Abschlusskriterien (ab Meilenstein 2, das Grundgerüst ist
-  erledigt)
-- Definition of Done
+Ein Meilenstein ist fertig, wenn alles davon zutrifft:
+
+1. Die Tests zu seinen Anforderungen wurden vor der Umsetzung geschrieben und
+   sind zuerst fehlgeschlagen.
+2. `npm run check` (Typecheck, Linter, Unit-Tests) ist grün.
+3. `npm run e2e` ist grün.
+4. `npm run check:release` ist grün (ab M1, siehe A44).
+5. Der `code-reviewer` hat die geänderten Dateien geprüft, und es gibt keine
+   offenen MUSS-Punkte.
+6. Die README beschreibt Start, Steuerung und Testhilfen auf dem neuen Stand.
+7. Der `docs-reviewer` hat die Doku geprüft, und seine Punkte sind erledigt
+   oder bewusst verworfen.
+8. Ich habe den Meilenstein mit seiner Checkliste abgenommen.
+9. Alles ist in einem Commit (oder wenigen zusammengehörigen) festgehalten.
+
+Jeder gefundene Fehler wird zuerst ein Test, dann die Korrektur.
+
+**Begründung:** Tests zuerst, damit sie wirklich die Spec prüfen und nicht
+den Code nachzeichnen. README und `docs-reviewer` halten die Doku mit dem Code
+gleich, weil ich das Projekt nur über Specs und Doku steuere.
 
 ## 11. Aufgesetzter Stack
 
-Aufgesetzt am 2026-11-10 mit `setup-stack`. **Meilenstein 1 (Grundgerüst) ist
-damit erledigt:** Es gibt ein leeres, lauffähiges Projekt mit je einem
+Aufgesetzt am 2026-11-10 mit `setup-stack`. **Das Grundgerüst ist damit
+erledigt** (es ist kein Meilenstein in der Liste): Es gibt ein leeres,
+lauffähiges Projekt mit je einem
 Beispieltest für Vitest und Playwright. Spielcode gibt es noch nicht.
 
 **Tatsächlich verwendete Versionen** (alle exakt gepinnt, nur devDependencies,
