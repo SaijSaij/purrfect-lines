@@ -1,0 +1,16 @@
+# Environment files (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# Personal Claude Code files
+CLAUDE.local.md
+.claude/settings.local.json
+
+# OS and editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
