@@ -11,10 +11,8 @@ erprobt, und der Smoke-Test des Grundgerüsts läuft. M1 ist das kleinste
 Ergebnis, das schon Spaß macht. M2 und M3 verbessern das Spielgefühl am
 stärksten. M4 bis M8 hängen kaum voneinander ab und kommen nach Nutzen.
 
-**Vorgehen pro Meilenstein:** Tests aus den Anforderungen schreiben (sie
-schlagen zuerst fehl), im Plan-Modus planen, umsetzen, immer `code-reviewer` mit
-der Liste der geänderten Dateien, `docs-reviewer` mit derselben Liste nur bei
-geänderter Doku (README, docs/, SPEC.md, CLAUDE.md), Abnahme, Commit.
+**Vorgehen pro Meilenstein:** siehe
+[CLAUDE.md, Workflow per milestone](../../CLAUDE.md#workflow-per-milestone).
 
 ---
 
