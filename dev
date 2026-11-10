@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Runs every project command inside the Docker container. Usage: ./dev <command>
+set -euo pipefail
+cd "$(dirname "$0")"
+
+tty_flag=()
+if [ ! -t 0 ] || [ ! -t 1 ]; then
+  tty_flag=(-T)
+fi
+
+run() {
+  docker compose run --rm "${tty_flag[@]}" app "$@"
+}
+
+usage() {
+  cat <<'EOF'
+Usage: ./dev <command>
+
+  install     install dependencies from package-lock.json (npm ci)
+  serve       start the dev server on http://localhost:5173
+  build       typecheck and build static files into dist/
+  test        run unit tests (Vitest)
+  e2e         run browser tests (Playwright)
+  lint        run ESLint
+  typecheck   run the TypeScript compiler without emitting
+  check       typecheck + lint + unit tests (used by the stop hook)
+  npm ...     run any npm command in the container
+  rebuild     rebuild the Docker image (after changing the Dockerfile)
+EOF
+}
+
+case "${1:-}" in
+  install)
+    if [ -f package-lock.json ]; then run npm ci; else run npm install; fi
+    ;;
+  serve)
+    docker compose run --rm --service-ports "${tty_flag[@]}" app npm run serve
+    ;;
+  build | test | e2e | lint | typecheck | check)
+    run npm run "$1"
+    ;;
+  npm)
+    shift
+    run npm "$@"
+    ;;
+  rebuild)
+    docker compose build
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+esac
