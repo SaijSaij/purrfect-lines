@@ -345,6 +345,8 @@ zur Laufzeit keine Bibliothek):
 **Absicherung für Claude:**
 - Ein Stop-Hook (`.claude/hooks/stop-check.sh`, Git Bash, Zeitlimit 120 s)
   führt `npm run check` aus, wenn es nicht committete Änderungen gibt. Schlägt
-  die Prüfung fehl, blockiert er das Rundenende.
+  die Prüfung fehl, blockiert er das Rundenende. Solange die Datei
+  `.claude/.tests-first` existiert (Tests vor der Umsetzung), überspringt er
+  die Prüfung.
 - Vor `npm install`, `npm i`, `npm add` und `npx` fragt Claude nach (ask-Regeln
   in `.claude/settings.json`).

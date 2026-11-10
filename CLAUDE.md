@@ -5,7 +5,8 @@ truth for scope and decisions.
 
 ## Commands
 
-Node.js runs locally on Windows.
+Node.js and Git for Windows run locally on Windows (Git Bash runs the stop
+hook).
 
 - `npm ci` – install dependencies from the lockfile
 - `npm run serve` – dev server on http://localhost:5173
@@ -42,16 +43,20 @@ and without cd, pipes or redirects. The one exception is
 
 ## Workflow per milestone
 
-1. Create a branch for the milestone.
-2. Write the tests first (they must fail) and commit them.
+1. Create a branch `m<N>-<short-name>` for the milestone (e.g. `m2-controls`).
+2. Create `.claude/.tests-first`, write the tests first (they must fail) and
+   commit them.
 3. Plan in plan mode.
-4. Implement and commit.
+4. Delete `.claude/.tests-first`, then implement and commit.
 5. Always run `code-reviewer` with the list of changed files. If documentation
    changed (README, docs/, SPEC.md, CLAUDE.md), also run `docs-reviewer` with
    the same list. Present each finding separately and wait for my decision.
-6. Wait for my acceptance. Only then merge into main with `git merge --ff-only`.
-7. After acceptance, set `**Status:** erledigt am <date> (Commit <hash>)` below
-   the milestone heading in docs/spec/meilensteine.md and tick its checklist.
+6. Wait for my acceptance; it requires the Definition of Done (SPEC.md,
+   section 10). Only then merge into main with `git merge --ff-only`.
+7. After acceptance, on main: set `**Status:** erledigt am <date> (Commit <hash>)`
+   below the milestone heading in docs/spec/meilensteine.md, with the hash of
+   the last implementation commit, tick its checklist and commit this
+   separately.
 
 Push only when I ask.
 
