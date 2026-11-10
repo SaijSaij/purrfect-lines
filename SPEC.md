@@ -292,8 +292,9 @@ Ein Meilenstein ist fertig, wenn alles davon zutrifft:
 5. Der `code-reviewer` hat die geänderten Dateien geprüft, und es gibt keine
    offenen MUSS-Punkte.
 6. Die README beschreibt Start, Steuerung und Testhilfen auf dem neuen Stand.
-7. Der `docs-reviewer` hat die Doku geprüft, und seine Punkte sind erledigt
-   oder bewusst verworfen.
+7. Wurde Doku geändert (README, docs/, SPEC.md, CLAUDE.md), hat der
+   `docs-reviewer` sie mit der Liste der geänderten Dateien geprüft, und seine
+   Punkte sind erledigt oder bewusst verworfen.
 8. Ich habe den Meilenstein mit seiner Checkliste abgenommen.
 9. Alles ist in einem Commit (oder wenigen zusammengehörigen) festgehalten.
 

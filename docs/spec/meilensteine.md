@@ -12,14 +12,15 @@ Ergebnis, das schon Spaß macht. M2 und M3 verbessern das Spielgefühl am
 stärksten. M4 bis M8 hängen kaum voneinander ab und kommen nach Nutzen.
 
 **Vorgehen pro Meilenstein:** Tests aus den Anforderungen schreiben (sie
-schlagen zuerst fehl), im Plan-Modus planen, umsetzen, `code-reviewer` mit der
-Liste der geänderten Dateien, `docs-reviewer`, Abnahme, Commit.
+schlagen zuerst fehl), im Plan-Modus planen, umsetzen, immer `code-reviewer` mit
+der Liste der geänderten Dateien, `docs-reviewer` mit derselben Liste nur bei
+geänderter Doku (README, docs/, SPEC.md, CLAUDE.md), Abnahme, Commit.
 
 ---
 
 ## M1 – Spielbare Grundversion
 
-**Status:** erledigt am 2026-11-10 (Commit `b896005`).
+**Status:** erledigt am 2026-11-10 (Commit b896005)
 
 **Ziel:** Man kann im Browser ein einfaches, vollständiges Spiel spielen, das
 irgendwann endet.
@@ -56,6 +57,8 @@ existiert und ist grün.
 
 ## M2 – Steuerung mit gutem Gefühl
 
+**Status:** offen
+
 **Ziel:** Die Steuerung fühlt sich flüssig und fair an.
 
 **Anforderungen:** A6 und A7 (Wiederholung), A8 (beide Richtungen), A9, A13,
@@ -75,6 +78,8 @@ gesteuerter Zeit.
 - [ ] WASD funktioniert genauso wie die Pfeile.
 
 ## M3 – Punkte, Level, Tempo, Hilfen
+
+**Status:** offen
 
 **Ziel:** Das Spiel zählt Punkte, wird schneller und zeigt Vorschau und
 Geisterstein.
@@ -98,6 +103,8 @@ A40, A41 grün. E2E-Test 2 prüft jetzt auch die Punkte.
 
 ## M4 – Bildschirme und Ablauf
 
+**Status:** offen
+
 **Ziel:** Das Spiel hat Start, Pause und Ende wie ein fertiges Spiel und passt
 sich dem Fenster an.
 
@@ -119,6 +126,8 @@ A24, A25, A26 (ohne Namenseingabe: Enter führt zum Start), A31.
 
 ## M5 – Bestenliste
 
+**Status:** offen
+
 **Ziel:** Gute Partien werden mit Namen gespeichert und bleiben erhalten.
 
 **Anforderungen:** A22 (mit Bestenliste), A26 (mit Namenseingabe), A27, A28,
@@ -137,6 +146,8 @@ grün.
 - [ ] Im privaten Fenster läuft das Spiel, mit Hinweis zum Speichern.
 
 ## M6 – Ton und Musik
+
+**Status:** offen
 
 **Ziel:** Das Spiel hat eigene Klänge und eigene Musik, die man abschalten
 kann.
@@ -157,6 +168,8 @@ grün. E2E-Test 7 grün.
 
 ## M7 – Gestaltung
 
+**Status:** offen
+
 **Ziel:** Das Spiel sieht nach Purrfect Lines aus: warm, eigen, mit dezentem
 Katzenbezug.
 
@@ -174,6 +187,8 @@ Repo findet keinen fremden Markennamen.
 - [ ] Texte sind auf allen Bildschirmen gut lesbar.
 
 ## M8 – Deutsch
+
+**Status:** offen
 
 **Ziel:** Das Spiel spricht Deutsch und Englisch.
 

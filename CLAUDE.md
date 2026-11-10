@@ -25,12 +25,35 @@ and without cd, pipes or redirects. The one exception is
 
 ## Rules
 
-- Never change an existing test to make it pass. If you think a test is wrong,
-  report it and explain why.
+- Never change or refactor an existing test to make something pass. If a test
+  seems wrong, or the spec changed the behaviour, report it and propose the
+  change. Apply it only after my approval, in its own commit.
+- Tests only for behaviour that stays valid in later milestones. Transitional
+  behaviour gets no automated test; it goes on the milestone's manual checklist.
+- While writing tests before the implementation, create `.claude/.tests-first`
+  so the stop hook allows failing tests. Delete it before implementing. Never
+  implement just to silence the hook.
+- Changes to SPEC.md, docs/spec/ and CLAUDE.md that reviewers suggest are my
+  decision. Propose them, do not apply them on your own.
 - No new dependency without asking me first.
 - Keep game logic free of DOM, canvas and audio so it can be unit-tested.
 - Never use the brand name of an existing game in code, docs or in-game text.
   Name, colors, graphics and sounds are original.
+
+## Workflow per milestone
+
+1. Create a branch for the milestone.
+2. Write the tests first (they must fail) and commit them.
+3. Plan in plan mode.
+4. Implement and commit.
+5. Always run `code-reviewer` with the list of changed files. If documentation
+   changed (README, docs/, SPEC.md, CLAUDE.md), also run `docs-reviewer` with
+   the same list. Present each finding separately and wait for my decision.
+6. Wait for my acceptance. Only then merge into main with `git merge --ff-only`.
+7. After acceptance, set `**Status:** erledigt am <date> (Commit <hash>)` below
+   the milestone heading in docs/spec/meilensteine.md and tick its checklist.
+
+Push only when I ask.
 
 ## Versions
 

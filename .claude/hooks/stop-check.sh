@@ -12,6 +12,11 @@ fi
 
 cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}" || exit 0
 
+# Tests are being written before the implementation: failing tests are expected.
+if [ -f .claude/.tests-first ]; then
+  exit 0
+fi
+
 # Nothing changed since the last commit: nothing to check.
 if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
   exit 0

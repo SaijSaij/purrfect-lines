@@ -6,6 +6,7 @@
 # Personal Claude Code files
 CLAUDE.local.md
 .claude/settings.local.json
+.claude/.tests-first
 
 # Dependencies and build output
 node_modules/
