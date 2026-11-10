@@ -306,9 +306,9 @@ gleich, weil ich das Projekt nur über Specs und Doku steuere.
 ## 11. Aufgesetzter Stack
 
 Aufgesetzt am 2026-11-10 mit `setup-stack`. **Das Grundgerüst ist damit
-erledigt** (es ist kein Meilenstein in der Liste): Es gibt ein leeres,
-lauffähiges Projekt mit je einem
-Beispieltest für Vitest und Playwright. Spielcode gibt es noch nicht.
+erledigt** (es ist kein Meilenstein in der Liste). Stand nach dem Setup: Es gab
+ein leeres, lauffähiges Projekt mit je einem Beispieltest für Vitest und
+Playwright, aber noch keinen Spielcode. Der Spielcode entsteht ab M1.
 
 **Tatsächlich verwendete Versionen** (alle exakt gepinnt, nur devDependencies,
 zur Laufzeit keine Bibliothek):

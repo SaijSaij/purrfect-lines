@@ -5,11 +5,13 @@
   "scripts": {
     "serve": "vite",
     "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
     "test": "vitest run",
     "e2e": "playwright test",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "check": "tsc --noEmit && eslint . && vitest run"
+    "check": "tsc --noEmit && eslint . && vitest run",
+    "check:release": "node scripts/check-release.js"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

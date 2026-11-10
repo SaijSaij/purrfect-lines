@@ -49,8 +49,8 @@ existiert und ist grün.
 - [ ] Eine volle Reihe verschwindet, darüber rutscht alles nach.
 - [ ] Stapeln bis oben beendet das Spiel, Enter startet neu.
 - [ ] `?seed=1` zweimal laden: gleiche Formfolge.
-- [ ] Gebaute Version (`npm run build`, `dist/` öffnen): `?seed` hat keine
-      Wirkung.
+- [ ] Gebaute Version (`npm run build`, dann `npm run preview` und
+      http://localhost:4173 öffnen): `?seed` hat keine Wirkung.
 
 ## M2 – Steuerung mit gutem Gefühl
 
