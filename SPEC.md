@@ -1,4 +1,4 @@
-Status: grob (project-scope, 2026-11-10)
+Status: stack (setup-stack, 2026-11-10)
 
 # SPEC: Purrfect Lines
 
@@ -26,8 +26,7 @@ historisch, siehe offene Annahmen.
 Das Projekt ist eine Übung, und zwar:
 - im Umgang mit Claude Code: vom Interview über die Spec bis zur Umsetzung durch
   Claude,
-- mit einem für mich neuen Stack (TypeScript mit moderner Web-Toolchain und
-  Docker als Entwicklungsumgebung).
+- mit einem für mich neuen Stack (TypeScript mit moderner Web-Toolchain).
 
 Zielgruppe bin ich selbst. Das Spiel wird lokal gespielt.
 
@@ -37,7 +36,7 @@ Zielgruppe bin ich selbst. Das Spiel wird lokal gespielt.
 - Der Code ist vollständig von Claude geschrieben („vibe-coded“). Ich steuere
   nur über Specs, Freigaben und Abnahmen. Daran messe ich den Erfolg.
 - Ich lerne den Arbeitsablauf mit Claude Code kennen und sehe nebenbei, wie ein
-  Projekt mit TypeScript, Vite und Docker funktioniert.
+  Projekt mit TypeScript und Vite funktioniert.
 
 ## 4. Feste Anforderungen
 
@@ -99,14 +98,14 @@ Dateien. Es gibt kein Hosting.
 
 | Baustein | Version (Stand Recherche 2026-11) | Zweck |
 |---|---|---|
-| TypeScript | 7.x | Sprache |
-| Vite | 8.x | Entwicklungsserver und Build |
+| TypeScript | 6.0.3 | Sprache (siehe Abschnitt 11, ursprünglich 7.x geplant) |
+| Vite | 8.3.7 | Entwicklungsserver und Build |
 | Canvas 2D (Browser) | – | Darstellung |
 | Web Audio API (Browser) | – | Ton und Musik |
 | localStorage (Browser) | – | Bestenliste |
-| Node.js | 26 LTS | Laufzeit für die Werkzeuge, nur im Container |
+| Node.js | 26 LTS | Laufzeit für die Werkzeuge, lokal installiert |
 
-Die exakten Versionen legt das Setup fest und hält sie in der Lockfile fest.
+Alle Versionen sind exakt gepinnt, die vollständige Liste steht in Abschnitt 11.
 
 **Begründung:**
 - TypeScript baut auf meinem Vorwissen in JavaScript auf. Neu sind die Typen
@@ -134,50 +133,42 @@ aber überschaubar. Eine Bibliothek nachträglich hinzuzufügen ist *billig*.
 
 ### 6.3 Toolchain
 
-**Entscheidung:** Build, Tests und Entwicklungsserver laufen in Docker. Claude
-und ich rufen alles über ein Bash-Wrapper-Skript `./dev` auf (z. B.
-`./dev serve`, `./dev test`, `./dev build`). Auf dem Host ist Docker die einzige
-Voraussetzung, Node.js wird nicht installiert.
+**Entscheidung (beim Setup geändert):** Build, Tests und Entwicklungsserver
+laufen lokal unter Windows mit Node.js 26 LTS (installiert per
+`winget install OpenJS.NodeJS.LTS`). Alle Befehle sind npm-Skripte
+(`npm test`, `npm run lint`, `npm run serve` usw.). Es gibt kein Wrapper-Skript.
+Chromium für Playwright liegt im Benutzerprofil (`%LOCALAPPDATA%\ms-playwright`).
+Eine `.npmrc` setzt `ignore-scripts=true`.
 
-Details:
-- Das Projekt bleibt unter `C:\dev\…` und wird per Bind-Mount in den Container
-  eingehängt.
-- Weil Änderungen über die Grenze zwischen Windows und Container nicht
-  zuverlässig gemeldet werden, nutzt Vite Polling, um Dateiänderungen zu
-  erkennen.
-- `node_modules` liegt auf dem Host, damit ein Editor die Typen findet.
-  Installiert und ausgeführt wird es nur im Container. Es enthält deshalb
-  Linux-Programme, und `npm` lässt sich nicht direkt unter Windows aufrufen.
-- Der Port des Entwicklungsservers wird auf `localhost` freigegeben, damit der
-  Browser der Desktop-App und mein eigener Browser das Spiel erreichen.
-- `./dev` ist ein Bash-Skript. Es läuft in Git Bash, die auch Claude nutzt. Ein
-  PowerShell-Pendant gibt es nicht.
-
-**Begründung:** Auf dem Host bleibt nichts installiert, und die
-Entwicklungsumgebung lässt sich exakt wiederholen. Den Umgang mit Docker als
-Entwicklungsumgebung zu üben gehört zum Lernziel.
+**Begründung:** Ursprünglich war Docker mit dem Bash-Wrapper `./dev` und
+`node_modules` auf dem Host entschieden. Beim Setup lief das so, aber ESLint
+brauchte über den Windows-Bind-Mount **25 Sekunden statt 2** (gemessen), weil
+typescript-eslint sehr viele kleine Dateien lädt. Der Stop-Hook hätte damit etwa
+34 Sekunden pro Rundenende gebraucht. Lokal braucht die gesamte Prüfung
+(Typecheck, Linter, Unit-Tests) etwa 5 Sekunden, und Vite erkennt Änderungen ohne
+Polling sofort.
 
 **Bewusst in Kauf genommen:**
-- Polling kostet etwas CPU. Das Neuladen dauert etwa eine halbe bis eine
-  Sekunde statt sofort.
-- Jeder Befehl startet erst einen Container.
-- Installieren und Testen werden langsamer, weil `node_modules` über die
-  Containergrenze gelesen wird.
+- Node.js liegt global auf dem Host.
+- Die Umgebung ist nicht mehr exakt reproduzierbar. Bei einem
+  Ein-Personen-Projekt spielt das kaum eine Rolle.
+- Pakete könnten beim Installieren Code auf dem Host ausführen. Das verhindert
+  `ignore-scripts=true`. Braucht ein künftiges Paket ein Install-Skript, wird
+  das bewusst entschieden.
 
 **Verworfen:**
-- *Lokal unter Windows installiert:* Das wäre am schnellsten, aber Node.js läge
-  dauerhaft auf dem Host, und Install-Skripte von Paketen liefen dort.
+- *Docker mit `node_modules` auf dem Host:* siehe oben, zu langsam.
+- *Docker mit `node_modules` in einem Docker-Volume:* Das wäre schnell, aber der
+  Editor auf dem Host fände die Typen nicht.
+- *Docker, Linter nicht im Stop-Hook:* Der Linter würde dann bei jedem
+  Rundenende fehlen.
 - *Claude Code selbst im Container:* Das geht nur mit der CLI, nicht mit dem
   Code-Tab der Desktop-App. Damit fiele auch der eingebaute Browser weg, mit
   dem Claude das Spiel prüfen soll.
-- *Projekt im WSL-Dateisystem:* Das Neuladen wäre schneller, aber die
-  Desktop-App, Git und der Editor müssten über `\\wsl$` zugreifen.
-- *`node_modules` in einem Docker-Volume:* Das wäre schneller, aber der Editor
-  auf dem Host fände die Typen nicht.
 
-**Kosten einer späteren Änderung:** Ein Wechsel auf eine lokale Toolchain ist
-*billig*: Node.js wird installiert, und `./dev` ruft dann `npm` direkt auf. Den
-Code betrifft das nicht.
+**Kosten einer späteren Änderung:** Ein Wechsel zurück zu Docker ist *billig*.
+Dockerfile, `compose.yaml` und `./dev` stehen in Commit `4adf5b4` und lassen sich
+von dort wiederherstellen. Den Code betrifft das nicht.
 
 ### 6.4 Tests (grob)
 
@@ -189,9 +180,8 @@ Code betrifft das nicht.
   ohne Browser testbar ist.
 - **Automatisch mit Playwright:** Ein paar Browser-Tests decken die
   Grundabläufe ab: Das Spiel startet, reagiert auf Tasten, ein Spiel endet, und
-  die Bestenliste bleibt nach einem Neuladen erhalten. Die Tests laufen im
-  Container, auf Basis des offiziellen Playwright-Images mit vorinstallierten
-  Browsern.
+  die Bestenliste bleibt nach einem Neuladen erhalten. Die Tests laufen lokal
+  in Chromium.
 - **Typprüfung:** Der TypeScript-Compiler prüft die Typen als eigener Schritt.
 - **Manuell** nehme ich ab, wie sich das Spiel spielt, wie es aussieht und ob
   der Ton passt.
@@ -212,7 +202,8 @@ Es gibt keine (siehe Abschnitt 8).
 ### 6.6 Git und CI
 
 **Entscheidung:** Das Repo liegt privat auf GitHub unter `SaijSaij/tetris`. Es
-gibt keine CI. Tests laufen lokal über `./dev`.
+gibt keine CI. Tests laufen lokal, und ein Stop-Hook erzwingt sie bei jedem
+Rundenende von Claude.
 
 **Begründung:** Ich arbeite allein, und Claude führt die Tests bei jeder
 Änderung ohnehin aus. Eine CI wäre ein zusätzlicher Baustein ohne
@@ -222,7 +213,7 @@ nennenswerten Nutzen.
 im Monat).
 
 **Kosten einer späteren Änderung:** *billig.* Ein Workflow, der dieselben
-`./dev`-Befehle aufruft, besteht aus einer Datei.
+npm-Skripte aufruft, besteht aus einer Datei.
 
 ### 6.7 Öffentlichkeit und Lizenz
 
@@ -239,13 +230,10 @@ eigene sind (siehe Abschnitt 1).
 
 | Annahme | Vorläufiger Standard |
 |---|---|
-| Exakte Versionen | Beim Setup die aktuellen stabilen Versionen der Hauptversionen aus 6.2 wählen und prüfen. TypeScript 7 ist der neue Compiler in Go. Funktioniert er mit Vite oder Vitest nicht, wird auf TypeScript 6 ausgewichen. |
 | Herkunft von Ton und Musik | Klänge und Musik werden zur Laufzeit per Web Audio synthetisiert. Es gibt keine Audiodateien und damit keine Lizenzfragen. Die Musik ist eine eigene Komposition. |
 | Grafik | Sie wird im Code gezeichnet, ohne Bilddateien, mit einer eigenen Farbpalette, gern mit Katzenbezug. |
 | Spielfeldgröße und Regeln | 10×20 Felder und sieben Formen aus je vier Blöcken. Rotationssystem, Punktevergabe, Vorschau und das Halten einer Form klärt das feine Interview. |
 | Repo-Name | Der Name `tetris` bleibt vorerst. Eine Umbenennung (z. B. in `purrfect-lines`) ist jederzeit möglich, GitHub leitet dann um. |
-| Polling-Intervall von Vite | Der Standardwert gilt, bis das Neuladen spürbar stört. |
-| Docker auf dem Host | Docker Desktop mit WSL-2-Backend, wie bereits installiert. |
 | Unterstützte Browser | Aktuelle Desktop-Versionen von Chromium-Browsern und Firefox. Getestet wird automatisch mit Chromium. |
 
 ## 8. Secrets
@@ -264,7 +252,8 @@ muss dieser Abschnitt ergänzt und `.gitignore` geprüft werden.
 - wenige Browser-Tests mit Playwright für Start, Steuerung, Spielende und
   Bestenliste
 - Typprüfung mit dem TypeScript-Compiler
-- alles über `./dev` im Container
+- alles lokal über npm-Skripte. Typecheck, Linter und Unit-Tests erzwingt ein
+  Stop-Hook (`npm run check`), Playwright läuft separat (`npm run e2e`).
 - Darüber hinaus prüft Claude Änderungen am Spiel im eingebauten Browser der
   Desktop-App.
 - Spielgefühl, Aussehen und Ton nehme ich manuell ab.
@@ -280,5 +269,50 @@ Einzelheiten (welche Fälle, Testdaten, Abdeckung) klärt das feine Interview.
 - Bildschirme: Start, Pause, Spielende, Bestenliste (wie viele Einträge, mit
   Namen?)
 - Gestaltung: Farbpalette, Katzenbezug, Musik und Klänge
-- Meilensteine mit Abschlusskriterien
+- Meilensteine mit Abschlusskriterien (ab Meilenstein 2, das Grundgerüst ist
+  erledigt)
 - Definition of Done
+
+## 11. Aufgesetzter Stack
+
+Aufgesetzt am 2026-11-10 mit `setup-stack`. **Meilenstein 1 (Grundgerüst) ist
+damit erledigt:** Es gibt ein leeres, lauffähiges Projekt mit je einem
+Beispieltest für Vitest und Playwright. Spielcode gibt es noch nicht.
+
+**Tatsächlich verwendete Versionen** (alle exakt gepinnt, nur devDependencies,
+zur Laufzeit keine Bibliothek):
+
+| Paket | Version |
+|---|---|
+| Node.js (lokal, winget) | 26.13.0 |
+| typescript | 6.0.3 |
+| vite | 8.3.7 |
+| vitest | 5.1.0 |
+| @playwright/test | 1.65.0 (Chromium 1254) |
+| eslint | 10.14.0 |
+| @eslint/js | 10.0.1 |
+| typescript-eslint | 8.72.2 |
+
+**Abweichungen von der groben Spec:**
+- **TypeScript 6.0.3 statt 7:** typescript-eslint 8.72.2 verlangt
+  `typescript <6.1.0` und unterstützt TypeScript 7 (den neuen Compiler in Go)
+  noch nicht. Für ein Projekt dieser Größe bringt TypeScript 7 keinen spürbaren
+  Vorteil. Die Version wird angehoben, sobald typescript-eslint sie unterstützt.
+- **Linter ergänzt:** ESLint mit typescript-eslint (typgeprüft,
+  `recommendedTypeChecked`). Die grobe Spec nannte keinen Linter. Es gelten
+  diese Komplexitätsregeln als Fehler: `max-depth` 3,
+  `max-lines-per-function` 50 (in Tests aus), `complexity` 10, `max-params` 4.
+- **Toolchain lokal statt Docker:** siehe 6.3.
+- **Playwright-Smoke-Test schon im Grundgerüst:** Er belegt früh, dass der
+  Browser-Teil der Toolchain funktioniert.
+- **Bekannte Audit-Meldung:** `npm audit` meldet eine moderate
+  Denial-of-Service-Lücke in `minimatch` innerhalb der Abhängigkeiten von
+  ESLint. Sie betrifft nur Glob-Muster beim Linten und wird akzeptiert. Der
+  angebotene Fix wäre ein Rückschritt auf ESLint 9.
+
+**Absicherung für Claude:**
+- Ein Stop-Hook (`.claude/hooks/stop-check.sh`, Git Bash, Zeitlimit 120 s)
+  führt `npm run check` aus, wenn es nicht committete Änderungen gibt. Schlägt
+  die Prüfung fehl, blockiert er das Rundenende.
+- Vor `npm install`, `npm i`, `npm add` und `npx` fragt Claude nach (ask-Regeln
+  in `.claude/settings.json`).
