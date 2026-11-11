@@ -61,6 +61,15 @@ the audio output. To listen, press any key first (browsers allow sound only
 after a key press). `?slow` slows down the game and with it the sound events,
 but not the music: its tempo depends only on the level.
 
+Checklist items with a long key sequence (e.g. clearing four rows at once with
+a fixed seed) can be replayed and checked by a script instead of by hand. With
+`npm run serve` running, the browser console of the game's tab can load the
+game rules with `await import('/src/game/game.ts')`, create a game with
+`createGame({ seed })` and call `press` and `release` for each key; `state`
+then shows board, lines and score. In the script no time passes between the
+keys; when you then play the sequence by hand, add `?slow` so the pieces
+hardly fall while you type.
+
 To run one test file, pass it after `--`, e.g. `npm test -- src/game/pause.test.ts`
 or `npm run e2e -- e2e/screens.spec.ts`.
 

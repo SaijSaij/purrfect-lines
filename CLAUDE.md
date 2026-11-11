@@ -38,6 +38,10 @@ flags, never with a heredoc.
   commit. Tests of the current milestone follow steps 2 and 4 of the workflow.
 - Tests only for behaviour that stays valid in later milestones. Transitional
   behaviour gets no automated test; it goes on the milestone's manual checklist.
+- If a bug cannot be reproduced automatically (e.g. because Playwright cannot
+  trigger it), a manual item on the milestone's checklist, with action and
+  expected result, takes the place of the test. Say so explicitly instead of
+  fixing the bug without a safeguard.
 - While writing tests before the implementation, create `.claude/.tests-first`
   (an empty, git-ignored file). With the marker the stop hook still runs
   typecheck and lint and blocks on their errors, but skips the unit tests.
