@@ -160,9 +160,13 @@ grün. E2E-Test 7 grün.
 - [ ] Auf dem Startbildschirm ist es still; Enter startet das Spiel, und die
       Musik setzt ein.
 - [ ] Drehen, Einrasten, harter Fall und Reihen klingen unterschiedlich.
-- [ ] Vier Reihen auf einmal klingen nach Katze: mit `?seed=<N>&slow=4` die
-      Tastenfolge `<Folge>` spielen (Seed und Folge werden bei der Umsetzung
-      von M6 eingetragen).
+- [ ] Vier Reihen auf einmal klingen nach Katze: http://localhost:5173/?seed=8&slow=4
+      laden, Enter, dann je Form diese Tasten kurz antippen:
+      L: → → → Leertaste · I: ← Leertaste · Z: ↑ ← ← ← Leertaste ·
+      T: Leertaste · J: ↑ ← ← ← ← Leertaste · S: → → → Leertaste ·
+      O: ← ← ← ← Leertaste · Z: → Leertaste · S: ↑ ← ← Leertaste ·
+      J: → → → Leertaste · I: ↑ → → → → Leertaste. Die letzte Form löst
+      vier Reihen auf einmal auf.
 - [ ] Nacheinander `?level=1` und `?level=15` laden: Bei Level 15 läuft die
       Musik deutlich schneller (+40 %).
 - [ ] In der Pause ist die Musik still und läuft danach weiter.
