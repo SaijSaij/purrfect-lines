@@ -68,7 +68,7 @@ e.g. http://localhost:5173/?seed=1&level=10&debug.
 | `?level=<1–99>`, e.g. http://localhost:5173/?level=15 | Every game starts on this level; the level still rises every 10 rows from there. Only whole numbers from 1 to 99; anything else is ignored and reported in the console. |
 | `?slow=<1–10>`, e.g. http://localhost:5173/?slow=4 | The whole game runs this many times slower: falling, lock delay, key repeat and the line clear animation. Only whole numbers from 1 to 10; anything else is ignored and reported in the console. |
 | `?debug` | Shows internal values as text at the top left: level, fall interval, time left until the resting piece locks and restarts used, the pieces left in the current bag, the seed, the slow motion factor and frames per second. Times are game time, so with `?slow` they stay the same while the game runs slower. |
-| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"`, `"gameOver"`, `"nameEntry"` or `"highscores"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. While full rows light up (300 ms), they are still in `board`, `active` is `null`, and `score` and `lines` already count them. On the start screen, `board` and `active` belong to a throwaway game that Enter replaces. Try `window.__purrfectLines.screen` in the browser console. |
+| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"`, `"gameOver"`, `"nameEntry"` or `"highscores"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. While full rows light up (300 ms), they are still in `board`, `active` is `null`, and `score` and `lines` already count them. On the start screen, `board` and `active` belong to a throwaway game that Enter replaces. On `gameOver`, `nameEntry` and `highscores`, all fields show the finished game. Try `window.__purrfectLines.screen` in the browser console. |
 
 ## Saved data
 
@@ -85,7 +85,9 @@ All storage access goes through `src/storage/persistence.ts`, which never
 throws: unreadable data is replaced by an empty list or the default settings,
 and if the storage is blocked or full the game keeps the list in memory and
 the start screen shows a hint. To see that hint, block site data for
-localhost in the browser settings.
+localhost in the browser settings. The browser test for this case
+(`e2e/highscores.spec.ts`) makes every access to `window.localStorage` throw
+with an init script instead.
 
 ## Screenshots
 
@@ -129,7 +131,7 @@ names, never to the numbers. All colors are in
 | `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas), the high score table and the pause menu |
 | `src/main.ts` | Entry point: keyboard, screens, storage, game loop and drawing; loads `src/debug/` only on the development server |
 | `src/debug/` | Test helpers, development server only |
-| `e2e/` | Browser tests; `e2e/support/` reads the test interface |
+| `e2e/` | Browser tests; `e2e/support/` reads the test interface and drives common steps (start a game, wait for a screen, play until game over) |
 | `scripts/` | Release check and screenshots |
 | `docs/spec/` | Requirements, milestones and test strategy (German), part of [SPEC.md](../SPEC.md) |
 | `docs/images/` | Pictures for the README and spare stills, made by `npm run screenshots` |

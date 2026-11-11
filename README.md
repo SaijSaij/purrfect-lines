@@ -58,14 +58,16 @@ ahead.
 - **Name entry:** type up to 12 characters; all keys, including Space and the
   game keys, are just text here. Enter saves and shows the list with your new
   entry highlighted, and Enter again leads to the start screen. Esc skips the
-  entry and saves nothing. An empty name is saved as "Kitty". Next time the
-  field already holds the name you typed last.
+  entry, saves nothing and leads to the start screen. Spaces at the start and
+  end are removed, and an empty name is saved as "Kitty". Next time the field
+  holds what you typed last (empty if you left it empty).
 - **Saving:** the list and your last name are stored in the browser
   (localStorage) for http://localhost:5173 and survive a reload. The release
   version on port 4173 keeps its own list. If the browser does not allow
   saving (for example when site data is blocked), the game still runs, the
   list lasts only until the page is reloaded, and the start screen says so.
-  Stored data that cannot be read is dropped and replaced by an empty list.
+  Invalid stored entries are dropped; if nothing can be read, the list starts
+  empty.
 
 The game area fills the browser window as far as its fixed shape allows. It
 adapts at once when you resize the window and stays sharp on scaled displays
