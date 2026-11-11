@@ -157,10 +157,14 @@ kann.
 grün. E2E-Test 7 grün.
 
 **Abnahme-Checkliste:**
-- [ ] Nach dem ersten Tastendruck läuft Musik.
+- [ ] Auf dem Startbildschirm ist es still; Enter startet das Spiel, und die
+      Musik setzt ein.
 - [ ] Drehen, Einrasten, harter Fall und Reihen klingen unterschiedlich.
-- [ ] Vier Reihen auf einmal klingen nach Katze.
-- [ ] Musik wird mit dem Level etwas schneller.
+- [ ] Vier Reihen auf einmal klingen nach Katze: mit `?seed=<N>&slow=4` die
+      Tastenfolge `<Folge>` spielen (Seed und Folge werden bei der Umsetzung
+      von M6 eingetragen).
+- [ ] Nacheinander `?level=1` und `?level=15` laden: Bei Level 15 läuft die
+      Musik deutlich schneller (+40 %).
 - [ ] In der Pause ist die Musik still und läuft danach weiter.
 - [ ] M und N schalten getrennt, der Zustand bleibt nach dem Neuladen.
 - [ ] Die Melodie erinnert an kein bekanntes Stück.
@@ -179,11 +183,16 @@ Repo findet keinen fremden Markennamen.
 
 **Abnahme-Checkliste:**
 - [ ] Die sieben Formen sind auf einen Blick unterscheidbar.
-- [ ] Die Farben wirken warm und stimmig, nicht wie das Genre-Original.
+- [ ] Die Farben wirken warm und stimmig. Der Stab ist nicht hellblau, und
+      keine Form hat die im Genre übliche Farbe.
 - [ ] Pfotenabdrücke sind erkennbar, aber nicht unruhig.
 - [ ] Der Katzenkopf im Titel gefällt mir.
 - [ ] Geisterstein ist klar von echten Blöcken zu unterscheiden.
-- [ ] Texte sind auf allen Bildschirmen gut lesbar.
+- [ ] Texte sind auf allen Bildschirmen gut lesbar. Geprüft in einem kleinen
+      Fenster (etwa halbe Bildschirmhöhe): Startbildschirm mit voller Liste
+      (10 Einträge), Startbildschirm mit Speicherhinweis (Website-Daten
+      gesperrt), Spielfeld mit Seitenleiste, Pause, Spielende, Namenseingabe,
+      Bestenliste.
 
 ## M8 – Deutsch
 
@@ -197,8 +206,17 @@ Repo findet keinen fremden Markennamen.
 die Startsprache grün. E2E-Test 8 grün.
 
 **Abnahme-Checkliste:**
-- [ ] Mit deutscher Browsersprache startet das Spiel auf Deutsch.
+- [ ] Gespeicherte Daten löschen (`localStorage.clear()` in der Konsole) und
+      neu laden: Bei deutscher Browsersprache startet das Spiel auf Deutsch.
+      In einem Browser oder Profil mit englischer Sprache, ebenfalls ohne
+      gespeicherte Daten, startet es auf Englisch.
 - [ ] L auf dem Startbildschirm wechselt die Sprache, sie bleibt nach dem
       Neuladen.
 - [ ] Alle Bildschirme sind vollständig übersetzt, nichts ist abgeschnitten.
-- [ ] Datum in der Bestenliste im deutschen Format, Standardname „Katze“.
+      Geprüft in einem kleinen Fenster (etwa halbe Bildschirmhöhe):
+      Startbildschirm mit voller Liste (10 Einträge), Startbildschirm mit
+      Speicherhinweis (Website-Daten gesperrt), Spielfeld mit Seitenleiste,
+      Pause, Spielende, Namenseingabe, Bestenliste.
+- [ ] Auf Deutsch eine Partie mit leerem Namen speichern: Der Eintrag heißt
+      „Katze“, das Datum steht im Format TT.MM.JJJJ. Ältere Einträge behalten
+      ihren Namen.
