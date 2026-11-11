@@ -10,8 +10,11 @@ Rules, commands and the workflow that Claude Code follows are in
 
 ## Prerequisites
 
-- Windows (the setup is only tested there) and Node.js 26 LTS
-  (`winget install OpenJS.NodeJS.LTS`). The exact versions are listed under
+- Windows (the setup is only tested there; the CI runs on Ubuntu) and
+  Node.js 26 LTS in exactly the version written in `.node-version`, e.g.
+  `winget install OpenJS.NodeJS.LTS --version <version from .node-version>`.
+  Without `--version`, winget installs the newest LTS release, which may differ
+  from the CI's. The other versions are listed under
   [Versions in CLAUDE.md](../CLAUDE.md#versions).
 - Git for Windows: its Git Bash runs the stop hook of Claude Code
   (`.claude/hooks/stop-check.sh`).
@@ -151,7 +154,11 @@ red step makes the whole run red. The CI adds to the local checks, it does not
 replace them.
 
 Only in the CI (where the environment variable `CI` is set) a failed browser
-test is retried once; locally it never is (`playwright.config.ts`).
+test is retried once; locally it never is (`playwright.config.ts`). A test
+that passes on the retry leaves the run green and produces no report; the log
+of the `e2e` step marks it as "flaky". Look for that word now and then, so
+unstable tests do not go unnoticed. In the CI a `test.only` left in `e2e/`
+makes the run red.
 
 **A red run:** open the pull request's "Checks" tab, or the "Actions" tab of
 the repository, and click the run; the log of the red step shows the error. If
@@ -160,19 +167,24 @@ a browser test failed for good, the run has an artifact `playwright-report`
 it, then open its `index.html` in a browser: it lists the failed tests with a
 screenshot each.
 
-**Updating the actions:** every action is pinned to a full commit SHA with
-its version as a comment (`uses: actions/checkout@<sha> # v7.0.1`), and is
-only updated on request. To move to a newer version, look up the SHA of its
-tag, e.g.
+**Updating the actions:** every action in `ci.yml` (all `uses:` lines:
+checkout, setup-node, upload-artifact) is pinned to a full commit SHA with its
+version as a comment (`uses: actions/checkout@<sha> # v7.0.1`), and is only
+updated on request. To move an action to a newer version, look up the SHA of
+its tag with the GitHub CLI (`gh`, signed in with `gh auth login`), e.g.
 
 ```bash
 gh api repos/actions/checkout/commits/v7.0.1 --jq .sha
 ```
 
-and replace both the SHA and the version comment.
+and replace both the SHA and the version comment. New pins cannot be tested
+locally: push the change on a branch and check that the CI of its pull request
+is green.
 
-**Updating Node.js:** the exact version is only in `.node-version`, which the
-CI reads. Change it together with the local installation (see
+**Updating Node.js:** the exact version is only in `.node-version`, as a bare
+version number such as `26.13.0` (no `v`). `actions/setup-node` installs
+exactly this version in the CI, so it must be a released Node.js version.
+Change it together with the local installation (see
 [Versions in CLAUDE.md](../CLAUDE.md#versions)), then run all checks locally.
 
 ## Tuning
