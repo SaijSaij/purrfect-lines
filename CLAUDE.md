@@ -86,12 +86,20 @@ flags, never with a heredoc.
    the transitional behaviour. If nothing needs checking by hand, say so.
    Never tick anything yourself. Wait for my acceptance; it requires the
    Definition of Done (SPEC.md, section 10). Only then merge into main with
-   `git merge --ff-only`.
+   `git merge --ff-only`. Before asking for acceptance, also show a short
+   overview of what is still open, one line per item, split into "needs my
+   decision" and "for information only": open or deferred findings (also
+   rejected KANN findings), changes to the spec, docs or CLAUDE.md that were
+   proposed but not applied, approved assumptions that have no entry in the
+   spec, and checklist items that were not checked. If nothing is open, one
+   sentence is enough. Whatever can be settled now still belongs on the
+   branch.
 7. After acceptance, on main: set `**Status:** erledigt am <date> (Commit <hash>)`
    below the milestone heading in docs/spec/meilensteine.md, tick its
    checklist and commit this separately. The hash is the state of the branch
    at the merge: what `git rev-parse --short HEAD` prints right before the
-   status commit.
+   status commit. After that, only name what is left in Git (commits not
+   pushed, a local branch that is left over) and ask whether to push.
 
 Push only when I ask.
 
