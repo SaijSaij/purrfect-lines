@@ -349,5 +349,7 @@ zur Laufzeit keine Bibliothek):
   die Prüfung fehl, blockiert er das Rundenende. Solange die Datei
   `.claude/.tests-first` existiert (Tests vor der Umsetzung), prüft er nur
   Typecheck und Linter. Fehlschlagende Unit-Tests sind dann erlaubt.
-- Vor `npm install`, `npm i`, `npm add` und `npx` fragt Claude nach (ask-Regeln
-  in `.claude/settings.json`).
+- Vor `npm install`, `npm i` und `npm add` fragt Claude nach (ask-Regeln in
+  `.claude/settings.json`). `npx` und `cd` sind gesperrt (deny-Regeln).
+  `git status`, `git diff`, `git log`, `git add` und `git commit` laufen ohne
+  Nachfrage, `git push` und `git merge` nur nach Nachfrage.

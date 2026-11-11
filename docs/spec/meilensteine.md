@@ -101,7 +101,7 @@ A40, A41 grün. E2E-Test 2 prüft jetzt auch die Punkte.
 
 ## M4 – Bildschirme und Ablauf
 
-**Status:** erledigt am 2026-11-11 (Commit e2c4471)
+**Status:** erledigt am 2026-11-11 (Commit 2a443d6)
 
 **Ziel:** Das Spiel hat Start, Pause und Ende wie ein fertiges Spiel und passt
 sich dem Fenster an.
