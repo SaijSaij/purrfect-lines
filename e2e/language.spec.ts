@@ -1,6 +1,7 @@
 // Choosing the language (M8). Every test gets a fresh browser context, so
 // localStorage starts empty; the browser language comes from `locale`.
 import { expect, test, type Page } from '@playwright/test';
+import { TEXTS } from '../src/i18n/texts';
 import { startGame, waitForScreen } from './support/game';
 
 const START_SCREEN = '#start-screen';
@@ -31,6 +32,7 @@ test.describe('A38 start language', () => {
     test('starts in German', async ({ page }) => {
       await openStartScreen(page);
       await expectLanguage(page, 'de');
+      await expect(page.locator(START_SCREEN)).toContainText(TEXTS.de.pressEnterToStart);
     });
   });
 
@@ -40,6 +42,7 @@ test.describe('A38 start language', () => {
     test('starts in English', async ({ page }) => {
       await openStartScreen(page);
       await expectLanguage(page, 'en');
+      await expect(page.locator(START_SCREEN)).toContainText(TEXTS.en.pressEnterToStart);
     });
   });
 });
@@ -70,6 +73,7 @@ test.describe('A38 switching the language', () => {
   test('L does not switch the language during a game or in the pause', async ({ page }) => {
     await startGame(page, '/?seed=1');
     await page.keyboard.press('l');
+    await expectLanguage(page, 'en');
     await page.keyboard.press('p');
     await waitForScreen(page, 'paused');
     await page.keyboard.press('l');
