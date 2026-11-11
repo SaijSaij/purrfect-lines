@@ -73,16 +73,17 @@ function toHighscores(data: unknown): HighscoreEntry[] {
   return entries.sort((a, b) => b.score - a.score).slice(0, HIGHSCORE_SIZE);
 }
 
+/** Keeps every valid setting; a missing or invalid one gets its default. */
 function toSettings(data: unknown): Settings {
   if (typeof data !== 'object' || data === null) return DEFAULT_SETTINGS;
-  const lastName = (data as Record<string, unknown>).lastName;
+  const { lastName, music, sounds } = data as Record<string, unknown>;
   return {
     lastName:
       typeof lastName === 'string' && lastName.length <= NAME_MAX_LENGTH
         ? lastName
         : DEFAULT_SETTINGS.lastName,
-    music: DEFAULT_SETTINGS.music,
-    sounds: DEFAULT_SETTINGS.sounds,
+    music: typeof music === 'boolean' ? music : DEFAULT_SETTINGS.music,
+    sounds: typeof sounds === 'boolean' ? sounds : DEFAULT_SETTINGS.sounds,
   };
 }
 
@@ -125,6 +126,6 @@ export function createPersistence(store: KeyValueStore | null): Persistence {
     loadHighscores: () => toHighscores(read(HIGHSCORES_KEY)),
     saveHighscores: (entries) => write(HIGHSCORES_KEY, entries),
     loadSettings: () => toSettings(read(SETTINGS_KEY)),
-    saveSettings: (changes) => write(SETTINGS_KEY, changes),
+    saveSettings: (changes) => write(SETTINGS_KEY, { ...toSettings(read(SETTINGS_KEY)), ...changes }),
   };
 }

@@ -50,6 +50,13 @@ Browser tests (Playwright, `e2e/`) cover what only works together: screens,
 keys, focus and window size. They read the game state through the test
 interface below instead of comparing pixels.
 
+Sound works the same way: the game rules report what happened (rotation, lock,
+hard drop, cleared rows with their count, new level, game over) through
+`takeEvents()`, and `src/main.ts` passes these events to `src/audio/` once per
+frame. Unit tests check the events and the pure rules in
+`src/audio/sound-rules.ts` (music tempo, switching); how the sounds and the
+music sound is checked by ear.
+
 To run one test file, pass it after `--`, e.g. `npm test -- src/game/pause.test.ts`
 or `npm run e2e -- e2e/screens.spec.ts`.
 
@@ -72,7 +79,8 @@ e.g. http://localhost:5173/?seed=1&level=10&debug.
 
 ## Saved data
 
-The high score list and the settings (so far only the last entered name) are
+The high score list and the settings (last entered name, music and sounds on
+or off) are
 in the browser's localStorage under `purrfect-lines.highscores` and
 `purrfect-lines.settings`, as JSON. Every origin has its own storage, so the
 development server (port 5173) and `npm run preview` (port 4173) keep separate
@@ -111,12 +119,14 @@ game changes.
 ## Tuning
 
 The timings (fall intervals per level, repeat delay and interval, lock delay
-and its restarts, line clear animation), the points, the maximum name length
-and the size of the high score list are in
+and its restarts, line clear animation), the points, the maximum name length,
+the size of the high score list and the music tempo steps are in
 [src/game/constants.ts](../src/game/constants.ts). Tests refer to these
 names, never to the numbers. All colors are in
 [src/render/palette.ts](../src/render/palette.ts), all visible texts in
-[src/i18n/texts.ts](../src/i18n/texts.ts).
+[src/i18n/texts.ts](../src/i18n/texts.ts), all volumes at the top of
+[src/audio/audio.ts](../src/audio/audio.ts) and the notes of the music in
+[src/audio/music.ts](../src/audio/music.ts).
 
 ## Project structure
 
@@ -129,7 +139,8 @@ names, never to the numbers. All colors are in
 | `src/highscores/` | High score list rules (who enters, order, names), unit-tested |
 | `src/storage/` | Saving the list and the settings in localStorage, unit-tested with a fake storage |
 | `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas), the high score table and the pause menu |
-| `src/main.ts` | Entry point: keyboard, screens, storage, game loop and drawing; loads `src/debug/` only on the development server |
+| `src/audio/` | Sounds and music with the Web Audio API (browser only); `sound-rules.ts` holds the unit-tested rules (music tempo, switching) |
+| `src/main.ts` | Entry point: keyboard, screens, storage, sound, game loop and drawing; loads `src/debug/` only on the development server |
 | `src/debug/` | Test helpers, development server only |
 | `e2e/` | Browser tests; `e2e/support/` reads the test interface and drives common steps (start a game, wait for a screen, play until game over) |
 | `scripts/` | Release check and screenshots |

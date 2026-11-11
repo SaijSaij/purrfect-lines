@@ -148,6 +148,8 @@ class GameSession implements Game {
   private clearTimerMs = 0;
   private readonly held = new Set<Action>();
   private readonly repeat = new KeyRepeat();
+  /** Events since the last takeEvents call (A32). */
+  private events: GameEvent[] = [];
 
   constructor(
     private readonly source: PieceSource,
@@ -188,11 +190,19 @@ class GameSession implements Game {
   giveUp(): void {
     if (this.status === 'gameOver') return;
     this.active = null;
-    this.status = 'gameOver';
+    this.endGame();
   }
 
   takeEvents(): GameEvent[] {
-    return [];
+    const events = this.events;
+    this.events = [];
+    return events;
+  }
+
+  /** Every regular end of the game goes through here, so it is reported once (A5, A25, A32). */
+  private endGame(): void {
+    this.status = 'gameOver';
+    this.events.push({ type: 'gameOver' });
   }
 
   get diagnostics(): GameDiagnostics {
@@ -333,7 +343,9 @@ class GameSession implements Game {
 
   private playerRotate(quarterTurns: 1 | 3): void {
     const wasGrounded = this.isGrounded();
-    if (this.tryRotate(quarterTurns)) this.afterPlayerMove(wasGrounded);
+    if (!this.tryRotate(quarterTurns)) return;
+    this.events.push({ type: 'rotate' });
+    this.afterPlayerMove(wasGrounded);
   }
 
   /** Whether the piece rests on blocks or the floor. */
@@ -388,23 +400,22 @@ class GameSession implements Game {
     const landed = landingPosition(this.board, this.active);
     this.score += (landed.y - this.active.y) * HARD_DROP_POINTS;
     this.active = landed;
-    this.lock();
+    this.lock('hardDrop');
   }
 
-  private lock(): void {
+  /** `how` tells the sound which way the piece came to rest (A32). */
+  private lock(how: 'lock' | 'hardDrop' = 'lock'): void {
     if (this.active === null) return;
     const cells = absoluteCells(this.active);
     this.board = placeCells(this.board, cells, this.active.type);
     this.active = null;
+    this.events.push({ type: how });
     if (cells.some((cell) => cell.y < 0)) {
-      this.status = 'gameOver'; // A5, case 2
+      this.endGame(); // A5, case 2
       return;
     }
     const rows = fullRows(this.board);
-    // Points and lines count at once (A16). Points use the level before the
-    // clear, even if the clear raises it (A17).
-    this.score += linePoints(rows.length, this.level);
-    this.lines += rows.length;
+    this.countRows(rows.length);
     if (rows.length === 0) {
       this.spawn();
       return;
@@ -414,6 +425,19 @@ class GameSession implements Game {
     this.clearTimerMs = 0;
   }
 
+  /**
+   * Points and lines count at once (A16). Points use the level before the
+   * clear, even if the clear raises it (A17).
+   */
+  private countRows(count: number): void {
+    if (count === 0) return;
+    const levelBefore = this.level;
+    this.score += linePoints(count, levelBefore);
+    this.lines += count;
+    this.events.push({ type: 'linesCleared', count });
+    if (this.level > levelBefore) this.events.push({ type: 'levelUp', level: this.level });
+  }
+
   private spawn(): void {
     const piece = spawnPiece(this.source.next());
     this.fallTimerMs = 0;
@@ -421,7 +445,7 @@ class GameSession implements Game {
     this.lockResets = 0;
     this.lowestRow = bottomRow(piece);
     if (!fits(this.board, piece)) {
-      this.status = 'gameOver'; // A5, case 1: the piece is not placed
+      this.endGame(); // A5, case 1: the piece is not placed
       return;
     }
     this.active = piece;

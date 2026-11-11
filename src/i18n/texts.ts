@@ -8,6 +8,7 @@ const EN = {
   keysSoftDrop: '↓ / S: soft drop',
   keysHardDrop: 'Space: hard drop',
   keysPause: 'P / Esc: pause',
+  keysSound: 'M / N: music / sounds',
   paused: 'Paused',
   resume: 'Resume',
   giveUp: 'Give up',
@@ -17,6 +18,11 @@ const EN = {
   lines: 'Lines',
   level: 'Level',
   next: 'Next',
+  /** Sound state in the sidebar (A34), e.g. "Music: on". */
+  musicOn: 'Music: on',
+  musicOff: 'Music: off',
+  soundsOn: 'Sounds: on',
+  soundsOff: 'Sounds: off',
   /** Used when the name entry stays empty (A27). */
   defaultName: 'Kitty',
   highscores: 'High scores',

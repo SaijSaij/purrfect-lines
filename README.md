@@ -4,7 +4,7 @@ A cosy falling-block puzzle for the browser, with a cat's touch.
 
 ![Pieces fall, slide into place and complete the bottom row, which lights up and disappears](docs/images/gameplay.apng.png)
 
-[Play](#play) · [High scores](#high-scores) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
+[Play](#play) · [High scores](#high-scores) · [Sound](#sound) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
 
 ## What it is
 
@@ -12,8 +12,8 @@ Pieces made of four blocks fall into a field of 10 × 20 cells. Move and rotate
 them so they complete rows: full rows light up and disappear. The game gets
 faster as you clear rows, and it ends when the stack reaches the top.
 
-This is an early version (milestone 5 of 8). It has start, pause and game over
-screens and a high score list, but no sound or German texts yet.
+This is an early version (milestone 6 of 8). It has start, pause and game over
+screens, a high score list, sounds and music, but no German texts yet.
 
 | Start | Pause | Game over |
 |---|---|---|
@@ -61,8 +61,8 @@ ahead.
   entry, saves nothing and leads to the start screen. Spaces at the start and
   end are removed, and an empty name is saved as "Kitty". Next time the field
   holds what you typed last (empty if you left it empty).
-- **Saving:** the list and your last name are stored in the browser
-  (localStorage) for http://localhost:5173 and survive a reload. The release
+- **Saving:** the list, your last name and the sound settings are stored in
+  the browser (localStorage) for http://localhost:5173 and survive a reload. The release
   version on port 4173 keeps its own list. If the browser does not allow
   saving (for example when site data is blocked), the game still runs, the
   list lasts only until the page is reloaded, and the start screen says so.
@@ -84,6 +84,22 @@ npm run build
 npm run preview
 ```
 
+## Sound
+
+The game has its own sounds for rotating, locking, a hard drop, cleared rows
+(four at once sound like a cat), a new level, the end of a game and choosing
+in menus. Moving is silent. While you play, a music loop of about 30 seconds
+runs; it gets 3 % faster with every level, at most 40 % faster (from level 15
+on). The music is silent on all other screens and in the pause, and after a
+pause it continues where it stopped. Everything is made by the browser while
+the game runs; there are no audio files.
+
+- **M** switches the music, **N** the sounds on and off, on every screen
+  except the name entry. The bottom of the sidebar shows both, and the setting
+  is saved like the high score list. Both are on at the first start.
+- Browsers allow sound only after a key press, so the start screen is silent;
+  the music starts with the first game.
+
 ## Controls
 
 | Key | Action |
@@ -97,6 +113,7 @@ npm run preview
 | ↑ / ↓ or W / S | Choose in the pause menu |
 | Enter | Start screen: start a game. Pause menu: confirm. Game over: on to the name entry or the start screen. Name entry: save. High score list: back to the start screen |
 | Esc | Name entry: skip without saving |
+| M / N | Music / sounds on and off (not in the name entry) |
 
 Letters work in upper and lower case and are recognised by the character they
 type, so Y is the key labelled Y on any Latin keyboard layout (on a German

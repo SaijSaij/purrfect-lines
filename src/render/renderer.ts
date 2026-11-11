@@ -104,8 +104,26 @@ function drawPreview(ctx: CanvasRenderingContext2D, type: PieceType, top: number
   }
 }
 
-/** Score, lines and level (A20) and the next piece (A19). */
-function drawSidebar(ctx: CanvasRenderingContext2D, state: GameState): void {
+/** Whether music and sounds are on, shown small in the sidebar (A34). */
+export interface SoundState {
+  readonly music: boolean;
+  readonly sounds: boolean;
+}
+
+function drawSoundState(ctx: CanvasRenderingContext2D, sound: SoundState, top: number): void {
+  ctx.font = '14px sans-serif';
+  const lines: [boolean, TextKey][] = [
+    [sound.music, sound.music ? 'musicOn' : 'musicOff'],
+    [sound.sounds, sound.sounds ? 'soundsOn' : 'soundsOff'],
+  ];
+  lines.forEach(([on, key], i) => {
+    ctx.fillStyle = on ? PALETTE.text : PALETTE.label;
+    ctx.fillText(text(key), SIDEBAR_LEFT_PX + CELL_PX / 2, top + i * 20);
+  });
+}
+
+/** Score, lines and level (A20), the next piece (A19) and the sound state (A34). */
+function drawSidebar(ctx: CanvasRenderingContext2D, state: GameState, sound: SoundState): void {
   ctx.fillStyle = PALETTE.sidebar;
   ctx.fillRect(SIDEBAR_LEFT_PX, 0, SIDEBAR_WIDTH_PX, CANVAS_HEIGHT);
   ctx.textAlign = 'left';
@@ -115,12 +133,13 @@ function drawSidebar(ctx: CanvasRenderingContext2D, state: GameState): void {
   drawValue(ctx, 'score', state.score, valuesTop);
   drawValue(ctx, 'lines', state.lines, valuesTop + 2.5 * CELL_PX);
   drawValue(ctx, 'level', state.level, valuesTop + 5 * CELL_PX);
+  drawSoundState(ctx, sound, CANVAS_HEIGHT - 2 * CELL_PX);
 }
 
 /** Draws in logical units (CANVAS_WIDTH × CANVAS_HEIGHT), whatever the canvas size in pixels (A31). */
-export function drawGame(ctx: CanvasRenderingContext2D, state: GameState): void {
+export function drawGame(ctx: CanvasRenderingContext2D, state: GameState, sound: SoundState): void {
   const canvas = ctx.canvas;
   ctx.setTransform(canvas.width / CANVAS_WIDTH, 0, 0, canvas.height / CANVAS_HEIGHT, 0, 0);
   drawField(ctx, state);
-  drawSidebar(ctx, state);
+  drawSidebar(ctx, state, sound);
 }

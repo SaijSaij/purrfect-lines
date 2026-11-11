@@ -44,8 +44,12 @@ export function menuActionForKey(key: string): MenuAction | null {
 /** What M and N switch on and off (A34). */
 export type SoundToggle = 'music' | 'sounds';
 
+const SOUND_KEYS: Readonly<Record<string, SoundToggle>> = {
+  m: 'music',
+  n: 'sounds',
+};
+
 /** M switches the music, N the sounds (A21, A34), matched like actionForKey. */
 export function soundToggleForKey(key: string): SoundToggle | null {
-  void key;
-  return null;
+  return SOUND_KEYS[key.toLowerCase()] ?? null;
 }

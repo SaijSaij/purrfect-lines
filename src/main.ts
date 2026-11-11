@@ -1,10 +1,13 @@
-// Entry point of Purrfect Lines: wires keyboard, screens, storage, game loop
-// and drawing to the game logic. The game starts from the start screen (A22).
+// Entry point of Purrfect Lines: wires keyboard, screens, storage, sound,
+// game loop and drawing to the game logic. The game starts from the start
+// screen (A22).
+import { createAudio } from './audio/audio';
+import { musicTempo, toggleSound } from './audio/sound-rules';
 import { createGame, type Action, type Game } from './game/game';
 import { addEntry, normalizeName, qualifies, type HighscoreEntry } from './highscores/highscores';
 import { text } from './i18n/texts';
 import { HeldKeys } from './input/held-keys';
-import { actionForKey, menuActionForKey } from './input/keymap';
+import { actionForKey, menuActionForKey, soundToggleForKey } from './input/keymap';
 import { fitToWindow } from './render/fit';
 import { PALETTE } from './render/palette';
 import { drawGame } from './render/renderer';
@@ -36,7 +39,10 @@ function browserStore(): KeyValueStore | null {
 const persistence = createPersistence(browserStore());
 /** Kept in memory, so it lasts until reload even if saving fails (A30). */
 let highscores: readonly HighscoreEntry[] = persistence.loadHighscores();
-let lastName = persistence.loadSettings().lastName;
+/** Kept in memory like the list; changes are saved at once (A27, A34). */
+let settings = persistence.loadSettings();
+const audio = createAudio();
+audio.setEnabled(settings.music, settings.sounds);
 /** Position of the entry saved last, highlighted on the high score screen (A27). */
 let highlight: number | null = null;
 
@@ -83,6 +89,7 @@ function onPausedKey(event: KeyboardEvent): void {
     return;
   }
   const menu = menuActionForKey(event.key);
+  if (menu !== null) audio.menu();
   if (menu === 'up') menuIndex = moveSelection(menuIndex, -1);
   if (menu === 'down') menuIndex = moveSelection(menuIndex, 1);
   if (menu !== 'confirm') return;
@@ -109,13 +116,15 @@ function onPlayingKey(event: KeyboardEvent): void {
  * name entry if the score enters the list, else to the start screen (A26).
  */
 function onConfirm(screen: Screen): void {
+  audio.menu();
   if (screen === 'start') {
     game = newGame();
+    audio.rewindMusic();
     menuScreen = null;
   } else if (screen === 'gameOver') {
     if (qualifies(highscores, game.state.score)) {
       menuScreen = 'nameEntry';
-      screens.openNameEntry(lastName);
+      screens.openNameEntry(settings.lastName);
     } else {
       menuScreen = 'start';
     }
@@ -133,10 +142,25 @@ function saveEntry(): void {
   highscores = result.entries;
   highlight = result.index;
   // The prefill is what was typed, so an empty field stays empty next time.
-  lastName = normalizeName(typed, '');
+  settings = { ...settings, lastName: normalizeName(typed, '') };
   persistence.saveHighscores(highscores);
-  persistence.saveSettings({ lastName });
+  persistence.saveSettings({ lastName: settings.lastName });
   menuScreen = 'highscores';
+}
+
+/**
+ * M switches the music, N the sounds, on every screen but the name entry
+ * (A34). Returns whether the key was one of them.
+ */
+function onSoundKey(event: KeyboardEvent): boolean {
+  const which = soundToggleForKey(event.key);
+  if (which === null) return false;
+  event.preventDefault();
+  if (event.repeat) return true;
+  settings = toggleSound(settings, which);
+  persistence.saveSettings(which === 'music' ? { music: settings.music } : { sounds: settings.sounds });
+  audio.setEnabled(settings.music, settings.sounds);
+  return true;
 }
 
 /**
@@ -152,11 +176,13 @@ function onNameEntryKey(event: KeyboardEvent): void {
 }
 
 function onKeyDown(event: KeyboardEvent): void {
+  audio.unlock(); // browsers allow sound only after a user gesture (A34)
   const screen = currentScreen();
   if (screen === 'nameEntry') {
     onNameEntryKey(event);
     return;
   }
+  if (onSoundKey(event)) return;
   const action = actionForKey(event.key);
   if (action === null) return;
   event.preventDefault(); // e.g. the space bar must not scroll the page (A21)
@@ -214,7 +240,10 @@ function start(): void {
     const frameMs = now - last;
     if (menuScreen === null) game.update(frameMs);
     last = now;
-    drawGame(ctx, game.state);
+    // Events of key presses and of time are collected here once per frame (A32).
+    for (const event of game.takeEvents()) audio.play(event);
+    audio.setMusic(currentScreen() === 'playing', musicTempo(game.state.level));
+    drawGame(ctx, game.state, settings);
     screens.show({
       screen: currentScreen(),
       state: game.state,

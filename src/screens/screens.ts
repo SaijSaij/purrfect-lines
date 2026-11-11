@@ -80,7 +80,14 @@ function startScreen(): { el: HTMLElement; table: HTMLElement; storageHint: HTML
   const el = screenElement('start-screen');
   el.style.gap = '0.5em';
   el.append(heading('title'), element('p', 'pressEnterToStart'));
-  const keys: TextKey[] = ['keysMove', 'keysRotate', 'keysSoftDrop', 'keysHardDrop', 'keysPause'];
+  const keys: TextKey[] = [
+    'keysMove',
+    'keysRotate',
+    'keysSoftDrop',
+    'keysHardDrop',
+    'keysPause',
+    'keysSound',
+  ];
   for (const key of keys) el.append(hint(key));
   const table = tableSlot();
   const storageHint = hint('storageUnavailable', 'storage-hint');
