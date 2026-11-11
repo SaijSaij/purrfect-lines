@@ -1,6 +1,8 @@
 /* global process, console */
-// Release check (A44): builds the game and verifies that the debug code
-// (URL parameters A39–A42, test interface A43) is not in the bundle.
+// Release check (A44, A48): builds the game and verifies that the debug code
+// (URL parameters A39–A42, test interface A43) is not in the bundle, and that
+// dist/index.html refers to its files only by relative paths, so the build
+// also runs under a subpath such as /purrfect-lines/ on GitHub Pages.
 //
 // The debug code must contain each marker below. The check fails if a marker
 // is missing from src/ (the check would prove nothing) or appears in dist/.
@@ -9,6 +11,9 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const MARKERS = ['__purrfectLines', 'purrfect-lines-debug'];
+
+// src="/…" or href="/…" (also protocol-relative "//…") in dist/index.html.
+const ABSOLUTE_PATH = /\b(?:src|href)\s*=\s*["']?\//g;
 
 function filesIn(dir) {
   return readdirSync(dir, { recursive: true })
@@ -45,6 +50,11 @@ if (built) {
       errors.push(`Marker "${marker}" found in release bundle: ${path}`);
     }
   }
+  const html = readFileSync(join('dist', 'index.html'), 'utf8');
+  for (const match of html.matchAll(ABSOLUTE_PATH)) {
+    const context = html.slice(match.index, match.index + 60);
+    errors.push(`Absolute path in dist/index.html: ${context}`);
+  }
 }
 
 if (errors.length > 0) {
@@ -52,4 +62,7 @@ if (errors.length > 0) {
   for (const error of errors) console.error(`  - ${error}`);
   process.exit(1);
 }
-console.log(`check:release passed: ${MARKERS.length} debug markers absent from dist/.`);
+console.log(
+  `check:release passed: ${MARKERS.length} debug markers absent from dist/, ` +
+    'dist/index.html uses relative paths only.',
+);
