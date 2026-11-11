@@ -167,6 +167,10 @@ einzelne Blöcke.
 Form erscheint. In dieser Zeit wirken nur Pause und Fokusverlust, alle anderen
 Spieltasten werden ignoriert. Punkte, Reihen und Level zählen sofort beim
 Einrasten.
+*Präzisierung:* Eine Taste, die während des Aufleuchtens gedrückt wird, wirkt
+auch danach nicht, solange sie gehalten bleibt (keine Wiederholung nach A7).
+Erst ein neuer Tastendruck wirkt. Eine schon vorher gehaltene Taste wirkt nach
+dem Aufleuchten weiter.
 *Prüfung:* Unit mit gesteuerter Zeit (neue Form erst nach 300 ms; Eingaben
 dazwischen ohne Wirkung), Manuell (Animation sichtbar und nicht störend).
 
@@ -219,9 +223,29 @@ scrollt die Leertaste die Seite nicht).
 
 ## Ablauf und Bildschirme
 
+**Ablauf zwischen den Bildschirmen.** Tasten, die hier nicht stehen, wirken
+auf dem jeweiligen Bildschirm nicht. Die Spieltasten im Spiel stehen in A21.
+
+| Bildschirm | Taste oder Ereignis | Ziel |
+|---|---|---|
+| Start | Enter | Spiel (neue Partie) |
+| Spiel | P, Esc, Fokusverlust (A24) | Pause |
+| Spiel | Spielende nach A5 | Spielende |
+| Pause | P, Esc, Enter auf „Fortsetzen“ | Spiel |
+| Pause | Enter auf „Aufgeben“ | Spielende (A25) |
+| Pause | ↑ / W, ↓ / S | bleibt, Auswahl wechselt |
+| Spielende | Enter, Punktzahl reicht (A29) | Namenseingabe |
+| Spielende | Enter, Punktzahl reicht nicht | Start |
+| Namenseingabe | Enter | Bestenliste, Eintrag gespeichert |
+| Namenseingabe | Esc | Start, nichts gespeichert |
+| Namenseingabe | jede andere Taste | bleibt, Zeichen im Textfeld |
+| Bestenliste | Enter | Start |
+
 **A22 Startbildschirm.** Beim Öffnen erscheint der Startbildschirm mit Titel,
 dem Hinweis „Enter startet“, einer kurzen Tastenübersicht und der Bestenliste
 (A28). Enter startet ein neues Spiel.
+*Präzisierung:* Die Tastenübersicht nennt Schieben, Drehen, weichen Fall,
+harten Fall und Pause. Die Menütasten stehen nicht darin.
 *Prüfung:* E2E (Startbildschirm sichtbar; Enter startet, eine Form fällt).
 
 **A23 Pause.** P oder Esc pausiert ein laufendes Spiel. Während der Pause ist
@@ -229,6 +253,8 @@ das Spielfeld verdeckt, die Zeit steht, und es gibt ein Menü mit
 „Fortsetzen“ und „Aufgeben“ (Auswahl nach A21). P, Esc oder Enter auf
 „Fortsetzen“ setzen fort. Nach dem Fortsetzen geht es genau dort weiter, wo
 pausiert wurde (auch Gnadenfrist und Animation laufen weiter).
+*Präzisierung:* Beim Pausieren ist immer „Fortsetzen“ ausgewählt. Die Auswahl
+bleibt am ersten und letzten Eintrag stehen und springt nicht ans andere Ende.
 *Prüfung:* Unit (Zeit läuft in der Pause nicht weiter), E2E (P zeigt Pause,
 Feld verdeckt; erneut P setzt fort).
 
@@ -244,6 +270,8 @@ Es folgt der Spielende-Bildschirm, und die Punkte zählen für die Bestenliste.
 **A26 Spielende-Bildschirm.** Er zeigt Punkte, Reihen und Level. Reicht die
 Punktzahl für die Bestenliste (A29), folgt die Namenseingabe (A27), sonst
 führt Enter zurück zum Startbildschirm.
+*Präzisierung:* Der Spielende-Bildschirm erscheint immer zuerst, auch wenn die
+Punktzahl für die Bestenliste reicht. Erst Enter führt zur Namenseingabe.
 *Prüfung:* E2E (Spielende mit festem Seed zeigt die Werte).
 
 **A27 Namenseingabe.** Ein Textfeld, vorausgefüllt mit dem zuletzt
@@ -255,6 +283,10 @@ Eintrag und zeigt die Bestenliste mit hervorgehobenem neuen Eintrag; ein
 weiteres Enter führt zum Startbildschirm. Esc überspringt die Eingabe, dann
 wird **kein** Eintrag gespeichert. Spieltasten (z. B. Leertaste, Q) wirken im
 Textfeld nur als Text.
+*Präzisierung:* Der Name wird zuerst auf `NAME_MAX_LENGTH` Zeichen gekürzt,
+danach werden Leerzeichen am Rand entfernt. Leerzeichen am Anfang zählen also
+zur Längengrenze mit. Die Bestenliste nach dem Speichern ist ein eigener
+Bildschirm. Esc führt zum Startbildschirm.
 *Prüfung:* Unit (Kürzen, Trimmen, Standardname), E2E (Name eingeben, Enter,
 Eintrag steht in der Liste; Esc speichert nichts).
 
@@ -278,6 +310,33 @@ letzter Name) stehen im localStorage des Browsers und überleben ein Neuladen.
 - Sind gespeicherte Daten unlesbar, werden sie verworfen und durch eine leere
   Liste bzw. die Standardeinstellungen ersetzt. Einzelne ungültige Einträge
   (falsche Typen, negative Punkte) werden verworfen, gültige bleiben.
+
+*Präzisierung Speicherhinweis:* Der Hinweis steht nur auf dem
+Startbildschirm. Er erscheint, sobald Lesen oder Schreiben einmal
+fehlgeschlagen ist, also auch, wenn erst das Speichern nach einer Partie
+fehlschlägt. Er bleibt bis zum Neuladen.
+
+*Speicherformat:* JSON im localStorage.
+
+| Schlüssel | Inhalt |
+|---|---|
+| `purrfect-lines.highscores` | Liste der Einträge mit den Feldern unten |
+| `purrfect-lines.settings` | Objekt mit `lastName`. Ton (A34) und Sprache (A38) kommen als weitere Felder dazu. Fehlt ein Feld oder ist es ungültig, gilt sein Standardwert. |
+
+*Gültiger Eintrag der Bestenliste:*
+
+| Feld | Regel |
+|---|---|
+| `name` | Text mit 1–`NAME_MAX_LENGTH` (12) Zeichen |
+| `score` | ganze Zahl ≥ 1 |
+| `lines` | ganze Zahl ≥ 0 |
+| `level` | ganze Zahl ≥ 1 |
+| `date` | lesbares Datum; gespeichert wird ISO 8601 in UTC, z. B. `2026-11-11T10:00:00.000Z` |
+
+Nach dem Laden wird die Liste nach Punkten absteigend sortiert und auf
+`HIGHSCORE_SIZE` gekürzt. Bei Gleichstand bleibt die gespeicherte Reihenfolge,
+also das Alter (A29). `lastName` ist gültig als Text mit höchstens 12 Zeichen,
+auch leer.
 *Prüfung:* Unit (Speicher-Attrappe: wirft Fehler, enthält Unsinn, enthält
 gemischte Einträge), E2E (Eintrag ist nach Neuladen noch da).
 
