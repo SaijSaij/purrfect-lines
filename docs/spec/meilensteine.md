@@ -124,7 +124,7 @@ A24, A25, A26 (ohne Namenseingabe: Enter führt zum Start), A31.
 
 ## M5 – Bestenliste
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit c18c884)
 
 **Ziel:** Gute Partien werden mit Namen gespeichert und bleiben erhalten.
 
@@ -135,13 +135,13 @@ A29, A30.
 grün.
 
 **Abnahme-Checkliste:**
-- [ ] Erste Partie: Namensfeld ist leer; leerer Name wird zu „Kitty“.
-- [ ] Zweite Partie: letzter Name ist vorausgefüllt.
-- [ ] Mehr als 12 Zeichen lassen sich nicht eingeben.
-- [ ] Esc in der Namenseingabe speichert nichts.
-- [ ] Der neue Eintrag ist in der Liste hervorgehoben.
-- [ ] Nach dem Neuladen ist die Liste noch da.
-- [ ] Mit gesperrten Website-Daten für localhost läuft das Spiel, mit
+- [x] Erste Partie: Namensfeld ist leer; leerer Name wird zu „Kitty“.
+- [x] Zweite Partie: letzter Name ist vorausgefüllt.
+- [x] Mehr als 12 Zeichen lassen sich nicht eingeben.
+- [x] Esc in der Namenseingabe speichert nichts.
+- [x] Der neue Eintrag ist in der Liste hervorgehoben.
+- [x] Nach dem Neuladen ist die Liste noch da.
+- [x] Mit gesperrten Website-Daten für localhost läuft das Spiel, mit
       Hinweis zum Speichern.
 
 ## M6 – Ton und Musik
