@@ -5,8 +5,13 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from './renderer';
 /** Font size of the screens at scale 1, in CSS pixels; screen texts use em. */
 const BASE_FONT_PX = 16;
 
-export function fitToWindow(container: HTMLElement, canvas: HTMLCanvasElement): void {
-  const scale = Math.min(window.innerWidth / CANVAS_WIDTH, window.innerHeight / CANVAS_HEIGHT);
+/**
+ * `reservePx` is kept free above and below the game area, e.g. for the line
+ * under it (A46); the same room on both sides keeps the game area centred.
+ */
+export function fitToWindow(container: HTMLElement, canvas: HTMLCanvasElement, reservePx = 0): void {
+  const availableHeight = Math.max(0, window.innerHeight - 2 * reservePx);
+  const scale = Math.min(window.innerWidth / CANVAS_WIDTH, availableHeight / CANVAS_HEIGHT);
   const width = CANVAS_WIDTH * scale;
   const height = CANVAS_HEIGHT * scale;
   container.style.width = `${width}px`;

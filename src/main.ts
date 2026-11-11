@@ -14,6 +14,7 @@ import { PALETTE } from './render/palette';
 import { drawGame } from './render/renderer';
 import { entryAt, moveSelection } from './screens/pause-menu';
 import { createScreens, type Screen, type Screens } from './screens/screens';
+import { createSourceLine, SOURCE_LINE_HEIGHT_PX, type SourceLine } from './screens/source-line';
 import { createPersistence, type KeyValueStore } from './storage/persistence';
 
 let seed: number | undefined;
@@ -24,6 +25,7 @@ let adapt = (created: Game): Game => created;
 let onFrame: (frameMs: number) => void = () => undefined;
 let game: Game;
 let screens: Screens;
+let sourceLine: SourceLine;
 /** The menu screen shown instead of the game, or null while a game is shown. */
 let menuScreen: 'start' | 'nameEntry' | 'highscores' | null = 'start';
 let menuIndex = 0;
@@ -186,6 +188,7 @@ function onLanguageKey(event: KeyboardEvent): boolean {
   settings = { ...settings, language };
   persistence.saveSettings({ language });
   screens.relabel();
+  sourceLine.relabel();
   return true;
 }
 
@@ -258,7 +261,11 @@ function start(): void {
   const ctx = canvas.getContext('2d');
   if (ctx === null) throw new Error('Canvas 2D is not available');
   screens = createScreens(container);
-  fitToWindow(container, canvas);
+  // The line hangs under the game area on every screen (A46).
+  sourceLine = createSourceLine();
+  container.append(sourceLine.el);
+  const fit = (): void => fitToWindow(container, canvas, SOURCE_LINE_HEIGHT_PX);
+  fit();
 
   game = newGame(); // shown behind the start screen, replaced by a fresh game on Enter
   window.addEventListener('keydown', onKeyDown);
@@ -267,7 +274,7 @@ function start(): void {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) onFocusLost();
   });
-  window.addEventListener('resize', () => fitToWindow(container, canvas));
+  window.addEventListener('resize', fit);
 
   let last = performance.now();
   const frame = (now: number): void => {
