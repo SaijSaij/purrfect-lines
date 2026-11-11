@@ -33,8 +33,8 @@ test.describe('A39 fixed seed', () => {
   });
 });
 
-// Planned E2E test 2, for now without points (A12, A21).
-test('an arrow key moves the piece and the space bar drops it to the bottom', async ({ page }) => {
+// Planned E2E test 2 (A12, A20, A21).
+test('an arrow key moves the piece, the space bar drops it to the bottom and scores', async ({ page }) => {
   const start = await startGame(page, '/?seed=1');
 
   await page.keyboard.press('ArrowLeft');
@@ -46,6 +46,7 @@ test('an arrow key moves the piece and the space bar drops it to the bottom', as
   await expect
     .poll(() => readState(page).then((s) => s.board[19]?.some((cell) => cell !== null)))
     .toBe(true);
+  expect((await readState(page)).score).toBeGreaterThan(0);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
