@@ -1,5 +1,13 @@
 import { expect, test } from '@playwright/test';
-import { leftmostColumn, readState, startGame } from './support/game';
+import { leftmostColumn, readState, startGame, type PurrfectLinesState } from './support/game';
+
+/** Whether the falling piece is wider than tall (rotation states 0 and 2 of all but the square). */
+function isWide(state: PurrfectLinesState): boolean {
+  const cells = state.active?.cells ?? [];
+  const width = new Set(cells.map((c) => c.x)).size;
+  const height = new Set(cells.map((c) => c.y)).size;
+  return width > height;
+}
 
 test.describe('A43 test interface', () => {
   test('exposes the game state', async ({ page }) => {
@@ -55,6 +63,24 @@ test('a held key stops repeating when the window loses focus', async ({ page }) 
   await page.waitForTimeout(500);
   expect(leftmostColumn(await readState(page))).toBe(afterBlur);
   await page.keyboard.up('ArrowRight');
+});
+
+// A second key for the same action is a new press (A8, A21): X rotates again
+// while ↑ is still held.
+test('a second rotation key rotates again while the first is held', async ({ page }) => {
+  let state = await startGame(page, '/?seed=1');
+  // The square looks the same in every rotation state, so drop it first.
+  if (state.active?.type === 'O') {
+    await page.keyboard.press('Space');
+    await expect.poll(() => readState(page).then((s) => s.active?.type)).not.toBe('O');
+    state = await readState(page);
+  }
+  expect(isWide(state)).toBe(true);
+  await page.keyboard.down('ArrowUp');
+  await expect.poll(() => readState(page).then(isWide)).toBe(false);
+  await page.keyboard.press('x');
+  await expect.poll(() => readState(page).then(isWide)).toBe(true);
+  await page.keyboard.up('ArrowUp');
 });
 
 // Planned E2E test 4 (A5).
