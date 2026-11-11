@@ -30,7 +30,7 @@ npm run serve
 
 Then open http://localhost:5173. The game starts immediately: a framed field
 appears, and a piece falls from the top centre by about one row per second.
-A pale outline at the bottom (the ghost piece) shows where the piece will
+A pale outline (the ghost piece) shows where the piece will
 land. The sidebar on the right shows the next piece, the score, the cleared
 rows (lines) and the level. When the stack reaches the top, "Game over –
 press Enter" is shown over the field.
@@ -55,7 +55,7 @@ not load JavaScript modules from `file://`.
 | Key | Action |
 |---|---|
 | ← / → or A / D | Move left / right |
-| ↓ or S (hold) | Soft drop: fall faster |
+| ↓ or S (hold) | Soft drop: fall 20 times faster |
 | ↑, W or X | Rotate clockwise |
 | Q or Y | Rotate counter-clockwise |
 | Space | Hard drop: fall to the bottom and lock at once |
@@ -111,8 +111,8 @@ Helpers can be combined with `&`, e.g. http://localhost:5173/?seed=1&level=10&de
 | `?seed=<integer>`, e.g. http://localhost:5173/?seed=1 | Fixed piece sequence: the same seed always gives the same pieces, also for new games started with Enter. Invalid values are ignored and reported in the browser console. |
 | `?level=<1–99>`, e.g. http://localhost:5173/?level=15 | Every game starts on this level; the level still rises every 10 rows from there. Only whole numbers from 1 to 99; anything else is ignored and reported in the console. |
 | `?slow=<1–10>`, e.g. http://localhost:5173/?slow=4 | The whole game runs this many times slower: falling, lock delay and key repeat. Only whole numbers from 1 to 10; anything else is ignored and reported in the console. |
-| `?debug` | Shows internal values as text at the top left: level, fall interval, time left until the resting piece locks and restarts used, the pieces left in the current bag, the seed and frames per second. |
-| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"playing"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next`, `score`, `lines`, `level`. Try `window.__purrfectLines.screen` in the browser console. |
+| `?debug` | Shows internal values as text at the top left: level, fall interval, time left until the resting piece locks and restarts used, the pieces left in the current bag, the seed, the slow motion factor and frames per second. Times are game time, so with `?slow` they stay the same while the game runs slower. |
+| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"playing"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. Try `window.__purrfectLines.screen` in the browser console. |
 
 ## Checks
 
@@ -133,6 +133,9 @@ Helpers can be combined with `&`, e.g. http://localhost:5173/?seed=1&level=10&de
 | `src/input/` | Key → action mapping |
 | `src/i18n/` | All in-game texts |
 | `src/render/` | Drawing on the canvas, color palette |
+| `src/main.ts` | Entry point: keyboard, game loop and drawing; loads `src/debug/` only on the development server |
 | `src/debug/` | Test helpers, development server only |
 | `e2e/` | Browser tests |
 | `scripts/` | Release check |
+| `docs/spec/` | Requirements, milestones and test strategy (German), part of [SPEC.md](SPEC.md) |
+| `index.html` | The page that loads the game |
