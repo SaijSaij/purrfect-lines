@@ -207,7 +207,7 @@ Repo findet keinen fremden Markennamen.
 
 ## M8 – Deutsch
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit 31027fd)
 
 **Ziel:** Das Spiel spricht Deutsch und Englisch.
 
@@ -217,17 +217,17 @@ Repo findet keinen fremden Markennamen.
 die Startsprache grün. E2E-Test 8 grün.
 
 **Abnahme-Checkliste:**
-- [ ] Gespeicherte Daten löschen (`localStorage.clear()` in der Konsole) und
+- [x] Gespeicherte Daten löschen (`localStorage.clear()` in der Konsole) und
       neu laden: Bei deutscher Browsersprache startet das Spiel auf Deutsch.
       In einem Browser oder Profil mit englischer Sprache, ebenfalls ohne
       gespeicherte Daten, startet es auf Englisch.
-- [ ] L auf dem Startbildschirm wechselt die Sprache, sie bleibt nach dem
+- [x] L auf dem Startbildschirm wechselt die Sprache, sie bleibt nach dem
       Neuladen.
-- [ ] Alle Bildschirme sind vollständig übersetzt, nichts ist abgeschnitten.
+- [x] Alle Bildschirme sind vollständig übersetzt, nichts ist abgeschnitten.
       Geprüft in einem kleinen Fenster (etwa halbe Bildschirmhöhe):
       Startbildschirm mit voller Liste (10 Einträge), Startbildschirm mit
       Speicherhinweis (Website-Daten gesperrt), Spielfeld mit Seitenleiste,
       Pause, Spielende, Namenseingabe, Bestenliste.
-- [ ] Auf Deutsch eine Partie mit leerem Namen speichern: Der Eintrag heißt
+- [x] Auf Deutsch eine Partie mit leerem Namen speichern: Der Eintrag heißt
       „Katze“, das Datum steht im Format TT.MM.JJJJ. Ältere Einträge behalten
       ihren Namen.
