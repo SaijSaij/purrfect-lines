@@ -114,3 +114,9 @@ test('Enter after game over leads to a new game', async ({ page }) => {
   expect(state.screen).toBe('playing');
   expect(state.board.flat().every((cell) => cell === null)).toBe(true);
 });
+
+// A40: ?level sets the start level, the test interface shows it.
+test('?level starts the game on that level', async ({ page }) => {
+  const state = await startGame(page, '/?seed=1&level=7');
+  expect(state.level).toBe(7);
+});

@@ -25,3 +25,15 @@ export const REPEAT_DELAY_MS = 170;
 
 /** After the first repeat, a held move key repeats at this interval (A7). */
 export const REPEAT_INTERVAL_MS = 50;
+
+/** Points for every row fallen by soft drop, not multiplied by the level (A11). */
+export const SOFT_DROP_POINTS = 1;
+
+/** Points for every row skipped by hard drop, not multiplied by the level (A12). */
+export const HARD_DROP_POINTS = 2;
+
+/** Points for clearing 1, 2, 3 or 4 rows at once, multiplied by the level (A17). */
+export const LINE_POINTS: readonly number[] = [100, 300, 500, 800];
+
+/** The level rises by one every this many cleared rows (A18). */
+export const LINES_PER_LEVEL = 10;

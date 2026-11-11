@@ -52,6 +52,14 @@ export interface GameOptions {
   seed?: number;
   sequence?: PieceSource;
   board?: Board;
+  /** Level the game starts on (A18, A40). Default 1. */
+  startLevel?: number;
+}
+
+/** Where the piece would end up after a hard drop; shown as the ghost piece (A14). */
+export function landingPosition(board: Board, piece: ActivePiece): ActivePiece {
+  void board;
+  return piece;
 }
 
 /** Board coordinates of the blocks of a piece. */

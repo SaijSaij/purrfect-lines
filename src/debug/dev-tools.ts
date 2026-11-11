@@ -18,6 +18,24 @@ export function seedFromUrl(search: string): number | undefined {
   return seed;
 }
 
+/** Reads ?level=<1–99> (A40). Invalid values are ignored and reported. */
+export function levelFromUrl(search: string): number | undefined {
+  void search;
+  return undefined;
+}
+
+/** Reads ?slow=<1–10> (A41). Invalid values are ignored and reported. */
+export function slowFromUrl(search: string): number | undefined {
+  void search;
+  return undefined;
+}
+
+/** Lets the whole game run `factor` times slower by dividing the elapsed time (A41). */
+export function slowMotion(game: Game, factor: number): Game {
+  void factor;
+  return game;
+}
+
 function snapshot(game: Game): unknown {
   const state = game.state;
   return {
