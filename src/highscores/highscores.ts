@@ -1,4 +1,5 @@
 // High score list rules (A27, A29). Pure functions: no DOM, no storage, no clock.
+import { HIGHSCORE_SIZE, NAME_MAX_LENGTH } from '../game/constants';
 
 /** One game in the high score list (A28). `date` is an ISO 8601 timestamp. */
 export interface HighscoreEntry {
@@ -11,9 +12,9 @@ export interface HighscoreEntry {
 
 /** Whether a game with this score enters the list (A29). */
 export function qualifies(entries: readonly HighscoreEntry[], score: number): boolean {
-  void entries;
-  void score;
-  return false;
+  if (score <= 0) return false;
+  const last = entries[HIGHSCORE_SIZE - 1];
+  return entries.length < HIGHSCORE_SIZE || last === undefined || score > last.score;
 }
 
 export interface AddResult {
@@ -28,8 +29,11 @@ export interface AddResult {
  * one, so on equal scores it goes behind the older entries.
  */
 export function addEntry(entries: readonly HighscoreEntry[], entry: HighscoreEntry): AddResult {
-  void entry;
-  return { entries: [...entries], index: null };
+  if (!qualifies(entries, entry.score)) return { entries: [...entries], index: null };
+  const behind = entries.findIndex((e) => e.score < entry.score);
+  const index = behind === -1 ? entries.length : behind;
+  const result = [...entries.slice(0, index), entry, ...entries.slice(index)];
+  return { entries: result.slice(0, HIGHSCORE_SIZE), index };
 }
 
 /**
@@ -38,6 +42,6 @@ export function addEntry(entries: readonly HighscoreEntry[], entry: HighscoreEnt
  * `defaultName` if nothing is left.
  */
 export function normalizeName(raw: string, defaultName: string): string {
-  void defaultName;
-  return raw;
+  const name = raw.slice(0, NAME_MAX_LENGTH).trim();
+  return name === '' ? defaultName : name;
 }
