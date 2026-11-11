@@ -175,7 +175,7 @@ multipliziert).
 *Prüfung:* Unit (alle vier Fälle auf Level 1 und 3; Levelwechsel durch das
 Auflösen selbst nutzt das alte Level).
 
-**A18 Level.** Ein Spiel beginnt auf Level 1 (oder dem Startlevel aus A41).
+**A18 Level.** Ein Spiel beginnt auf Level 1 (oder dem Startlevel aus A40).
 Level = Startlevel + ⌊aufgelöste Reihen / `LINES_PER_LEVEL`⌋ (10). Es gibt kein
 Höchstlevel.
 *Prüfung:* Unit (9 Reihen → Level 1, 10 → 2, 4 Reihen auf einmal bei 8 → 12
@@ -346,17 +346,17 @@ und in der Konsole gemeldet.
 fest. Ohne Parameter ist der Seed bei jedem Spiel zufällig.
 *Prüfung:* E2E (zweimal mit gleichem Seed: gleiche erste Formen).
 
-**A40 Startlevel.** `?level=<1–99>` lässt jedes Spiel auf diesem Level
+**A40 Startlevel.** `?level=<ganze Zahl 1–99>` lässt jedes Spiel auf diesem Level
 beginnen (siehe A18).
 *Prüfung:* Unit (Level-Berechnung), E2E (Anzeige zeigt das Level).
 
-**A41 Zeitlupe.** `?slow=<1–10>` lässt das ganze Spiel um diesen Faktor
+**A41 Zeitlupe.** `?slow=<ganze Zahl 1–10>` lässt das ganze Spiel um diesen Faktor
 langsamer laufen (Schwerkraft, Gnadenfrist, Animationen, Tastenwiederholung).
 *Prüfung:* Unit (Zeitfaktor wird angewendet).
 
 **A42 Debug-Anzeige.** `?debug` zeigt am Rand als Text: Level,
 Fallintervall, verbleibende Gnadenfrist und Zurücksetzungen, Inhalt des
-aktuellen Beutels, Seed und Bilder pro Sekunde.
+aktuellen Beutels, Seed, Zeitlupenfaktor (A41) und Bilder pro Sekunde.
 *Prüfung:* Manuell.
 
 **A43 Testschnittstelle.** Im Entwicklungsbuild stellt das Spiel unter
