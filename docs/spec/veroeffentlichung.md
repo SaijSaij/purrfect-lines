@@ -106,23 +106,34 @@ Live-Seite.
 **A49 CI.** Der Workflow `.github/workflows/ci.yml` läuft bei jedem Push auf
 main und bei jedem Pull Request.
 - Er läuft auf Ubuntu mit derselben exakten Node-Version wie lokal (A50).
-- Die Schritte sind: `npm ci`, Chromium für Playwright installieren,
-  `npm run check`, `npm run e2e`, `npm run check:release`.
+- Die Schritte sind: `npm ci`, Chromium für Playwright mit seinen
+  Systembibliotheken installieren (`--with-deps`), `npm run check`,
+  `npm run e2e`, `npm run check:release`.
 - Ein roter Schritt macht den ganzen Lauf rot.
-- Der Prüf-Job hat nur das Recht `contents: read`.
+- Der Prüf-Job hat nur das Recht `contents: read`. Der Checkout legt das Token
+  nicht ab (`persist-credentials: false`), weil kein späterer Schritt es
+  braucht.
+- Ein Lauf bricht nach 20 Minuten ab. Der npm-Cache von `setup-node` ist
+  eingeschaltet.
+- In der CI macht ein vergessenes `test.only` in `e2e/` den Lauf rot
+  (`forbidOnly`).
 
 *Prüfung:* manuell (CI im Pull Request grün); Review.
 
 **A50 Pinning in der CI.** Jede Action ist mit ihrem vollständigen Commit-SHA
 und einem Versionskommentar gepinnt (`uses: actions/checkout@<sha> # v5.0.0`).
-Die Node-Version steht an genau einer Stelle im Repo, die lokal und in der CI
-gilt. Actions und Node-Version werden nur auf meine Anfrage aktualisiert.
+Die exakte Node-Version (26.13.0) steht nur in `.node-version`. Lokal wird
+genau diese Version installiert, die CI liest sie mit `node-version-file`.
+Actions und Node-Version werden nur auf meine Anfrage aktualisiert, die
+Node-Version nur gemeinsam mit der lokalen Installation.
 *Prüfung:* Review (`code-reviewer`).
 
 **A51 Browser-Tests in der CI.** Nur in der CI (Umgebungsvariable `CI` gesetzt)
-wird ein fehlgeschlagener Playwright-Test einmal wiederholt, lokal nie. Schlägt
-ein Test endgültig fehl, lädt der Lauf den Playwright-Bericht mit Screenshots
-als Artefakt hoch, Aufbewahrung 7 Tage.
+wird ein fehlgeschlagener Playwright-Test einmal wiederholt, lokal nie. Den
+HTML-Bericht und Screenshots fehlgeschlagener Tests erzeugt Playwright nur in
+der CI, lokal bleibt die Ausgabe wie bisher. Schlägt im Schritt `e2e` ein Test
+endgültig fehl, lädt der Lauf den Bericht als Artefakt hoch, Aufbewahrung
+7 Tage. Ist nur ein anderer Schritt rot, wird nichts hochgeladen.
 *Prüfung:* Review. Einen manuellen Punkt gibt es nicht, weil dafür
 absichtlich ein Fehler eingebaut werden müsste.
 
@@ -197,5 +208,4 @@ Messenger ohne Vorschau, und der Tab zeigt das Standardsymbol.
 | Annahme | Vorläufiger Standard |
 |---|---|
 | Impressum und Datenschutz | Das Spiel nutzt kein Tracking, keine Cookies und keine fremden Ressourcen; localStorage dient nur dem Spielstand. Als privates, nicht geschäftsmäßiges Hobbyprojekt bekommt es kein Impressum. Das ist keine rechtliche Prüfung. |
-| Node-Version | Die exakte lokale Version (26.13.0) steht in einer Datei, die lokal und in der CI gilt (z. B. `.node-version`). Sie wird nur gemeinsam angehoben. |
-| Dauer eines CI-Laufs | geschätzt 2–4 Minuten |
+| Dauer eines CI-Laufs | etwa 5–6 Minuten (erster Lauf in M9: 5:36) |
