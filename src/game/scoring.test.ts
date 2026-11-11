@@ -76,6 +76,8 @@ describe('A10 gravity on every level', () => {
     const game = newGame(['I'], { board: rowsOpenInColumnOne(LINES_PER_LEVEL) });
     while (game.state.lines < LINES_PER_LEVEL) dropBarIntoColumnOne(game);
     expect(game.state.level).toBe(2);
+    // A hard drop spawns the next piece without any time carried over.
+    tap(game, 'hardDrop');
     const start = activeCells(game);
     game.update(LEVEL_2_GRAVITY_MS - 1);
     expect(activeCells(game)).toEqual(start);
