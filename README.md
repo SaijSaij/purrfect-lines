@@ -115,15 +115,15 @@ the game runs; there are no audio files.
 ## Language
 
 The game speaks English and German. On the first start it uses German if
-your browser's language is German (any language code starting with `de`,
+your browser's preferred language is German (any language code starting with `de`,
 e.g. `de-DE` or `de-AT`), otherwise English.
 
 - **L** on the start screen switches between English and German; the line
   "L: Deutsch" or "L: English" there names the other language. The choice is
   saved like the high score list and wins over the browser language from then
   on. Until you press L, the game follows the browser language.
-- Dates in the high score list follow the language: German as DD.MM.YYYY
-  (e.g. 11.11.2026), English in the browser's short form (e.g. 11/11/2026).
+- Dates in the high score list follow the language: German as DD.MM.YYYY,
+  English as M/D/YYYY (1 February 2026 is 01.02.2026 or 2/1/2026).
 
 ## Controls
 

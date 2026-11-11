@@ -61,6 +61,13 @@ the audio output. To listen, press any key first (browsers allow sound only
 after a key press). `?slow` slows down the game and with it the sound events,
 but not the music: its tempo depends only on the level.
 
+Language works the same way: `startLanguage(saved, browserLanguage)` in
+`src/i18n/language.ts` gets `navigator.language` passed in and is
+unit-tested, like the date format and the completeness of the text tables
+(`src/i18n/*.test.ts`). The browser tests in `e2e/language.spec.ts` set the
+browser language with Playwright's `locale` option and read the page language
+from `<html lang>`.
+
 Checklist items with a long key sequence (e.g. clearing four rows at once with
 a fixed seed) can be replayed and checked by a script instead of by hand. With
 `npm run serve` running, the browser console of the game's tab can load the
@@ -96,12 +103,13 @@ The high score list and the settings are in the browser's localStorage under
 `purrfect-lines.highscores` and `purrfect-lines.settings`, as JSON. The
 settings hold `lastName` (the name entered last, text), `music` and `sounds`
 (true or false), and `language` (`"en"` or `"de"`) once a language was chosen
-with L; without it the game follows the browser language. Every origin has its own storage, so the
-development server (port 5173) and `npm run preview` (port 4173) keep separate
-lists. To start over, delete both keys in the browser's developer tools
-(Application → Local storage) or run `localStorage.clear()` in the console of
-the game's tab, which empties the storage of that origin.
-Browser tests start with an empty storage in every test.
+with L; without it the game follows the browser language. Every origin has
+its own storage, so the development server (port 5173) and `npm run preview`
+(port 4173) keep separate lists. To start over, delete both keys in the
+browser's developer tools (Application → Local storage) or run
+`localStorage.clear()` in the console of the game's tab, which empties the
+storage of that origin. Browser tests start with an empty storage in every
+test.
 
 All storage access goes through `src/storage/persistence.ts`, which never
 throws: unreadable data is replaced by an empty list or the default settings,
@@ -120,7 +128,9 @@ npm run screenshots
 Renders the pictures in [docs/images/](images/) with Playwright: start
 screen, a game in progress, a row lighting up, the pause menu and the game
 over screen, plus the animated `gameplay.apng.png` for the README. The scenes
-are in `scripts/screenshots.spec.ts`. They use `?seed=1` and, where a piece
+are in `scripts/screenshots.spec.ts`. The browser language is fixed to
+English (`locale` in `playwright.screenshots.config.ts`), so the pictures
+match the README. They use `?seed=1` and, where a piece
 falls, `?slow=10`, so the still pictures come out the same on every run. The
 animation runs at normal speed and its timing varies a little; the run fails
 if its row is not cleared. Its frames go to `test-results/screenshots/`

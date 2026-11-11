@@ -1,7 +1,7 @@
 // Formatting values in the chosen language (A28, A38).
 import type { Language } from './texts';
 
-/** German dates as DD.MM.YYYY; English keeps the browser's short form, e.g. 2/1/2026. */
+/** German dates as DD.MM.YYYY, English as M/D/YYYY, whatever the browser's settings (1 February: 01.02.2026, 2/1/2026). */
 const DATE_FORMATS: Readonly<Record<Language, { locale: string; options: Intl.DateTimeFormatOptions }>> = {
   en: { locale: 'en', options: {} },
   de: { locale: 'de-DE', options: { day: '2-digit', month: '2-digit', year: 'numeric' } },

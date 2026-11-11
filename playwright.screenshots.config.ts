@@ -12,6 +12,8 @@ export default defineConfig({
     baseURL: 'http://localhost:5173',
     viewport: { width: 600, height: 750 },
     deviceScaleFactor: 1,
+    // The pictures are for the English README, whatever the system language.
+    locale: 'en-US',
   },
   webServer: {
     command: 'npm run serve',
