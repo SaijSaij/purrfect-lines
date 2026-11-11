@@ -3,15 +3,17 @@
 import { clearFullRows, createBoard, isOccupied, placeCells, type Board } from './board';
 import {
   BOARD_WIDTH,
-  GRAVITY_MS,
+  HARD_DROP_POINTS,
   LOCK_DELAY_MS,
   LOCK_RESETS_MAX,
   SOFT_DROP_FACTOR,
+  SOFT_DROP_POINTS,
 } from './constants';
 import { KeyRepeat } from './key-repeat';
 import { kickOffsets } from './kicks';
 import { boxSize, pieceCells, type CellOffset, type PieceType, type Rotation } from './pieces';
 import { randomSeed } from './random';
+import { gravityMs, levelFor, linePoints } from './scoring';
 import { createPieceSequence, type PieceSequence } from './sequence';
 
 export type Action = 'left' | 'right' | 'softDrop' | 'hardDrop' | 'rotateCW' | 'rotateCCW';
@@ -36,7 +38,6 @@ export interface GameState {
   readonly active: ActivePiece | null;
   readonly next: PieceType;
   readonly level: number;
-  /** Always 0 until points are added in a later milestone. */
   readonly score: number;
   readonly lines: number;
 }
@@ -58,8 +59,11 @@ export interface GameOptions {
 
 /** Where the piece would end up after a hard drop; shown as the ghost piece (A14). */
 export function landingPosition(board: Board, piece: ActivePiece): ActivePiece {
-  void board;
-  return piece;
+  let landed = piece;
+  for (let below = { ...piece, y: piece.y + 1 }; fits(board, below); below = { ...below, y: below.y + 1 }) {
+    landed = below;
+  }
+  return landed;
 }
 
 /** Board coordinates of the blocks of a piece. */
@@ -94,8 +98,8 @@ class GameSession implements Game {
   private board: Board;
   private active: ActivePiece | null = null;
   private status: GameStatus = 'playing';
-  private readonly level = 1;
   private lines = 0;
+  private score = 0;
   private fallTimerMs = 0;
   /** Time the piece has rested since the last restart of the lock delay (A13). */
   private lockTimerMs = 0;
@@ -108,9 +112,14 @@ class GameSession implements Game {
   constructor(
     private readonly source: PieceSource,
     board: Board,
+    private readonly startLevel: number,
   ) {
     this.board = board;
     this.spawn();
+  }
+
+  private get level(): number {
+    return levelFor(this.lines, this.startLevel);
   }
 
   get state(): GameState {
@@ -120,7 +129,7 @@ class GameSession implements Game {
       active: this.active,
       next: this.source.peek(),
       level: this.level,
-      score: 0,
+      score: this.score,
       lines: this.lines,
     };
   }
@@ -200,7 +209,7 @@ class GameSession implements Game {
   }
 
   private fallInterval(): number {
-    const gravity = GRAVITY_MS[Math.min(this.level, GRAVITY_MS.length) - 1] ?? Number.NaN;
+    const gravity = gravityMs(this.level);
     return this.held.has('softDrop') ? gravity / SOFT_DROP_FACTOR : gravity;
   }
 
@@ -271,18 +280,24 @@ class GameSession implements Game {
     if (grounded) this.lock();
   }
 
-  /** One gravity or soft drop step. A resting piece is left to the lock delay (A13). */
+  /**
+   * One gravity or soft drop step. Only rows fallen by soft drop score (A11).
+   * A resting piece is left to the lock delay (A13).
+   */
   private fallStep(): void {
     if (!this.tryMove(0, 1)) return;
+    if (this.held.has('softDrop')) this.score += SOFT_DROP_POINTS;
     this.trackLowestRow();
     this.lockTimerMs = 0;
     if (this.isGrounded() && this.lockResets >= LOCK_RESETS_MAX) this.lock();
   }
 
+  /** Drops to the landing position and locks at once; every row skipped scores (A12). */
   private hardDrop(): void {
-    while (this.tryMove(0, 1)) {
-      // Keep falling until the piece rests.
-    }
+    if (this.active === null) return;
+    const landed = landingPosition(this.board, this.active);
+    this.score += (landed.y - this.active.y) * HARD_DROP_POINTS;
+    this.active = landed;
     this.lock();
   }
 
@@ -297,6 +312,8 @@ class GameSession implements Game {
     }
     const result = clearFullRows(this.board);
     this.board = result.board;
+    // Points use the level before the clear, even if the clear raises it (A17).
+    this.score += linePoints(result.cleared, this.level);
     this.lines += result.cleared;
     this.spawn();
   }
@@ -317,5 +334,5 @@ class GameSession implements Game {
 
 export function createGame(options: GameOptions = {}): Game {
   const source = options.sequence ?? createPieceSequence(options.seed ?? randomSeed());
-  return new GameSession(source, options.board ?? createBoard());
+  return new GameSession(source, options.board ?? createBoard(), options.startLevel ?? 1);
 }
