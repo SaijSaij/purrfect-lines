@@ -8,6 +8,8 @@ const BPM = 96;
 const EIGHTHS_PER_BAR = 8;
 const SCHEDULER_INTERVAL_MS = 25;
 const LOOKAHEAD_S = 0.1;
+/** Time constant of the fade when the music stops or starts, in seconds. */
+const FADE_S = 0.02;
 const MELODY_VOLUME = 0.5;
 const BASS_VOLUME = 0.6;
 
@@ -64,7 +66,7 @@ const SCORE = buildScore();
 export interface Music {
   /** Starts or continues the loop where it stopped. */
   play(): void;
-  /** Stops scheduling; the position in the loop is kept. */
+  /** Silences the music at once and stops scheduling; the position in the loop is kept. */
   stop(): void;
   /** Playback speed, 1 = normal (A33). */
   setTempo(tempo: number): void;
@@ -72,18 +74,34 @@ export interface Music {
   rewind(): void;
 }
 
+/** Notes already playing would ring on after the music stops; this gain fades them out. */
+function createGate(
+  ctx: AudioContext,
+  destination: AudioNode,
+): { gate: GainNode; fadeTo: (level: number) => void } {
+  const gate = ctx.createGain();
+  gate.connect(destination);
+  const fadeTo = (level: number): void => {
+    const now = ctx.currentTime;
+    gate.gain.cancelScheduledValues(now);
+    gate.gain.setTargetAtTime(level, now, FADE_S);
+  };
+  return { gate, fadeTo };
+}
+
 export function createMusic(ctx: AudioContext, destination: AudioNode): Music {
   let step = 0;
   let nextTime = 0;
   let tempo = 1;
   let timer: ReturnType<typeof setInterval> | null = null;
+  const { gate, fadeTo } = createGate(ctx, destination);
 
   const eighthSeconds = (): number => 60 / (BPM * tempo) / 2;
 
   const playStep = (): void => {
     const eighth = eighthSeconds();
     for (const { note, eighths, bass } of SCORE[step] ?? []) {
-      tone(ctx, destination, {
+      tone(ctx, gate, {
         wave: bass ? 'sine' : 'triangle',
         from: midiToHz(note),
         at: nextTime,
@@ -96,12 +114,15 @@ export function createMusic(ctx: AudioContext, destination: AudioNode): Music {
   };
 
   const schedule = (): void => {
+    // After a hang, skip what is already past instead of playing it all at once.
+    if (nextTime < ctx.currentTime) nextTime = ctx.currentTime;
     while (nextTime < ctx.currentTime + LOOKAHEAD_S) playStep();
   };
 
   return {
     play() {
       if (timer !== null) return;
+      fadeTo(1);
       nextTime = ctx.currentTime + 0.05;
       schedule();
       timer = setInterval(schedule, SCHEDULER_INTERVAL_MS);
@@ -110,6 +131,7 @@ export function createMusic(ctx: AudioContext, destination: AudioNode): Music {
       if (timer === null) return;
       clearInterval(timer);
       timer = null;
+      fadeTo(0);
     },
     setTempo(value) {
       tempo = value;

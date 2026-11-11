@@ -59,13 +59,15 @@ ahead.
   game keys, are just text here. Enter saves and shows the list with your new
   entry highlighted, and Enter again leads to the start screen. Esc skips the
   entry, saves nothing and leads to the start screen. Spaces at the start and
-  end are removed, and an empty name is saved as "Kitty". Next time the field
+  end are removed (spaces at the start count towards the 12 characters), and
+  an empty name is saved as "Kitty". Next time the field
   holds what you typed last (empty if you left it empty).
 - **Saving:** the list, your last name and the sound settings are stored in
   the browser (localStorage) for http://localhost:5173 and survive a reload. The release
   version on port 4173 keeps its own list. If the browser does not allow
   saving (for example when site data is blocked), the game still runs, the
-  list lasts only until the page is reloaded, and the start screen says so.
+  list and the sound settings last only until the page is reloaded, and the
+  start screen says so.
   Invalid stored entries are dropped; if nothing can be read, the list starts
   empty.
 
@@ -97,8 +99,11 @@ the game runs; there are no audio files.
 - **M** switches the music, **N** the sounds on and off, on every screen
   except the name entry. The bottom of the sidebar shows both, and the setting
   is saved like the high score list. Both are on at the first start.
-- Browsers allow sound only after a key press, so the start screen is silent;
-  the music starts with the first game.
+- The music only runs during a game, so the start screen is silent. Browsers
+  allow sound only after a key press; your first key press switches it on.
+- If you hear nothing, check that neither the browser tab nor the system is
+  muted. If the browser cannot play sound at all, the game stays silent and
+  runs as usual.
 
 ## Controls
 

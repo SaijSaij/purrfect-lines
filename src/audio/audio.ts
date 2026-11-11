@@ -6,10 +6,18 @@ import type { GameEvent } from '../game/game';
 import { createMusic, type Music } from './music';
 import { midiToHz, tone, type ToneSpec } from './synth';
 
-/** All volumes in one place, 0–1. */
+/**
+ * Volumes, 0–1: the mix (master, music, sounds) and the peak of each kind of
+ * sound. Melody and bass within the music are set in music.ts.
+ */
 const MASTER_VOLUME = 0.5;
 const MUSIC_VOLUME = 0.22;
 const SOUNDS_VOLUME = 0.6;
+/** Short single tones: rotate, lock, hard drop, menu. */
+const GLIDE_VOLUME = 0.45;
+/** Note sequences: rows, level up, game over. */
+const ARPEGGIO_VOLUME = 0.35;
+const MEOW_VOLUME = 0.4;
 
 export interface GameAudio {
   /** Call on every key press: creates or wakes up the audio on the first one. */
@@ -54,7 +62,7 @@ function arpeggio(out: Output, notes: readonly number[], gap: number, wave: Osci
       from: midiToHz(note),
       at: start + i * gap,
       duration: gap * 2.5,
-      volume: 0.35,
+      volume: ARPEGGIO_VOLUME,
     });
   });
 }
@@ -76,7 +84,7 @@ function meow(out: Output): void {
   filter.frequency.exponentialRampToValueAtTime(2600, t + 0.18);
   filter.frequency.exponentialRampToValueAtTime(800, t + 0.55);
   gain.gain.setValueAtTime(0.0001, t);
-  gain.gain.exponentialRampToValueAtTime(0.4, t + 0.04);
+  gain.gain.exponentialRampToValueAtTime(MEOW_VOLUME, t + 0.04);
   gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
   osc.connect(filter).connect(gain).connect(out.sounds);
   osc.start(t);
@@ -87,7 +95,7 @@ type Glide = Pick<ToneSpec, 'wave' | 'from' | 'to' | 'duration'>;
 
 /** One short tone starting now, gliding from one pitch to another. */
 function glide(out: Output, spec: Glide): void {
-  tone(out.ctx, out.sounds, { ...spec, at: out.ctx.currentTime, volume: 0.45 });
+  tone(out.ctx, out.sounds, { ...spec, at: out.ctx.currentTime, volume: GLIDE_VOLUME });
 }
 
 function playEvent(out: Output, event: GameEvent): void {
