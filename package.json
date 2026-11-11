@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check": "tsc --noEmit && eslint . && vitest run",
-    "check:release": "node scripts/check-release.js"
+    "check:release": "node scripts/check-release.js",
+    "screenshots": "playwright test --config playwright.screenshots.config.ts && node scripts/make-apng.js"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
