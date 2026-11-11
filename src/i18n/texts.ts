@@ -3,6 +3,8 @@
 const EN = {
   title: 'Purrfect Lines',
   pressEnterToStart: 'Press Enter to start',
+  /** Shown instead of pressEnterToStart on devices without a fine pointer (A47). */
+  keyboardNeeded: 'This game is played with a physical keyboard – best opened on a computer.',
   keysMove: '← → / A D: move',
   keysRotate: '↑ W X / Q Y: rotate',
   keysSoftDrop: '↓ / S: soft drop',
@@ -36,6 +38,10 @@ const EN = {
   rank: '#',
   name: 'Name',
   date: 'Date',
+  /** The link in the line under the game (A46). */
+  sourceCode: 'Source code',
+  /** The license in the line under the game (A45, A46). */
+  licenseName: 'GPL-3.0',
 };
 
 export type TextKey = keyof typeof EN;
@@ -47,6 +53,7 @@ export type Language = (typeof LANGUAGES)[number];
 const DE: Readonly<Record<TextKey, string>> = {
   title: 'Purrfect Lines',
   pressEnterToStart: 'Enter drücken zum Starten',
+  keyboardNeeded: 'Gespielt wird mit einer echten Tastatur – am besten am Computer öffnen.',
   keysMove: '← → / A D: schieben',
   keysRotate: '↑ W X / Q Y: drehen',
   keysSoftDrop: '↓ / S: schneller fallen',
@@ -77,6 +84,8 @@ const DE: Readonly<Record<TextKey, string>> = {
   rank: '#',
   name: 'Name',
   date: 'Datum',
+  sourceCode: 'Quellcode',
+  licenseName: 'GPL-3.0',
 };
 
 export const TEXTS: Readonly<Record<Language, Readonly<Record<TextKey, string>>>> = {
