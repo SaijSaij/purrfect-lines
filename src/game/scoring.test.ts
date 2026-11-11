@@ -18,7 +18,7 @@ import { activeCells, advanceUntil, boardFromRows, fixedSequence, tap, translate
 const LEVEL_1_GRAVITY_MS = GRAVITY_MS[0] ?? Number.NaN;
 const LEVEL_2_GRAVITY_MS = GRAVITY_MS[1] ?? Number.NaN;
 const FASTEST_GRAVITY_MS = GRAVITY_MS[GRAVITY_MS.length - 1] ?? Number.NaN;
-const TETRIS_POINTS = LINE_POINTS[3] ?? Number.NaN;
+const FOUR_ROWS_POINTS = LINE_POINTS[3] ?? Number.NaN;
 
 interface Setup {
   board?: Board;
@@ -146,7 +146,7 @@ describe('A17 points for cleared rows', () => {
     // The upright bar spans rows 0–3 (one above the field) and lands in rows 17–20.
     const skippedRows = BOARD_HEIGHT - 3;
     tap(game, 'hardDrop');
-    expect(game.state.score).toBe(TETRIS_POINTS * 3 + skippedRows * HARD_DROP_POINTS);
+    expect(game.state.score).toBe(FOUR_ROWS_POINTS * 3 + skippedRows * HARD_DROP_POINTS);
   });
 
   it('uses the level before the clear when the clear raises the level', () => {
@@ -157,7 +157,7 @@ describe('A17 points for cleared rows', () => {
     expect(level).toBe(1);
     dropBarIntoColumnOne(game);
     expect(game.state.level).toBe(2);
-    expect(game.state.score - score).toBe(TETRIS_POINTS * 1);
+    expect(game.state.score - score).toBe(FOUR_ROWS_POINTS * 1);
   });
 });
 
