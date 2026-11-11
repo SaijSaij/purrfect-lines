@@ -298,8 +298,10 @@ grün.
       gesperrt, auf Englisch und auf Deutsch: Der Hinweis ist vollständig
       lesbar, nichts ist abgeschnitten oder überlagert.
 - [ ] Browser-Tab: zeigt den Katzenkopf als Symbol.
-- [ ] Auf der Repo-Seite bei GitHub (Pull Request bzw. Branch): Rechts steht
-      die Lizenz „GPL-3.0“.
+
+Die Lizenz-Anzeige bei GitHub („GPL-3.0“ rechts auf der Repo-Seite) prüft M11
+in Stufe 1. GitHub erkennt die Lizenz nur auf dem Standard-Branch, vor dem
+Merge von M10 lässt sie sich also nicht prüfen.
 
 ## M11 – Online auf GitHub Pages
 
