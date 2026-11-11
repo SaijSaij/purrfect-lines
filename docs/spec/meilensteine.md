@@ -10,6 +10,10 @@ werden müsste, gibt es nicht. Canvas, Tastatur, Web Audio und localStorage sind
 erprobt, und der Smoke-Test des Grundgerüsts läuft. M1 ist das kleinste
 Ergebnis, das schon Spaß macht. M2 und M3 verbessern das Spielgefühl am
 stärksten. M4 bis M8 hängen kaum voneinander ab und kommen nach Nutzen.
+M9 bis M11 bringen das fertige Spiel online (siehe
+[veroeffentlichung.md](veroeffentlichung.md)). Die CI kommt zuerst, damit sie
+schon prüft, wenn das Repo öffentlich wird. Die Lizenz muss auf main liegen,
+bevor das Repo öffentlich wird, und Pages braucht ein öffentliches Repo.
 
 **Vorgehen pro Meilenstein:** siehe
 [CLAUDE.md, Workflow per milestone](../../CLAUDE.md#workflow-per-milestone).
@@ -231,3 +235,115 @@ die Startsprache grün. E2E-Test 8 grün.
 - [x] Auf Deutsch eine Partie mit leerem Namen speichern: Der Eintrag heißt
       „Katze“, das Datum steht im Format TT.MM.JJJJ. Ältere Einträge behalten
       ihren Namen.
+
+## M9 – Umbenennen und CI
+
+**Status:** offen
+
+**Ziel:** Das Repo heißt `purrfect-lines`, und jeder Push auf main und jeder
+Pull Request wird automatisch geprüft.
+
+**Anforderungen:** A49, A50, A51, A53 (nur Umbenennen und Remote), A54 (nur
+der CI-Teil von `docs/DEVELOPMENT.md`).
+
+**Übergangsverhalten:** Das Repo ist noch privat. Die CI läuft mit den
+kostenlosen Minuten für private Repos.
+
+**Abschlusskriterium:** Die CI ist im Pull Request des Meilenstein-Branches
+grün. Claude fragt vor dem Push des Branches und vor dem Öffnen des Pull
+Requests.
+
+**Abnahme-Checkliste:**
+- [ ] `gh repo view` ausführen: zeigt `SaijSaij/purrfect-lines`.
+- [ ] `git remote -v` ausführen: zeigt die neue URL.
+- [ ] `https://github.com/SaijSaij/tetris` im Browser öffnen: leitet auf das
+      neue Repo um.
+- [ ] Im Pull Request den Reiter „Checks“ öffnen: Der Lauf zeigt die Schritte
+      check, e2e und check:release, alle grün.
+
+## M10 – Lizenz, Quellcode-Link, Tastatur-Hinweis
+
+**Status:** offen
+
+**Ziel:** Das Projekt ist bereit, öffentlich zu werden.
+
+**Anforderungen:** A45, A46, A47, A55, A54 (README: Lizenz und Hinweis auf
+die Tastatur).
+
+**Übergangsverhalten:** Das Repo ist noch privat. Für andere führt der
+Quellcode-Link auf eine 404-Seite.
+
+**Abschlusskriterium:** Der Unit-Test der Texttabelle ist mit den neuen
+Schlüsseln grün. E2E-Tests für A46 und A47 grün. Die CI im Pull Request ist
+grün.
+
+**Abnahme-Checkliste** (Start: `npm run serve`, http://localhost:5173):
+- [ ] Fenster groß und klein ziehen: Unter dem Spiel steht dezent
+      „Purrfect Lines · Source code · GPL-3.0“, das Spiel bleibt ganz sichtbar,
+      es gibt keine Bildlaufleisten.
+- [ ] L auf dem Startbildschirm: Die Zeile zeigt „Quellcode“.
+- [ ] Im Spiel „Source code“ anklicken: Ein neuer Tab zeigt das Repo, das
+      Spiel ist pausiert.
+- [ ] Zum Spiel-Tab zurückkehren und Enter drücken: Das Spiel läuft weiter, es
+      öffnet sich kein weiterer Tab.
+- [ ] In der Namenseingabe den Link anklicken, zurückkehren und tippen: Die
+      Zeichen erscheinen im Namensfeld.
+- [ ] Auf dem Startbildschirm Tab, dann Enter drücken: Das Spiel startet, der
+      Link wird nicht geöffnet.
+- [ ] DevTools-Gerätemodus (ein Handy wählen, Hochformat) und neu laden:
+      Anstelle von „Enter startet“ steht „This game is played with a physical
+      keyboard – best opened on a computer.“ Gerätemodus aus und neu laden:
+      Wieder „Enter startet“.
+- [ ] Gerätemodus Hochformat, volle Bestenliste (10 Einträge), Website-Daten
+      gesperrt, auf Englisch und auf Deutsch: Der Hinweis ist vollständig
+      lesbar, nichts ist abgeschnitten oder überlagert.
+- [ ] Browser-Tab: zeigt den Katzenkopf als Symbol.
+- [ ] Auf der Repo-Seite bei GitHub (Pull Request bzw. Branch): Rechts steht
+      die Lizenz „GPL-3.0“.
+
+## M11 – Online auf GitHub Pages
+
+**Status:** offen
+
+**Ziel:** Das Spiel ist unter `https://saijsaij.github.io/purrfect-lines/`
+spielbar und wird nach jedem grünen Push auf main aktualisiert.
+
+**Voraussetzung:** M10 ist auf main gepusht.
+
+**Anforderungen:** A48, A52, A53 (öffentlich, Beschreibung, Website,
+Pages-Quelle), A54 (Link zum Online-Spiel, CI-Badge, Deploy-Teil von
+`docs/DEVELOPMENT.md`).
+
+**Übergangsverhalten:** keines.
+
+**Abschlusskriterium:** `npm run check:release` mit der Pfadprüfung aus A48 ist
+grün. Die CI im Pull Request ist grün. Nach Merge und Push sind der Deploy und
+die Live-Seite in Ordnung (Stufe 2).
+
+**Abnahme in zwei Stufen:** Stufe 1 vor dem Merge, Stufe 2 nach Merge und
+Push. Der Status-Commit folgt erst nach Stufe 2. Ein Fehler in Stufe 2 wird auf
+einem neuen Branch korrigiert.
+
+**Abnahme-Checkliste, Stufe 1** (vor dem Merge):
+- [ ] `gh repo view` ausführen: Das Repo ist öffentlich, mit Beschreibung und
+      Website.
+- [ ] `https://github.com/SaijSaij/purrfect-lines` in einem privaten Fenster
+      (nicht angemeldet) öffnen: Das Repo ist sichtbar, rechts steht
+      „GPL-3.0“.
+- [ ] Im Pull Request: Die CI ist grün, der Deploy-Job wurde übersprungen.
+- [ ] `npm run build`, dann `npm run preview` und http://localhost:4173
+      öffnen: Das Spiel ist spielbar.
+
+**Abnahme-Checkliste, Stufe 2** (nach Merge und Push):
+- [ ] Im Reiter „Actions“ der Lauf auf main: grün, inklusive Deploy.
+- [ ] `https://saijsaij.github.io/purrfect-lines/` in einem privaten Fenster
+      öffnen: Startbildschirm erscheint, Enter startet, Ton und Musik laufen.
+- [ ] Live eine Partie mit Eintrag in der Bestenliste beenden und neu laden:
+      Der Eintrag ist noch da.
+- [ ] Live `?seed=1` und `?debug` anhängen: keine Wirkung.
+- [ ] Live-URL auf dem echten Handy öffnen, im Hoch- und Querformat: Der
+      Tastatur-Hinweis ist ohne Zoomen lesbar, und der Quellcode-Link lässt
+      sich antippen.
+- [ ] Live auf den Quellcode-Link klicken: Das öffentliche Repo öffnet sich.
+- [ ] README auf GitHub: Der Link zum Spiel funktioniert, das CI-Badge ist
+      grün.

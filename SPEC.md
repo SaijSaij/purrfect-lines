@@ -11,7 +11,8 @@ Die Details stehen in Teilspecs:
 |---|---|
 | Anforderungen A1–A44 mit Randfällen und Prüfung | [docs/spec/anforderungen.md](docs/spec/anforderungen.md) |
 | Teststrategie (fein), Testhilfen, Konstanten | [docs/spec/teststrategie.md](docs/spec/teststrategie.md) |
-| Meilensteine M1–M8 mit Abnahme-Checklisten | [docs/spec/meilensteine.md](docs/spec/meilensteine.md) |
+| Veröffentlichung: Lizenz, CI, GitHub Pages (A45–A55) | [docs/spec/veroeffentlichung.md](docs/spec/veroeffentlichung.md) |
+| Meilensteine M1–M11 mit Abnahme-Checklisten | [docs/spec/meilensteine.md](docs/spec/meilensteine.md) |
 | Definition of Done | Abschnitt 10 unten |
 
 Die Spec wurde aufgeteilt, weil sie sonst über 600 Zeilen lang wäre. Eine
@@ -34,8 +35,9 @@ Zeit schneller. Mechanisch gibt es keine eigenen Varianten.
 übernommen. Name, Farben, Grafikstil, Bildschirme, Musik und Klänge sind eigene.
 Es gibt keine bekannten Melodien und keine nachgebildeten Originalfarben oder
 Originalbildschirme. Auch im Code, in der Doku und in den Texten im Spiel kommt
-der Markenname eines bestehenden Spiels nicht vor. Der Repo-Name `tetris` ist
-historisch, siehe offene Annahmen.
+der Markenname eines bestehenden Spiels nicht vor. Das Repo hieß bis M8
+`tetris` und wird mit M9 in `purrfect-lines` umbenannt (A53), weil der alte
+Name in der öffentlichen Adresse stünde.
 
 ## 2. Zweck
 
@@ -44,7 +46,10 @@ Das Projekt ist eine Übung, und zwar:
   Claude,
 - mit einem für mich neuen Stack (TypeScript mit moderner Web-Toolchain).
 
-Zielgruppe bin ich selbst. Das Spiel wird lokal gespielt.
+Zielgruppe bin ich selbst. Bis M8 wurde das Spiel nur lokal gespielt. Ab M11
+ist es zusätzlich öffentlich unter `https://saijsaij.github.io/purrfect-lines/`
+spielbar, damit ich es zeigen und teilen kann (siehe
+[veroeffentlichung.md](docs/spec/veroeffentlichung.md)).
 
 ## 3. Ziele
 
@@ -74,15 +79,24 @@ dieser Spec dazu:
   Puzzlemodus)
 - Touch-Steuerung und Bedienung auf dem Handy
 - Gamepad-Steuerung
-- Hosting im Internet (siehe Entscheidung 6.1)
+
+Bis M8 war auch „Hosting im Internet“ ein Nicht-Ziel. Am 2026-11-11 wurde es
+aufgehoben: Das fertige Spiel soll sich ohne Installation zeigen lassen, und
+der Build erzeugt ohnehin statische Dateien. Touch-Steuerung bleibt ein
+Nicht-Ziel; Geräte ohne Maus bekommen nur einen Hinweis (A47).
 
 ## 6. Entscheidungen
 
 ### 6.1 Zielplattform und Auslieferung
 
-**Entscheidung:** Das Spiel läuft im Browser und wird nur lokal gespielt. Man
-startet es über den Entwicklungsserver oder über die gebauten statischen
-Dateien. Es gibt kein Hosting.
+**Entscheidung (geändert am 2026-11-11):** Das Spiel läuft im Browser.
+Entwickelt und abgenommen wird lokal über den Entwicklungsserver oder die
+gebauten statischen Dateien. Ab M11 liefert GitHub Pages den Build von main
+zusätzlich öffentlich aus (A52).
+
+**Bis M8 galt:** nur lokal, kein Hosting. Die Begründung unten gilt für die
+Entwicklung weiter. Hosting kam dazu, weil das Spiel fertig ist und sich ohne
+Installation zeigen lassen soll. Die Kosten waren wie erwartet *billig*.
 
 **Begründung:**
 - Claude kann ein Spiel im Browser im eingebauten Browser der Desktop-App
@@ -100,8 +114,10 @@ Dateien. Es gibt kein Hosting.
   allem könnte Claude das Spiel nur schwerfällig über die Bildschirmsteuerung
   prüfen.
 - *Terminal:* Ton und flüssige Steuerung sind dort mühsam.
-- *Hosting (Cloudflare Pages, Netlify, GitHub Pages):* Es wird derzeit nicht
-  gebraucht. GitHub Pages ginge bei einem privaten Repo nur mit bezahltem Konto.
+- *Hosting (Cloudflare Pages, Netlify, GitHub Pages):* bis M8 verworfen, weil
+  es nicht gebraucht wurde. Seit 2026-11-11 gilt GitHub Pages, weil das Repo
+  ohnehin auf GitHub liegt, öffentlich wird und dann nichts kostet. Ein
+  weiteres Konto und ein Deploy-Token entfallen.
 
 **Kosten einer späteren Änderung:**
 - Hosting nachrüsten ist *billig*: Der Build erzeugt ohnehin statische Dateien.
@@ -217,30 +233,44 @@ Es gibt keine (siehe Abschnitt 8).
 
 ### 6.6 Git und CI
 
-**Entscheidung:** Das Repo liegt privat auf GitHub unter `SaijSaij/tetris`. Es
-gibt keine CI. Tests laufen lokal, und ein Stop-Hook erzwingt sie bei jedem
+**Entscheidung (geändert am 2026-11-11):** Das Repo liegt auf GitHub unter
+`SaijSaij/purrfect-lines` (bis M8 privat als `SaijSaij/tetris`) und wird ab M11
+öffentlich. Ab M9 prüft GitHub Actions jeden Push auf main und jeden Pull
+Request mit `npm run check`, `npm run e2e` und `npm run check:release` (A49).
+Tests laufen weiterhin lokal, und der Stop-Hook erzwingt sie bei jedem
 Rundenende von Claude.
 
-**Begründung:** Ich arbeite allein, und Claude führt die Tests bei jeder
-Änderung ohnehin aus. Eine CI wäre ein zusätzlicher Baustein ohne
-nennenswerten Nutzen.
+**Begründung:** Bis M8 galt: Ich arbeite allein, Claude führt die Tests ohnehin
+aus, eine CI brächte kaum Nutzen. Mit dem öffentlichen Repo ändert sich das:
+Der Deploy auf Pages soll nur geprüften Code ausliefern, und Pull Requests von
+anderen sollen automatisch geprüft werden. Für öffentliche Repos ist GitHub
+Actions kostenlos.
 
-**Verworfen:** *GitHub Actions* (kostenlos für private Repos, bis 2000 Minuten
-im Monat).
+**Verworfen:** *Keine CI* (bis M8 die Entscheidung).
 
 **Kosten einer späteren Änderung:** *billig.* Ein Workflow, der dieselben
 npm-Skripte aufruft, besteht aus einer Datei.
 
 ### 6.7 Öffentlichkeit und Lizenz
 
-**Entscheidung:** Das Repo ist privat, und es gibt keine Lizenzdatei. Damit
-gilt „alle Rechte vorbehalten“.
+**Entscheidung (geändert am 2026-11-11):** Das Repo wird öffentlich und steht
+unter GPL-3.0-or-later (A45). Das Spiel verlinkt seinen Quellcode (A46). Die
+Git-Historie bleibt vollständig erhalten, mit der bisherigen Autoren-Adresse.
 
-**Begründung:** Das Projekt ist eine private Übung.
+**Begründung:** Bis M8 war das Repo privat und ohne Lizenz („alle Rechte
+vorbehalten“), weil das Projekt eine private Übung war. Jetzt soll es sich
+zeigen lassen. Die GPL sorgt dafür, dass veränderte Fassungen offen bleiben.
+Alle Assets sind eigene: Grafik und Ton entstehen im Code (A35, A32), es gibt
+keine fremden Dateien. Ein Umschreiben der Historie würde die Commit-Hashes in
+meilensteine.md ungültig machen.
 
-**Kosten einer späteren Änderung:** *billig.* Wird das Repo veröffentlicht,
-wird eine Lizenz gewählt und ergänzt. Vorher ist zu prüfen, dass alle Assets
-eigene sind (siehe Abschnitt 1).
+**Verworfen:** *MIT* (erlaubt auch geschlossene Weiterverwendung), *keine
+Lizenz* (dann dürfte niemand den Code nutzen), *Historie umschreiben oder neu
+beginnen* (siehe oben).
+
+**Kosten einer späteren Änderung:** Die Lizenz zu wechseln ist *mittel*: Für
+bereits veröffentlichte Stände gilt die GPL weiter. Das Repo wieder privat zu
+stellen ist technisch *billig*, aber Kopien und Forks bleiben bestehen.
 
 ## 7. Offene Annahmen
 
@@ -252,13 +282,18 @@ eigene sind (siehe Abschnitt 1).
 | Konkrete Farben | Werden in M7 festgelegt. Bis dahin reicht eine schlichte, gut unterscheidbare Palette. |
 | Zahlenwerte für das Spielgefühl | Die Startwerte der Konstanten (teststrategie.md) sind Schätzungen und werden bei den Abnahmen nachjustiert. |
 | Standardname | EN „Kitty“, DE „Katze“, wenn das Namensfeld leer bleibt (A27). |
-| Repo-Name | Der Name `tetris` bleibt vorerst. Eine Umbenennung (z. B. in `purrfect-lines`) ist jederzeit möglich, GitHub leitet dann um. |
 | Unterstützte Browser | Aktuelle Desktop-Versionen von Chromium-Browsern und Firefox. Getestet wird automatisch mit Chromium. |
+
+Die offenen Annahmen zur Veröffentlichung (Impressum, Node-Version, Dauer der
+CI) stehen in [veroeffentlichung.md](docs/spec/veroeffentlichung.md#offene-annahmen).
+Die frühere Annahme „Repo-Name“ ist mit A53 entschieden.
 
 ## 8. Secrets
 
-Es gibt **keine**: keinen Server, keine Konten, kein Hosting und keine
-Deploy-Tokens. Die Bestenliste im localStorage enthält keine geheimen Daten.
+Es gibt **keine**: keinen Server, keine Konten und keine eigenen
+Deploy-Tokens. Der Deploy auf GitHub Pages (A52) nutzt das Token, das GitHub
+für jeden Actions-Lauf selbst bereitstellt. Es muss nirgends hinterlegt
+werden. Die Bestenliste im localStorage enthält keine geheimen Daten.
 
 Die `.env`-Regeln aus den Projektgrundlagen bleiben als Vorsorge bestehen.
 Kommt später doch ein Secret hinzu (z. B. ein Deploy-Token für ein Hosting),
@@ -273,6 +308,8 @@ muss dieser Abschnitt ergänzt und `.gitignore` geprüft werden.
 - Typprüfung mit dem TypeScript-Compiler
 - alles lokal über npm-Skripte. Typecheck, Linter und Unit-Tests erzwingt ein
   Stop-Hook (`npm run check`), Playwright läuft separat (`npm run e2e`).
+- ab M9 zusätzlich GitHub Actions bei jedem Push auf main und jedem Pull
+  Request, mit denselben npm-Skripten (A49)
 - Darüber hinaus prüft Claude Änderungen am Spiel im eingebauten Browser der
   Desktop-App.
 - Spielgefühl, Aussehen und Ton nehme ich manuell ab.

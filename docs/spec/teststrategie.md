@@ -49,11 +49,22 @@ Die Zeile „Prüfung“ in jeder Anforderung sagt, was der Test festlegt.
 7. M schaltet Musik, Zustand bleibt nach Neuladen (A34).
 8. L wechselt die Sprache, bleibt nach Neuladen (A38).
 9. Zwei Fenstergrößen ohne Bildlaufleisten (A31).
+10. Quellcode-Link: Ziel, neuer Tab, nicht per Tab erreichbar, Text wechselt
+    mit L; nach einem Klick öffnet Enter keinen zweiten Tab (A46).
+11. Mit Touch-Emulation steht der Tastatur-Hinweis anstelle von „Enter
+    startet“, ohne Emulation nicht (A47).
 
 Jeder Test kommt mit dem Meilenstein, der die Anforderung liefert.
 
 **Release-Prüfung:** `npm run check:release` baut das Spiel und prüft, dass
-der Debug-Code im Bundle fehlt (A44).
+der Debug-Code im Bundle fehlt (A44) und `dist/index.html` keine absoluten
+Pfade enthält (A48).
+
+**CI (ab M9):** GitHub Actions führt bei jedem Push auf main und bei jedem Pull
+Request `npm run check`, `npm run e2e` und `npm run check:release` aus (A49).
+In der CI wird ein fehlgeschlagener Browser-Test einmal wiederholt, lokal nie
+(A51). Die CI ersetzt die lokalen Prüfungen nicht, sie sichert main und
+fremde Pull Requests zusätzlich ab.
 
 **Bereits vorhanden:** Typecheck, ESLint mit Komplexitätsregeln und der
 Stop-Hook (`npm run check`).
