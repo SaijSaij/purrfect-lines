@@ -46,7 +46,7 @@ port 5173 is already taken, it stops with an error; free the port first.
 
 Open http://localhost:5173. The start screen shows the title, the keys and the
 high score list; press Enter to start. A piece falls from the top centre by
-about one row per second, and a pale outline (the ghost piece) shows where it
+about one row per second, and a thin outline in the piece's color (the ghost piece) shows where it
 will land. The sidebar shows the next piece, the score, the cleared rows
 (lines) and the level. When the stack reaches the top, the game over screen
 shows your score, lines and level. Press Enter: if the score makes it into the

@@ -78,7 +78,6 @@ export function catHeadSvg(heightEm: number): SVGSVGElement {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('viewBox', '0 0 100 90');
   svg.setAttribute('aria-hidden', 'true');
-  svg.id = 'cat-head';
   Object.assign(svg.style, { height: `${heightEm}em`, width: `${(heightEm * 100) / 90}em`, display: 'block' });
   svg.append(...catFace(), ...whiskers());
   return svg;

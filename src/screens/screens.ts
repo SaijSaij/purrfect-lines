@@ -80,7 +80,7 @@ function tableSlot(): HTMLElement {
 function startScreen(): { el: HTMLElement; table: HTMLElement; storageHint: HTMLElement } {
   const el = screenElement('start-screen');
   el.style.gap = '0.5em';
-  // The cat head sits left of the title, so the screen gets no taller (A35).
+  // The cat head sits left of the title, so the screen gets hardly any taller (A35).
   const title = heading('title');
   Object.assign(title.style, { display: 'flex', alignItems: 'center', gap: '0.3em' });
   title.prepend(catHeadSvg(1.3));

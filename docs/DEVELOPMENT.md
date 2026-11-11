@@ -136,9 +136,12 @@ and its restarts, line clear animation), the points, the maximum name length,
 the size of the high score list and the music tempo steps are in
 [src/game/constants.ts](../src/game/constants.ts). Tests refer to these
 names, never to the numbers. All colors are in
-[src/render/palette.ts](../src/render/palette.ts) (a unit test fails if a
-color literal appears anywhere else in `src/`, or if a piece gets the color it
-usually has in the genre); the paw print and the cat head are drawn in
+[src/render/palette.ts](../src/render/palette.ts). The unit test
+`src/render/palette.test.ts` fails if a color literal (`#…`, `rgb(…)`,
+`hsl(…)`) appears outside palette.ts (in `src/` or `index.html`), if two
+pieces share a color, if a piece's hue is within 40° of its usual hue in the
+genre (the table `GENRE_HUES` in the test), or if a source file refers to an
+image file. The paw print and the cat head are drawn in
 [src/render/decor.ts](../src/render/decor.ts). All visible texts are in
 [src/i18n/texts.ts](../src/i18n/texts.ts). The volumes of the mix (master,
 music, sounds) and of each kind of sound are at the top of
@@ -153,10 +156,10 @@ tempo (`BPM`) and the notes of the music are at the top of
 | `src/game/` | Game rules without browser APIs, unit-tested; `testing.ts` holds helpers for the unit tests only |
 | `src/input/` | Key → action mapping, held keys |
 | `src/i18n/` | All in-game texts |
-| `src/render/` | Drawing on the canvas, scaling to the window, color palette, paw print and cat head (`decor.ts`) |
+| `src/render/` | Drawing on the canvas, scaling to the window, color palette; `decor.ts` holds the paw print (canvas) and the cat head (SVG element for the start screen) |
 | `src/highscores/` | High score list rules (who enters, order, names), unit-tested |
 | `src/storage/` | Saving the list and the settings in localStorage, unit-tested with a fake storage |
-| `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas), the high score table and the pause menu |
+| `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas; the start screen's title carries the cat head), the high score table and the pause menu |
 | `src/audio/` | Sound with the Web Audio API (browser only): `audio.ts` (sounds, switching, volumes), `music.ts` (music loop), `synth.ts` (tone helper); `sound-rules.ts` holds the unit-tested rules (music tempo, switching) |
 | `src/main.ts` | Entry point: keyboard, screens, storage, sound, game loop and drawing; loads `src/debug/` only on the development server |
 | `src/debug/` | Test helpers, development server only |

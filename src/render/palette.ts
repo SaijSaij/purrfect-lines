@@ -29,7 +29,7 @@ export const PALETTE = {
   label: '#c2ab92',
   /** The paw print on every block, drawn over the piece color. */
   paw: 'rgba(255, 246, 232, 0.32)',
-  /** The cat head above the title on the start screen. */
+  /** The cat head next to the title on the start screen. */
   cat: {
     fur: '#e9a35a',
     innerEar: '#f4c9a6',
