@@ -124,8 +124,10 @@ Ab Level 15 wird es nicht schneller, das Level steigt aber weiter.
 **A11 Weicher Fall.** Solange ↓ / S gedrückt ist, fällt die Form mit
 Intervall `GRAVITY_MS[level] / SOFT_DROP_FACTOR` (Faktor 20). Jede so
 gefallene Reihe bringt `SOFT_DROP_POINTS` (1) Punkt. Liegt die Form auf,
-ändert der weiche Fall nichts an der Gnadenfrist (A13).
-*Prüfung:* Unit (Fallgeschwindigkeit und Punkte).
+ändert der weiche Fall nichts an der Gnadenfrist (A13). Ein Druck auf ↓ / S
+startet die Fallzeit nicht neu, kurzes Tippen hält die Form also nicht in
+der Luft.
+*Prüfung:* Unit (Fallgeschwindigkeit, Punkte, schnelles Tippen).
 
 **A12 Harter Fall.** Leertaste lässt die Form sofort bis zur tiefsten
 möglichen Position fallen und rastet sie ohne Gnadenfrist ein. Jede
