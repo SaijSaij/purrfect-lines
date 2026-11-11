@@ -63,6 +63,45 @@ describe('A30 saving the high score list and settings', () => {
   });
 });
 
+describe('A34 saving the sound settings', () => {
+  it('has music and sounds on at the first start', () => {
+    const settings = createPersistence(new FakeStore()).loadSettings();
+    expect(settings.music).toBe(true);
+    expect(settings.sounds).toBe(true);
+  });
+
+  it('loads switched-off music and sounds again after a reload', () => {
+    const store = new FakeStore();
+    createPersistence(store).saveSettings({ music: false, sounds: false });
+    const reloaded = createPersistence(store).loadSettings();
+    expect(reloaded.music).toBe(false);
+    expect(reloaded.sounds).toBe(false);
+  });
+
+  it('keeps the other settings when saving one of them', () => {
+    const store = new FakeStore();
+    createPersistence(store).saveSettings({ lastName: 'Mia' });
+    createPersistence(store).saveSettings({ music: false });
+    createPersistence(store).saveSettings({ sounds: false });
+    createPersistence(store).saveSettings({ music: true });
+    expect(createPersistence(store).loadSettings()).toEqual({
+      lastName: 'Mia',
+      music: true,
+      sounds: false,
+    });
+  });
+
+  it('replaces music and sounds of the wrong type by the defaults and keeps the rest', () => {
+    const store = new FakeStore();
+    store.data.set(SETTINGS_KEY, JSON.stringify({ lastName: 'Mia', music: 'no', sounds: 0 }));
+    expect(createPersistence(store).loadSettings()).toEqual({
+      lastName: 'Mia',
+      music: DEFAULT_SETTINGS.music,
+      sounds: DEFAULT_SETTINGS.sounds,
+    });
+  });
+});
+
 describe('A30 storage failures', () => {
   it('without any storage: empty list, default settings, not available, saving does not throw', () => {
     const persistence = createPersistence(null);

@@ -24,6 +24,19 @@ export type PieceSource = PieceSequence;
 
 export type GameStatus = 'playing' | 'paused' | 'gameOver';
 
+/**
+ * Something that happened in the game and has its own sound (A32). Moving is
+ * silent and has no event.
+ */
+export type GameEvent =
+  | { readonly type: 'rotate' }
+  /** A piece locked by gravity or the lock delay; a hard drop reports 'hardDrop' instead. */
+  | { readonly type: 'lock' }
+  | { readonly type: 'hardDrop' }
+  | { readonly type: 'linesCleared'; readonly count: number }
+  | { readonly type: 'levelUp'; readonly level: number }
+  | { readonly type: 'gameOver' };
+
 export interface ActivePiece {
   readonly type: PieceType;
   readonly rotation: Rotation;
@@ -69,6 +82,8 @@ export interface Game {
   resume(): void;
   /** Ends a running or paused game like a regular game over (A25). */
   giveUp(): void;
+  /** Returns the events since the last call, oldest first, and forgets them (A32). */
+  takeEvents(): GameEvent[];
 }
 
 export interface GameOptions {
@@ -174,6 +189,10 @@ class GameSession implements Game {
     if (this.status === 'gameOver') return;
     this.active = null;
     this.status = 'gameOver';
+  }
+
+  takeEvents(): GameEvent[] {
+    return [];
   }
 
   get diagnostics(): GameDiagnostics {

@@ -12,13 +12,18 @@ export interface KeyValueStore {
 export const HIGHSCORES_KEY = 'purrfect-lines.highscores';
 export const SETTINGS_KEY = 'purrfect-lines.settings';
 
-/** Saved settings. Sound (A34) and language (A38) follow in later milestones. */
+/** Saved settings. The language (A38) follows in a later milestone. */
 export interface Settings {
   /** The name entered last, to prefill the name entry (A27). */
   readonly lastName: string;
+  /** Whether the music plays (A34). */
+  readonly music: boolean;
+  /** Whether the sounds play (A34). */
+  readonly sounds: boolean;
 }
 
-export const DEFAULT_SETTINGS: Settings = { lastName: '' };
+/** On the first start the name is empty, music and sounds are on (A27, A34). */
+export const DEFAULT_SETTINGS: Settings = { lastName: '', music: true, sounds: true };
 
 export interface Persistence {
   /**
@@ -32,8 +37,8 @@ export interface Persistence {
   saveHighscores(entries: readonly HighscoreEntry[]): void;
   /** Never throws; unreadable data gives the default settings. */
   loadSettings(): Settings;
-  /** Never throws. */
-  saveSettings(settings: Settings): void;
+  /** Never throws. Saves the given settings and keeps the stored values of the others. */
+  saveSettings(changes: Partial<Settings>): void;
 }
 
 function isWholeNumber(value: unknown, min: number): value is number {
@@ -76,6 +81,8 @@ function toSettings(data: unknown): Settings {
       typeof lastName === 'string' && lastName.length <= NAME_MAX_LENGTH
         ? lastName
         : DEFAULT_SETTINGS.lastName,
+    music: DEFAULT_SETTINGS.music,
+    sounds: DEFAULT_SETTINGS.sounds,
   };
 }
 
@@ -118,6 +125,6 @@ export function createPersistence(store: KeyValueStore | null): Persistence {
     loadHighscores: () => toHighscores(read(HIGHSCORES_KEY)),
     saveHighscores: (entries) => write(HIGHSCORES_KEY, entries),
     loadSettings: () => toSettings(read(SETTINGS_KEY)),
-    saveSettings: (settings) => write(SETTINGS_KEY, settings),
+    saveSettings: (changes) => write(SETTINGS_KEY, changes),
   };
 }

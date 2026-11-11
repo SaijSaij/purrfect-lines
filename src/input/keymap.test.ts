@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { actionForKey, menuActionForKey } from './keymap';
+import { actionForKey, menuActionForKey, soundToggleForKey } from './keymap';
 
 // Keys are given as KeyboardEvent.key values.
 describe('A21 key mapping', () => {
@@ -63,5 +63,21 @@ describe('A21 key mapping for all game keys', () => {
   it('recognises letters by the typed character, so Z is not Y', () => {
     expect(actionForKey('z')).toBeNull();
     expect(actionForKey('Z')).toBeNull();
+  });
+});
+
+describe('A34 keys for sound', () => {
+  it('maps M to the music, in lower and upper case', () => {
+    expect(soundToggleForKey('m')).toBe('music');
+    expect(soundToggleForKey('M')).toBe('music');
+  });
+
+  it('maps N to the sounds, in lower and upper case', () => {
+    expect(soundToggleForKey('n')).toBe('sounds');
+    expect(soundToggleForKey('N')).toBe('sounds');
+  });
+
+  it('ignores other keys', () => {
+    for (const key of ['p', 'Enter', ' ', 'ArrowUp', 'x']) expect(soundToggleForKey(key)).toBeNull();
   });
 });

@@ -46,3 +46,9 @@ export const NAME_MAX_LENGTH = 12;
 
 /** The high score list holds at most this many entries (A28, A29). */
 export const HIGHSCORE_SIZE = 10;
+
+/** The music gets this much faster per level above level 1, as a fraction (A33). */
+export const MUSIC_TEMPO_STEP = 0.03;
+
+/** The music gets at most this much faster, as a fraction (A33). */
+export const MUSIC_TEMPO_MAX = 0.4;
