@@ -140,6 +140,41 @@ animation and three of the stills; `gameplay.png` and `line-clear.png` are
 spare. The command is not part of `npm run check`; run it when the look of the
 game changes.
 
+## Continuous integration
+
+GitHub Actions runs [.github/workflows/ci.yml](../.github/workflows/ci.yml) on
+every push to main and on every pull request. On Ubuntu, with the Node.js
+version from `.node-version`, it installs the dependencies (`npm ci`) and
+Playwright's Chromium, then runs `npm run check`, `npm run e2e` and
+`npm run check:release`, the automatic checks of the Definition of Done. Any
+red step makes the whole run red. The CI adds to the local checks, it does not
+replace them.
+
+Only in the CI (where the environment variable `CI` is set) a failed browser
+test is retried once; locally it never is (`playwright.config.ts`).
+
+**A red run:** open the pull request's "Checks" tab, or the "Actions" tab of
+the repository, and click the run; the log of the red step shows the error. If
+a browser test failed for good, the run has an artifact `playwright-report`
+(kept for 7 days) at the bottom of the run's summary page. Download and unpack
+it, then open its `index.html` in a browser: it lists the failed tests with a
+screenshot each.
+
+**Updating the actions:** every action is pinned to a full commit SHA with
+its version as a comment (`uses: actions/checkout@<sha> # v7.0.1`), and is
+only updated on request. To move to a newer version, look up the SHA of its
+tag, e.g.
+
+```bash
+gh api repos/actions/checkout/commits/v7.0.1 --jq .sha
+```
+
+and replace both the SHA and the version comment.
+
+**Updating Node.js:** the exact version is only in `.node-version`, which the
+CI reads. Change it together with the local installation (see
+[Versions in CLAUDE.md](../CLAUDE.md#versions)), then run all checks locally.
+
 ## Tuning
 
 The timings (fall intervals per level, repeat delay and interval, lock delay
@@ -184,6 +219,8 @@ tempo (`BPM`) and the notes of the music are at the top of
 | `docs/spec/` | Requirements, milestones and test strategy (German), part of [SPEC.md](../SPEC.md) |
 | `docs/images/` | Pictures for the README and spare stills, made by `npm run screenshots` |
 | `.claude/` | Claude Code setup: stop hook, review agents, rules |
+| `.github/workflows/` | CI workflow (`ci.yml`) |
+| `.node-version` | Exact Node.js version: the one to install locally, read by the CI |
 | `index.html` | The page that loads the game |
 | `vite.config.ts`, `playwright.config.ts`, `playwright.screenshots.config.ts`, `eslint.config.js`, `tsconfig.json` | Tool configuration |
 
