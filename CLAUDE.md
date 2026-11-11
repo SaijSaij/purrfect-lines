@@ -22,6 +22,11 @@ hook).
 - `npm run screenshots` – render the pictures in `docs/images/` (not part of
   `npm run check`)
 
+The CI runs the same npm scripts as locally (`check`, `e2e`, `check:release`),
+never other commands to check or build. Besides them it only installs the
+dependencies (`npm ci`) and Playwright's Chromium and runs the GitHub Pages
+deploy actions.
+
 Developer documentation for humans: `docs/DEVELOPMENT.md`.
 
 Run project commands via the npm scripts from the project root, never via npx,
@@ -105,14 +110,24 @@ flags, never with a heredoc.
    status commit. After that, only name what is left in Git (commits not
    pushed, a local branch that is left over) and ask whether to push.
 
+Exception: if the spec gives a milestone a two-stage acceptance (e.g. M11,
+because the deployment can only be checked on the real site), stage 1 happens
+before the merge as in step 6, then merge. Push only when I say so. The status
+commit from step 7 comes only after stage 2. Fixes that stage 2 brings up go
+on a new branch `m<N>-fix-<short-name>` and are handled like a small milestone
+of their own.
+
 Push only when I ask.
 
 ## Versions
 
-- Node.js 26 LTS.
+- Node.js 26 LTS. The exact version is set in `.node-version`; the CI reads
+  it from there. Change it only together with the local installation.
 - TypeScript is pinned to 6.0.x: typescript-eslint does not support TypeScript 7
   yet. Upgrade only together with typescript-eslint.
 - All dependencies are pinned to exact versions.
+- GitHub Actions are pinned to full commit SHAs with a version comment
+  (`uses: actions/checkout@<sha> # v5.0.0`). Update them only when I ask.
 
 ## Pitfalls
 
