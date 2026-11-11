@@ -1,6 +1,7 @@
 // Entry point of Purrfect Lines: wires keyboard, game loop and drawing to the
 // game logic. The game starts as soon as the page has loaded.
-import { createGame, type Game } from './game/game';
+import { createGame, type Action, type Game } from './game/game';
+import { HeldKeys } from './input/held-keys';
 import { actionForKey } from './input/keymap';
 import { PALETTE } from './render/palette';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, drawGame } from './render/renderer';
@@ -18,6 +19,10 @@ function newGame(): Game {
   return createGame({ seed });
 }
 
+// Keys are recognised by the typed character (A21), but held keys are tracked
+// by the physical key, so ← and A or ↑ and X do not interfere.
+const heldKeys = new HeldKeys<Action>();
+
 function onKeyDown(event: KeyboardEvent): void {
   const action = actionForKey(event.key);
   if (action === null) return;
@@ -26,14 +31,21 @@ function onKeyDown(event: KeyboardEvent): void {
     if (game.state.status === 'gameOver') game = newGame();
     return;
   }
+  if (!heldKeys.down(event.code, action)) return; // key repeat of the operating system
+  // Another key for the same action may still be held: every new key is a new press.
+  game.release(action);
   game.press(action);
 }
 
 function onKeyUp(event: KeyboardEvent): void {
-  const action = actionForKey(event.key);
-  if (action === null) return;
-  event.preventDefault();
-  if (action !== 'confirm') game.release(action);
+  if (actionForKey(event.key) !== null) event.preventDefault();
+  const action = heldKeys.up(event.code);
+  if (action !== null) game.release(action);
+}
+
+/** Key-up events get lost while the window has no focus, so let go of everything. */
+function onBlur(): void {
+  for (const action of heldKeys.releaseAll()) game.release(action);
 }
 
 function start(): void {
@@ -48,6 +60,7 @@ function start(): void {
   game = newGame();
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
+  window.addEventListener('blur', onBlur);
 
   let last = performance.now();
   const frame = (now: number): void => {

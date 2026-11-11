@@ -41,6 +41,22 @@ test('an arrow key moves the piece and the space bar drops it to the bottom', as
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
+// A held move key must not keep repeating when its key-up is lost because
+// the window lost focus (A7).
+test('a held key stops repeating when the window loses focus', async ({ page }) => {
+  const start = await startGame(page, '/?seed=1');
+  await page.keyboard.down('ArrowRight');
+  await expect
+    .poll(() => readState(page).then(leftmostColumn))
+    .toBe(leftmostColumn(start) + 1);
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  const afterBlur = leftmostColumn(await readState(page));
+  // Longer than the repeat delay, shorter than one fall step.
+  await page.waitForTimeout(500);
+  expect(leftmostColumn(await readState(page))).toBe(afterBlur);
+  await page.keyboard.up('ArrowRight');
+});
+
 // Planned E2E test 4 (A5).
 test('a game with only hard drops ends', async ({ page }) => {
   await startGame(page, '/?seed=1');
