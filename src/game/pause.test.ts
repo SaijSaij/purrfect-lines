@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { GRAVITY_MS, LINE_CLEAR_MS, LOCK_DELAY_MS } from './constants';
 import { createGame, type Game } from './game';
-import { activeCells, at, boardFromRows, boardWith, fixedSequence, tap, translate } from './testing';
+import {
+  activeCells,
+  at,
+  boardFromRows,
+  boardWith,
+  filledCells,
+  fixedSequence,
+  tap,
+  translate,
+} from './testing';
 
 // GRAVITY_MS lists the fall intervals for level 1, 2, 3, ...
 const LEVEL_1_GRAVITY_MS = GRAVITY_MS[0] ?? Number.NaN;
@@ -63,7 +72,8 @@ describe('A23 pause', () => {
     game.update(99);
     expect(game.state.active?.type).toBe('T');
     game.update(1);
-    expect(game.state.active?.type).toBe('O');
+    // The T locks: its four cells join the block below it on the board.
+    expect(filledCells(game.state.board)).toHaveLength(5);
   });
 
   it('continues the line clear animation exactly where it stopped (A16)', () => {
