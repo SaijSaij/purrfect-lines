@@ -122,3 +122,8 @@ Push only when I ask.
   `@playwright/test`, ask the user to run `npx playwright install chromium`.
 - `npm audit` reports a moderate minimatch issue inside ESLint's dependencies.
   It only affects lint-time glob matching and is accepted.
+- The built-in browser runs no animation frames while its pane is hidden. The
+  game loop then stands still: screens are not shown, the high score table is
+  not filled, and layout measurements return empty results. Check
+  `tabs_context` first and, if the pane is hidden, ask the user to show it
+  before measuring or taking screenshots.
