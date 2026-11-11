@@ -79,6 +79,11 @@ function tableSlot(): HTMLElement {
   return el;
 }
 
+/** Whether a mouse, touchpad or pen is attached; read whenever the screens are built. */
+function hasFinePointer(): boolean {
+  return window.matchMedia('(any-pointer: fine)').matches;
+}
+
 function startScreen(): { el: HTMLElement; table: HTMLElement; storageHint: HTMLElement } {
   const el = screenElement('start-screen');
   el.style.gap = '0.5em';
@@ -86,7 +91,10 @@ function startScreen(): { el: HTMLElement; table: HTMLElement; storageHint: HTML
   const title = heading('title');
   Object.assign(title.style, { display: 'flex', alignItems: 'center', gap: '0.3em' });
   title.prepend(catHeadSvg(1.3));
-  el.append(title, element('p', 'pressEnterToStart'));
+  // Without a fine pointer (phone, tablet) there is probably no keyboard either (A47).
+  const prompt = element('p', hasFinePointer() ? 'pressEnterToStart' : 'keyboardNeeded');
+  prompt.style.maxWidth = '90%'; // the longer hint wraps instead of leaving the game area
+  el.append(title, prompt);
   const keys: TextKey[] = [
     'keysMove',
     'keysRotate',
