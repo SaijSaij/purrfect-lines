@@ -5,10 +5,16 @@ export type KeyAction = Action | 'confirm';
 
 const KEYS: Readonly<Record<string, KeyAction>> = {
   arrowleft: 'left',
+  a: 'left',
   arrowright: 'right',
+  d: 'right',
   arrowdown: 'softDrop',
+  s: 'softDrop',
   arrowup: 'rotateCW',
+  w: 'rotateCW',
   x: 'rotateCW',
+  q: 'rotateCCW',
+  y: 'rotateCCW',
   ' ': 'hardDrop',
   enter: 'confirm',
 };
