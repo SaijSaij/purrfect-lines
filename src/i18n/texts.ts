@@ -2,6 +2,10 @@
 
 const EN = {
   gameOver: 'Game over – press Enter',
+  score: 'Score',
+  lines: 'Lines',
+  level: 'Level',
+  next: 'Next',
 };
 
 export type TextKey = keyof typeof EN;

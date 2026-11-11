@@ -16,6 +16,11 @@ export const PALETTE = {
   page: '#17131c',
   frame: '#d8c3a5',
   field: '#241e2b',
+  sidebar: '#1d1823',
   overlay: 'rgba(0, 0, 0, 0.7)',
   text: '#fff8f0',
+  label: '#b9a99a',
 } as const;
+
+/** Opacity of the ghost piece outline (A14). */
+export const GHOST_ALPHA = 0.55;
