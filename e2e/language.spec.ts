@@ -70,6 +70,17 @@ test.describe('A38 switching the language', () => {
     await expect.poll(() => startScreenText(page)).toBe(english);
   });
 
+  test('Ctrl+L and Alt+L on the start screen do not switch the language', async ({ page }) => {
+    await openStartScreen(page);
+    await page.keyboard.press('Control+l');
+    await expectLanguage(page, 'en');
+    await page.keyboard.press('Alt+l');
+    await expectLanguage(page, 'en');
+    // A plain L afterwards still switches, so the game was ready for keys.
+    await page.keyboard.press('l');
+    await expectLanguage(page, 'de');
+  });
+
   test('L does not switch the language during a game or in the pause', async ({ page }) => {
     await startGame(page, '/?seed=1');
     await page.keyboard.press('l');

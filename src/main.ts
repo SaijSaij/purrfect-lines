@@ -176,6 +176,8 @@ function onSoundKey(event: KeyboardEvent): boolean {
  * the screens in the new language (A38). Returns whether the key was L.
  */
 function onLanguageKey(event: KeyboardEvent): boolean {
+  // Ctrl+L, Alt+L and Cmd+L stay with the browser, e.g. to reach the address bar.
+  if (event.ctrlKey || event.altKey || event.metaKey) return false;
   if (!isLanguageKey(event.key)) return false;
   event.preventDefault();
   if (event.repeat) return true;
