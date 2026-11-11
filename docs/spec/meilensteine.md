@@ -101,7 +101,7 @@ A40, A41 grün. E2E-Test 2 prüft jetzt auch die Punkte.
 
 ## M4 – Bildschirme und Ablauf
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit e2c4471)
 
 **Ziel:** Das Spiel hat Start, Pause und Ende wie ein fertiges Spiel und passt
 sich dem Fenster an.
@@ -113,13 +113,13 @@ A24, A25, A26 (ohne Namenseingabe: Enter führt zum Start), A31.
 5 und 9 grün.
 
 **Abnahme-Checkliste:**
-- [ ] Beim Laden erscheint der Startbildschirm, Enter startet.
-- [ ] P und Esc pausieren, das Feld ist verdeckt, Fortsetzen geht nahtlos
+- [x] Beim Laden erscheint der Startbildschirm, Enter startet.
+- [x] P und Esc pausieren, das Feld ist verdeckt, Fortsetzen geht nahtlos
       weiter.
-- [ ] Alt+Tab in ein anderes Fenster pausiert.
-- [ ] Aufgeben führt zum Spielende-Bildschirm mit den Werten.
-- [ ] Volle Reihen leuchten kurz auf, bevor sie verschwinden.
-- [ ] Fenster verkleinern und vergrößern: Spiel bleibt ganz sichtbar und
+- [x] Alt+Tab in ein anderes Fenster pausiert.
+- [x] Aufgeben führt zum Spielende-Bildschirm mit den Werten.
+- [x] Volle Reihen leuchten kurz auf, bevor sie verschwinden.
+- [x] Fenster verkleinern und vergrößern: Spiel bleibt ganz sichtbar und
       scharf.
 
 ## M5 – Bestenliste
