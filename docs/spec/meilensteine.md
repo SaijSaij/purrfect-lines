@@ -305,7 +305,7 @@ Merge von M10 lässt sie sich also nicht prüfen.
 
 ## M11 – Online auf GitHub Pages
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit c989b62)
 
 **Ziel:** Das Spiel ist unter `https://saijsaij.github.io/purrfect-lines/`
 spielbar und wird nach jedem grünen Push auf main aktualisiert.
@@ -327,25 +327,25 @@ Push. Der Status-Commit folgt erst nach Stufe 2. Ein Fehler in Stufe 2 wird auf
 einem neuen Branch korrigiert.
 
 **Abnahme-Checkliste, Stufe 1** (vor dem Merge):
-- [ ] `gh repo view` ausführen: Das Repo ist öffentlich, mit Beschreibung und
+- [x] `gh repo view` ausführen: Das Repo ist öffentlich, mit Beschreibung und
       Website.
-- [ ] `https://github.com/SaijSaij/purrfect-lines` in einem privaten Fenster
+- [x] `https://github.com/SaijSaij/purrfect-lines` in einem privaten Fenster
       (nicht angemeldet) öffnen: Das Repo ist sichtbar, rechts steht
       „GPL-3.0“.
-- [ ] Im Pull Request: Die CI ist grün, der Deploy-Job wurde übersprungen.
-- [ ] `npm run build`, dann `npm run preview` und http://localhost:4173
+- [x] Im Pull Request: Die CI ist grün, der Deploy-Job wurde übersprungen.
+- [x] `npm run build`, dann `npm run preview` und http://localhost:4173
       öffnen: Das Spiel ist spielbar.
 
 **Abnahme-Checkliste, Stufe 2** (nach Merge und Push):
-- [ ] Im Reiter „Actions“ der Lauf auf main: grün, inklusive Deploy.
-- [ ] `https://saijsaij.github.io/purrfect-lines/` in einem privaten Fenster
+- [x] Im Reiter „Actions“ der Lauf auf main: grün, inklusive Deploy.
+- [x] `https://saijsaij.github.io/purrfect-lines/` in einem privaten Fenster
       öffnen: Startbildschirm erscheint, Enter startet, Ton und Musik laufen.
-- [ ] Live eine Partie mit Eintrag in der Bestenliste beenden und neu laden:
+- [x] Live eine Partie mit Eintrag in der Bestenliste beenden und neu laden:
       Der Eintrag ist noch da.
-- [ ] Live `?seed=1` und `?debug` anhängen: keine Wirkung.
-- [ ] Live-URL auf dem echten Handy öffnen, im Hoch- und Querformat: Der
+- [x] Live `?seed=1` und `?debug` anhängen: keine Wirkung.
+- [x] Live-URL auf dem echten Handy öffnen, im Hoch- und Querformat: Der
       Tastatur-Hinweis ist ohne Zoomen lesbar, und der Quellcode-Link lässt
       sich antippen.
-- [ ] Live auf den Quellcode-Link klicken: Das öffentliche Repo öffnet sich.
-- [ ] README auf GitHub: Der Link zum Spiel funktioniert, das CI-Badge ist
+- [x] Live auf den Quellcode-Link klicken: Das öffentliche Repo öffnet sich.
+- [x] README auf GitHub: Der Link zum Spiel funktioniert, das CI-Badge ist
       grün.
