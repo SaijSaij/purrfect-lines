@@ -238,7 +238,7 @@ die Startsprache grün. E2E-Test 8 grün.
 
 ## M9 – Umbenennen und CI
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit e7768c0)
 
 **Ziel:** Das Repo heißt `purrfect-lines`, und jeder Push auf main und jeder
 Pull Request wird automatisch geprüft.
@@ -254,11 +254,11 @@ grün. Claude fragt vor dem Push des Branches und vor dem Öffnen des Pull
 Requests.
 
 **Abnahme-Checkliste:**
-- [ ] `gh repo view` ausführen: zeigt `SaijSaij/purrfect-lines`.
-- [ ] `git remote -v` ausführen: zeigt die neue URL.
-- [ ] `https://github.com/SaijSaij/tetris` im Browser öffnen: leitet auf das
+- [x] `gh repo view` ausführen: zeigt `SaijSaij/purrfect-lines`.
+- [x] `git remote -v` ausführen: zeigt die neue URL.
+- [x] `https://github.com/SaijSaij/tetris` im Browser öffnen: leitet auf das
       neue Repo um.
-- [ ] Im Pull Request den Reiter „Checks“ öffnen: Der Lauf zeigt die Schritte
+- [x] Im Pull Request den Reiter „Checks“ öffnen: Der Lauf zeigt die Schritte
       check, e2e und check:release, alle grün.
 
 ## M10 – Lizenz, Quellcode-Link, Tastatur-Hinweis
