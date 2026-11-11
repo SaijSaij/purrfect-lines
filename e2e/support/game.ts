@@ -50,7 +50,8 @@ export async function startGame(page: Page, url: string): Promise<PurrfectLinesS
 }
 
 export async function waitForScreen(page: Page, screen: string): Promise<void> {
-  await expect.poll(() => readState(page).then((s) => s.screen)).toBe(screen);
+  // Right after loading, the game may not have set up the test interface yet.
+  await expect.poll(() => readStateOrNull(page).then((s) => s?.screen ?? null)).toBe(screen);
 }
 
 /** Hard drops until the game ends; with ?seed=1 the stack reaches the top with points (A5). */

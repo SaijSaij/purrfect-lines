@@ -5,19 +5,9 @@ import { startGame, waitForScreen } from './support/game';
 
 const START_SCREEN = '#start-screen';
 
-/** Waits until the game has set up its test interface, then for the start screen. */
-async function waitForStartScreen(page: Page): Promise<void> {
-  await expect
-    .poll(() => page.evaluate(() => '__purrfectLines' in window), {
-      message: 'window.__purrfectLines should exist',
-    })
-    .toBe(true);
-  await waitForScreen(page, 'start');
-}
-
 async function openStartScreen(page: Page): Promise<void> {
   await page.goto('/');
-  await waitForStartScreen(page);
+  await waitForScreen(page, 'start');
 }
 
 /** The visible text of the start screen; hidden parts are left out. */
@@ -68,7 +58,7 @@ test.describe('A38 switching the language', () => {
     const german = await startScreenText(page);
 
     await page.reload();
-    await waitForStartScreen(page);
+    await waitForScreen(page, 'start');
     await expectLanguage(page, 'de');
     await expect.poll(() => startScreenText(page)).toBe(german);
 
