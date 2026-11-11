@@ -354,6 +354,12 @@ Bildlaufleisten), Manuell (scharf, auch bei 125 %/150 % Skalierung).
 **A32 Klänge.** Eigene, zur Laufzeit synthetisierte Klänge für: Drehen,
 Einrasten, harter Fall, 1–3 Reihen aufgelöst, 4 Reihen aufgelöst (miau-artig),
 Level-Aufstieg, Spielende, Menüauswahl. Schieben ist still.
+*Präzisierung:* Ein harter Fall klingt anstelle des Einrastens, nicht
+zusätzlich. Der Klang für aufgelöste Reihen ertönt beim Einrasten, wenn die
+Reihen aufleuchten (A16). Reihen, Level-Aufstieg und Spielende klingen
+zusätzlich zum Einrasten bzw. harten Fall. Aufgeben (A25) klingt wie ein
+Spielende. Menüauswahl heißt: ↑/↓ im Pausemenü und Enter auf Start-,
+Spielende-, Pause- und Bestenlisten-Bildschirm.
 *Prüfung:* Unit (Spiellogik meldet die passenden Ereignisse), Manuell (Klänge
 angenehm, unterscheidbar, nicht zu laut).
 
@@ -361,6 +367,10 @@ angenehm, unterscheidbar, nicht zu laut).
 während des Spiels. Ihr Tempo steigt pro Level um `MUSIC_TEMPO_STEP` (3 %), bis
 höchstens `MUSIC_TEMPO_MAX` (+40 %). In der Pause und auf den Menübildschirmen
 schweigt sie, nach dem Fortsetzen läuft sie weiter.
+*Präzisierung:* Die Musik läuft nur im Spiel, auch während Reihen
+aufleuchten. Nach einer Pause läuft sie an derselben Stelle der Schleife
+weiter, jede neue Partie beginnt sie von vorn. Die Zeitlupe (A41)
+verlangsamt sie nicht.
 *Prüfung:* Unit (Tempoberechnung), Manuell (eigene Melodie, keine Anlehnung an
 bekannte Stücke, Schleife ohne hörbaren Sprung).
 
@@ -369,6 +379,8 @@ Bildschirm außer in der Namenseingabe. Beim ersten Start ist beides an. Der
 Zustand wird gespeichert (A30) und ist im Spiel klein sichtbar (z. B. Symbol
 in der Seitenleiste). Ton beginnt erst nach dem ersten Tastendruck, weil
 Browser vorher keinen Ton erlauben.
+*Präzisierung:* Der Zustand steht als zwei Textzeilen unten in der
+Seitenleiste, je Musik und Klänge „an“ bzw. „aus“. Was aus ist, ist gedimmt.
 *Prüfung:* Unit (Umschalten und Speichern), E2E (M ändert den gespeicherten
 Zustand, bleibt nach Neuladen).
 
