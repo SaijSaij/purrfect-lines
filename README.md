@@ -1,6 +1,11 @@
 # Purrfect Lines
 
+[![CI](https://github.com/SaijSaij/purrfect-lines/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SaijSaij/purrfect-lines/actions/workflows/ci.yml)
+
 A cosy falling-block puzzle for the browser, with a cat's touch.
+
+**[Play it online](https://saijsaij.github.io/purrfect-lines/)**: nothing to
+install, you only need a physical keyboard.
 
 ![Pieces fall, slide into place and complete the bottom row, which lights up and disappears](docs/images/gameplay.apng.png)
 
@@ -31,7 +36,15 @@ to start"; with a keyboard attached, Enter still starts the game.
 
 ## Play
 
-You need Windows (the setup is only tested there), Node.js 26 LTS
+Open https://saijsaij.github.io/purrfect-lines/ in a current desktop browser
+based on Chromium or Firefox. The online version is always the latest checked
+state of the main branch. Everything below about the game applies to it as
+well.
+
+### Play locally
+
+To run the game on your own computer instead,
+you need Windows (the setup is only tested there), Node.js 26 LTS
 (`winget install OpenJS.NodeJS.LTS`, then check in a new terminal with
 `node --version`), a keyboard and a current desktop browser based on Chromium
 or Firefox. Clone the repository, and in the project folder install once:
@@ -75,8 +88,9 @@ ahead.
   holds what you typed last (empty if you left it empty).
 - **Saving:** the list, your last name, the sound settings and the language
   you chose with L are stored in
-  the browser (localStorage) for http://localhost:5173 and survive a reload. The release
-  version on port 4173 keeps its own list. If the browser does not allow
+  the browser (localStorage) and survive a reload. Each address keeps its own
+  list: the online version, http://localhost:5173 and the release version on
+  port 4173 do not share it. If the browser does not allow
   saving (for example when site data is blocked), the game still runs, the
   list and the settings last only until the page is reloaded, and the
   start screen says so.

@@ -39,7 +39,9 @@ All commands are npm scripts, run from the project root. The full list is in
   browser tests or the release check.
 - `npm run e2e` starts the dev server itself, or reuses one already running on
   port 5173, so stop an outdated one first.
-- `npm run check:release` overwrites `dist/`.
+- `npm run check:release` overwrites `dist/`. Besides the debug code it checks
+  that `dist/index.html` refers to its files only by relative paths, so the
+  build also runs under `/purrfect-lines/` on GitHub Pages.
 - A milestone is done only when the checks of the Definition of Done pass
   (SPEC.md, section 10).
 
@@ -175,8 +177,20 @@ a browser test failed for good, the run has an artifact `playwright-report`
 it, then open its `index.html` in a browser: it lists the failed tests with a
 screenshot each.
 
+**Deploy:** when the check job of a push to main is green, a second job
+(`deploy`) builds the game with `npm run build` and publishes `dist/` on
+GitHub Pages at https://saijsaij.github.io/purrfect-lines/. Pull requests and
+red runs never deploy. The repository's Pages source is set to "GitHub
+Actions". The deploy job is the only one allowed to write to Pages, and it
+needs no secret of its own. If a deploy is still waiting when a newer push
+arrives, the newer one replaces it; a running deploy is never cancelled. If
+the deploy fails, the old version stays online and the run is red. Each
+deploy appears in the run's summary with a link to the site, and under
+"Environments" → `github-pages` on the repository page.
+
 **Updating the actions:** every action in `ci.yml` (all `uses:` lines:
-checkout, setup-node, upload-artifact) is pinned to a full commit SHA with its
+checkout, setup-node, upload-artifact, configure-pages, upload-pages-artifact,
+deploy-pages) is pinned to a full commit SHA with its
 version as a comment (`uses: actions/checkout@<sha> # v7.0.1`), and is only
 updated on request. To move an action to a newer version, look up the SHA of
 its tag with the GitHub CLI (`gh`, signed in with `gh auth login`), e.g.
@@ -187,7 +201,8 @@ gh api repos/actions/checkout/commits/v7.0.1 --jq .sha
 
 and replace both the SHA and the version comment. New pins cannot be tested
 locally: push the change on a branch and check that the CI of its pull request
-is green.
+is green. The deploy job does not run there, so changed Pages actions only
+show after the merge, in the run on main.
 
 **Updating Node.js:** the exact version is only in `.node-version`, as a bare
 version number such as `26.13.0` (no `v`). `actions/setup-node` installs
@@ -247,7 +262,7 @@ tempo (`BPM`) and the notes of the music are at the top of
 | `docs/spec/` | Requirements, milestones and test strategy (German), part of [SPEC.md](../SPEC.md) |
 | `docs/images/` | Pictures for the README and spare stills, made by `npm run screenshots` |
 | `.claude/` | Claude Code setup: stop hook, review agents, rules |
-| `.github/workflows/` | CI workflow (`ci.yml`) |
+| `.github/workflows/` | CI and deploy workflow (`ci.yml`) |
 | `.node-version` | Exact Node.js version: the one to install locally, read by the CI |
 | `index.html` | The page that loads the game, with the description for shared links |
 | `LICENSE` | GPL-3.0 license text, fetched unchanged with `gh api licenses/gpl-3.0` |
@@ -267,5 +282,8 @@ See [Pitfalls in CLAUDE.md](../CLAUDE.md#pitfalls). In addition:
 
 - Opening `dist/index.html` directly as a file does not work, because browsers
   do not load JavaScript modules from `file://`. Use `npm run preview`.
+- `base: './'` in `vite.config.ts` must stay: GitHub Pages serves the game
+  under `/purrfect-lines/`, where absolute paths such as `/assets/…` would
+  not load. `npm run check:release` fails if they come back.
 - Port 5173 is fixed: if it is taken, `npm run serve` stops. Port 4173 is
   not: if it is taken, `npm run preview` picks another port and prints it.
