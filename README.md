@@ -4,7 +4,7 @@ A falling-block puzzle game for the browser. Pieces made of four blocks fall
 into a 10 × 20 field; move and rotate them so they complete rows. Full rows
 disappear. The game ends when the stack reaches the top.
 
-This is an early version (milestone 1 of 8): it starts right away when the
+This is an early version (milestone 2 of 8): it starts right away when the
 page loads, has no points yet and no sound. The plan is in
 [SPEC.md](SPEC.md), the numbered requirements (A1, A2, …) that code comments
 refer to are in [docs/spec/anforderungen.md](docs/spec/anforderungen.md). Both
@@ -52,14 +52,24 @@ not load JavaScript modules from `file://`.
 
 | Key | Action |
 |---|---|
-| ← / → | Move left / right |
-| ↓ (hold) | Soft drop: fall faster |
-| ↑ or X | Rotate clockwise |
+| ← / → or A / D | Move left / right |
+| ↓ or S (hold) | Soft drop: fall faster |
+| ↑, W or X | Rotate clockwise |
+| Q or Y | Rotate counter-clockwise |
 | Space | Hard drop: fall to the bottom and lock at once |
 | Enter | After game over: start a new game |
 
-Holding ← or → moves the piece only once in this version; automatic repeat
-while holding a key comes in the next milestone.
+Letters work in upper and lower case and are recognised by the character they
+type, so Y is the key labelled Y on any keyboard layout.
+
+Holding a move key moves the piece once, then after a short pause it keeps
+sliding until you let go. If both directions are held, the one pressed last
+wins. A piece that cannot turn in place (for example a vertical bar at the
+wall) is shifted a little if that makes room.
+
+A piece that lands does not lock at once: for half a second you can still
+move or rotate it. Each move restarts that time, but only 15 times per piece,
+so it cannot be stalled forever.
 
 ## Test helpers (development server only)
 
