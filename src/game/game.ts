@@ -6,7 +6,7 @@ import { boxSize, pieceCells, type CellOffset, type PieceType, type Rotation } f
 import { randomSeed } from './random';
 import { createPieceSequence, type PieceSequence } from './sequence';
 
-export type Action = 'left' | 'right' | 'softDrop' | 'hardDrop' | 'rotateCW';
+export type Action = 'left' | 'right' | 'softDrop' | 'hardDrop' | 'rotateCW' | 'rotateCCW';
 
 /** Where new pieces come from. Usually a seeded bag sequence (A3). */
 export type PieceSource = PieceSequence;
@@ -130,6 +130,9 @@ class GameSession implements Game {
         break;
       case 'rotateCW':
         this.tryRotate();
+        break;
+      case 'rotateCCW':
+        // Stub: no effect yet, the state stays unchanged.
         break;
       case 'hardDrop':
         this.hardDrop();

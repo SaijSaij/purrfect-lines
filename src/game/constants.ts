@@ -13,3 +13,15 @@ export const GRAVITY_MS: readonly number[] = [
 
 /** Soft drop falls this many times faster than gravity (A11). */
 export const SOFT_DROP_FACTOR = 20;
+
+/** A resting piece locks after this many milliseconds (A13). */
+export const LOCK_DELAY_MS = 500;
+
+/** How often moves and rotations may restart the lock delay per piece (A13). */
+export const LOCK_RESETS_MAX = 15;
+
+/** A held move key repeats for the first time after this delay (A7). */
+export const REPEAT_DELAY_MS = 170;
+
+/** After the first repeat, a held move key repeats at this interval (A7). */
+export const REPEAT_INTERVAL_MS = 50;

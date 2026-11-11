@@ -29,3 +29,25 @@ describe('A21 key mapping', () => {
     expect(actionForKey('1')).toBeNull();
   });
 });
+
+describe('A21 key mapping for all game keys', () => {
+  it('maps A, D and S like the left, right and down arrows', () => {
+    for (const key of ['a', 'A']) expect(actionForKey(key)).toBe('left');
+    for (const key of ['d', 'D']) expect(actionForKey(key)).toBe('right');
+    for (const key of ['s', 'S']) expect(actionForKey(key)).toBe('softDrop');
+  });
+
+  it('maps W to clockwise rotation, in lower and upper case', () => {
+    expect(actionForKey('w')).toBe('rotateCW');
+    expect(actionForKey('W')).toBe('rotateCW');
+  });
+
+  it('maps Q and Y to counter-clockwise rotation, in lower and upper case', () => {
+    for (const key of ['q', 'Q', 'y', 'Y']) expect(actionForKey(key)).toBe('rotateCCW');
+  });
+
+  it('recognises letters by the typed character, so Z is not Y', () => {
+    expect(actionForKey('z')).toBeNull();
+    expect(actionForKey('Z')).toBeNull();
+  });
+});
