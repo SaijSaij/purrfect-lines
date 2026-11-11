@@ -35,8 +35,9 @@ and without cd, pipes or redirects. The one exception is
   With the marker the stop hook still runs typecheck and lint and blocks on
   their errors; only unit tests may fail. Add stubs first: types, constants
   (with their spec values) and function signatures without behaviour. A stub
-  returns a neutral value (e.g. the unchanged state) where that is natural,
-  otherwise it throws. Tests must fail on their assertions, not on missing
+  returns a neutral value (e.g. the unchanged state) where that is natural.
+  It throws only where no neutral value exists; a test that fails on that
+  exception is accepted. Tests must fail on their assertions, not on missing
   names. Delete the marker before implementing. Never implement just to
   silence the hook.
 - Changes to SPEC.md, docs/spec/ and CLAUDE.md that reviewers suggest are my
@@ -50,8 +51,9 @@ and without cd, pipes or redirects. The one exception is
 
 1. Create a branch `m<N>-<short-name>` for the milestone (e.g. `m2-controls`).
 2. Create `.claude/.tests-first`, add the stubs, then write the tests.
-   Typecheck and lint must pass, only the new tests fail. Explain every new
-   test that already passes, one by one. Commit stubs and tests together.
+   Typecheck and lint must pass, only the new tests fail. Explain to me in
+   chat every new test that already passes, one by one. Commit stubs and
+   tests together.
 3. Plan in plan mode.
 4. Delete `.claude/.tests-first`, then implement and commit.
 5. Always run `code-reviewer` with the list of changed files. If documentation
