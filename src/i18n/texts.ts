@@ -17,6 +17,8 @@ const EN = {
   lines: 'Lines',
   level: 'Level',
   next: 'Next',
+  /** Used when the name entry stays empty (A27). */
+  defaultName: 'Kitty',
 };
 
 export type TextKey = keyof typeof EN;

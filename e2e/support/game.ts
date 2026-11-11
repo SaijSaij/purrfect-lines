@@ -49,6 +49,19 @@ export async function startGame(page: Page, url: string): Promise<PurrfectLinesS
   return readState(page);
 }
 
+export async function waitForScreen(page: Page, screen: string): Promise<void> {
+  await expect.poll(() => readState(page).then((s) => s.screen)).toBe(screen);
+}
+
+/** Hard drops until the game ends; with ?seed=1 the stack reaches the top with points (A5). */
+export async function playUntilGameOver(page: Page): Promise<void> {
+  for (let i = 0; i < 60; i++) {
+    if ((await readState(page)).screen === 'gameOver') break;
+    await page.keyboard.press('Space');
+  }
+  await waitForScreen(page, 'gameOver');
+}
+
 export function leftmostColumn(state: PurrfectLinesState): number {
   if (state.active === null) throw new Error('No falling piece');
   return Math.min(...state.active.cells.map((c) => c.x));

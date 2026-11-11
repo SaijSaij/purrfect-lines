@@ -40,3 +40,9 @@ export const LINE_POINTS: readonly number[] = [100, 300, 500, 800];
 
 /** The level rises by one every this many cleared rows (A18). */
 export const LINES_PER_LEVEL = 10;
+
+/** A name in the high score list has at most this many characters (A27). */
+export const NAME_MAX_LENGTH = 12;
+
+/** The high score list holds at most this many entries (A28, A29). */
+export const HIGHSCORE_SIZE = 10;
