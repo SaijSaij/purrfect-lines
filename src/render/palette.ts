@@ -1,7 +1,8 @@
 // All colors in one place (A35): a warm palette of dark browns and cream.
 // The pieces avoid the colors they usually have in the genre; a few muted
 // cool tones (teal, sage, plum) keep the seven pieces apart.
-import type { PieceType } from '../game/pieces';
+// With file extension, because vite.config.ts loads this file for the favicon (A55).
+import type { PieceType } from '../game/pieces.ts';
 
 export const PIECE_COLORS: Readonly<Record<PieceType, string>> = {
   I: '#c4583e', // terracotta

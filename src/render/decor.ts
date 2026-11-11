@@ -1,6 +1,7 @@
 // The cat touches of the look (A35): a paw print on every block and a cat
 // head next to the title. Both are drawn in code, without image files.
-import { PALETTE } from './palette';
+// With file extension, because vite.config.ts loads this file for the favicon (A55).
+import { PALETTE } from './palette.ts';
 
 /**
  * A small paw print in the middle of a square of `size` whose top left corner
@@ -29,56 +30,71 @@ export function drawPaw(ctx: CanvasRenderingContext2D, left: number, top: number
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const CAT = PALETTE.cat;
+const CAT_VIEW_BOX = '0 0 100 90';
 
-function svgShape(tag: string, attributes: Record<string, string | number>): SVGElement {
-  const el = document.createElementNS(SVG_NS, tag);
-  for (const [name, value] of Object.entries(attributes)) el.setAttribute(name, String(value));
-  return el;
-}
+/** One SVG shape: its tag and its attributes. */
+type Shape = readonly [tag: string, attributes: Readonly<Record<string, string | number>>];
 
 /** Ears, face, eyes, nose and mouth in a 100 × 90 box. */
-function catFace(): SVGElement[] {
-  return [
-    svgShape('polygon', { points: '14,44 20,4 46,26', fill: CAT.fur }),
-    svgShape('polygon', { points: '86,44 80,4 54,26', fill: CAT.fur }),
-    svgShape('polygon', { points: '21,34 23,15 37,27', fill: CAT.innerEar }),
-    svgShape('polygon', { points: '79,34 77,15 63,27', fill: CAT.innerEar }),
-    svgShape('ellipse', { cx: 50, cy: 54, rx: 38, ry: 32, fill: CAT.fur }),
-    svgShape('ellipse', { cx: 36, cy: 50, rx: 4.5, ry: 6.5, fill: CAT.eye }),
-    svgShape('ellipse', { cx: 64, cy: 50, rx: 4.5, ry: 6.5, fill: CAT.eye }),
-    svgShape('polygon', { points: '45,62 55,62 50,68', fill: CAT.nose }),
-    svgShape('path', {
+const CAT_FACE: readonly Shape[] = [
+  ['polygon', { points: '14,44 20,4 46,26', fill: CAT.fur }],
+  ['polygon', { points: '86,44 80,4 54,26', fill: CAT.fur }],
+  ['polygon', { points: '21,34 23,15 37,27', fill: CAT.innerEar }],
+  ['polygon', { points: '79,34 77,15 63,27', fill: CAT.innerEar }],
+  ['ellipse', { cx: 50, cy: 54, rx: 38, ry: 32, fill: CAT.fur }],
+  ['ellipse', { cx: 36, cy: 50, rx: 4.5, ry: 6.5, fill: CAT.eye }],
+  ['ellipse', { cx: 64, cy: 50, rx: 4.5, ry: 6.5, fill: CAT.eye }],
+  ['polygon', { points: '45,62 55,62 50,68', fill: CAT.nose }],
+  [
+    'path',
+    {
       d: 'M50 68 Q46 74 41 71 M50 68 Q54 74 59 71',
       fill: 'none',
       stroke: CAT.eye,
       'stroke-width': 2,
       'stroke-linecap': 'round',
-    }),
-  ];
-}
+    },
+  ],
+];
 
 /** Three whiskers on each side, given for the left side and mirrored. */
-function whiskers(): SVGElement[] {
-  const left: [number, number, number, number][] = [
+const WHISKERS: readonly Shape[] = (
+  [
     [30, 62, 4, 56],
     [30, 66, 3, 67],
     [30, 70, 5, 78],
-  ];
-  const both = left.flatMap(([x1, y1, x2, y2]) => [
+  ] as const
+)
+  .flatMap(([x1, y1, x2, y2]) => [
     { x1, y1, x2, y2 },
     { x1: 100 - x1, y1, x2: 100 - x2, y2 },
-  ]);
-  return both.map((line) =>
-    svgShape('line', { ...line, stroke: CAT.whisker, 'stroke-width': 1.5, 'stroke-linecap': 'round' }),
-  );
-}
+  ])
+  .map((line): Shape => ['line', { ...line, stroke: CAT.whisker, 'stroke-width': 1.5, 'stroke-linecap': 'round' }]);
+
+const CAT_HEAD: readonly Shape[] = [...CAT_FACE, ...WHISKERS];
 
 /** A cat head as an SVG element, `heightEm` high so it scales with the screens (A31). */
 export function catHeadSvg(heightEm: number): SVGSVGElement {
   const svg = document.createElementNS(SVG_NS, 'svg');
-  svg.setAttribute('viewBox', '0 0 100 90');
+  svg.setAttribute('viewBox', CAT_VIEW_BOX);
   svg.setAttribute('aria-hidden', 'true');
   Object.assign(svg.style, { height: `${heightEm}em`, width: `${(heightEm * 100) / 90}em`, display: 'block' });
-  svg.append(...catFace(), ...whiskers());
+  for (const [tag, attributes] of CAT_HEAD) {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [name, value] of Object.entries(attributes)) el.setAttribute(name, String(value));
+    svg.append(el);
+  }
   return svg;
+}
+
+/**
+ * The same cat head as SVG text, without the DOM, for the favicon that
+ * vite.config.ts puts into index.html (A55).
+ */
+export function catHeadMarkup(): string {
+  const shapes = CAT_HEAD.map(([tag, attributes]) => {
+    const list = Object.entries(attributes).map(([name, value]) => `${name}="${String(value)}"`);
+    return `<${tag} ${list.join(' ')}/>`;
+  });
+  return `<svg xmlns="${SVG_NS}" viewBox="${CAT_VIEW_BOX}">${shapes.join('')}</svg>`;
 }
