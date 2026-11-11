@@ -70,16 +70,17 @@ pause. When the game window loses focus, all held keys count as released.
 
 A piece that cannot turn in place (for example a vertical bar at the wall) is
 shifted by the first of up to four other positions that makes room, as listed
-in the wall kick tables of A9.
+in the wall kick tables of A9; if none fits, the piece does not turn.
 
 A piece that lands does not lock at once: for half a second you can still
-move or rotate it (A13). Each move restarts that time, but only 15 times per
-piece; the count starts again when the piece reaches a lower row than before.
-After that the piece locks as soon as it rests.
+move or rotate it (A13). Each move or rotation while the piece rests (or that
+lifts it off) restarts that time, but only 15 times per piece; the count
+starts again when the piece reaches a lower row than before. After that the
+piece locks as soon as it rests. Soft drop does not shorten that time; a hard
+drop locks at once.
 
 The timings (repeat delay and interval, lock delay, number of restarts) are in
-[src/game/constants.ts](src/game/constants.ts). The numbered requirements are
-in [docs/spec/anforderungen.md](docs/spec/anforderungen.md).
+[src/game/constants.ts](src/game/constants.ts).
 
 ## Test helpers (development server only)
 
