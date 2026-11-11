@@ -30,9 +30,10 @@ and without cd, pipes or redirects. The one exception is
 
 ## Rules
 
-- Never change or refactor an existing test to make something pass. If a test
-  seems wrong, or the spec changed the behaviour, report it and propose the
-  change. Apply it only after my approval, in its own commit.
+- Never change or refactor a test of an earlier milestone to make something
+  pass. If such a test seems wrong, or the spec changed the behaviour, report
+  it and propose the change. Apply it only after my approval, in its own
+  commit. Tests of the current milestone follow steps 2 and 4 of the workflow.
 - Tests only for behaviour that stays valid in later milestones. Transitional
   behaviour gets no automated test; it goes on the milestone's manual checklist.
 - While writing tests before the implementation, create `.claude/.tests-first`
@@ -57,21 +58,36 @@ and without cd, pipes or redirects. The one exception is
 
 1. Create a branch `m<N>-<short-name>` for the milestone (e.g. `m2-controls`).
 2. Create `.claude/.tests-first`, add the stubs, then write the tests.
-   Typecheck and lint must pass, only the new tests fail. Explain to me in
-   chat every new test that already passes, one by one: why it passes
-   without the implementation and whether it still checks something real.
-   Commit stubs and tests together.
-3. Plan in plan mode.
-4. Delete `.claude/.tests-first`, then implement and commit.
+   Typecheck and lint must pass, only the new tests fail. Commit stubs and
+   tests together without waiting for my approval and go straight to step 3.
+   Until the implementation starts, adjust tests of the current milestone when
+   I point something out. Show me the tests only when I ask for them.
+3. Plan in plan mode. Present together with the plan:
+   - a short mapping table: requirement, number and names of its tests, one
+     row per requirement;
+   - special cases: new tests that already pass (why, and whether they still
+     check something real), needed changes to existing tests with their diff,
+     requirements without a test and why;
+   - assumptions where the spec was ambiguous.
+   Leave out special cases and assumptions when there are none.
+4. Delete `.claude/.tests-first`, then implement and commit. If a test of the
+   current milestone fails during implementation, say whether the test or the
+   code is wrong. Fix a wrong test in its own commit, with a one-sentence
+   reason in the commit message.
 5. Always run `code-reviewer` with the list of changed files. If documentation
    changed (README, docs/, SPEC.md, CLAUDE.md), also run `docs-reviewer` with
    the same list. Present each finding separately and wait for my decision.
-6. Wait for my acceptance; it requires the Definition of Done (SPEC.md,
-   section 10). Only then merge into main with `git merge --ff-only`.
+6. Before asking for my acceptance, show me the start command, the
+   milestone's checklist with action and expected result for each item, and
+   the transitional behaviour. If nothing needs checking by hand, say so.
+   Never tick anything yourself. Wait for my acceptance; it requires the
+   Definition of Done (SPEC.md, section 10). Only then merge into main with
+   `git merge --ff-only`.
 7. After acceptance, on main: set `**Status:** erledigt am <date> (Commit <hash>)`
-   below the milestone heading in docs/spec/meilensteine.md, with the hash of
-   the last implementation commit, tick its checklist and commit this
-   separately.
+   below the milestone heading in docs/spec/meilensteine.md, tick its
+   checklist and commit this separately. The hash is the state of the branch
+   at the merge: what `git rev-parse --short HEAD` prints right before the
+   status commit.
 
 Push only when I ask.
 
