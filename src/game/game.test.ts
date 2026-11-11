@@ -299,3 +299,19 @@ describe('A15 clearing rows during play', () => {
     expect(filledCells(game.state.board)).toEqual([at(1, 20)]);
   });
 });
+
+describe('A11 tapping soft drop', () => {
+  it('does not hold the piece in the air when tapped faster than the soft drop interval', () => {
+    const game = newGame(['T']);
+    const startY = activePiece(game).y;
+    const tapMs = LEVEL_1_GRAVITY_MS / SOFT_DROP_FACTOR / 5;
+    // Short taps of soft drop, each shorter than one soft drop step, for two gravity steps.
+    for (let elapsed = 0; elapsed < 2 * LEVEL_1_GRAVITY_MS; elapsed += 2 * tapMs) {
+      game.press('softDrop');
+      game.update(tapMs);
+      game.release('softDrop');
+      game.update(tapMs);
+    }
+    expect(activePiece(game).y).toBeGreaterThanOrEqual(startY + 2);
+  });
+});
