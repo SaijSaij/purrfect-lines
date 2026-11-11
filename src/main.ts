@@ -205,6 +205,13 @@ function onKeyUp(event: KeyboardEvent): void {
 function onFocusLost(): void {
   releaseAllKeys();
   pause();
+  // A hidden tab gets no animation frames, so stop the music here, not in the next frame (A33).
+  syncMusic();
+}
+
+/** The music runs only while a game is played, at the speed of its level (A33). */
+function syncMusic(): void {
+  audio.setMusic(currentScreen() === 'playing', musicTempo(game.state.level));
 }
 
 function createGameArea(): { container: HTMLElement; canvas: HTMLCanvasElement } {
@@ -242,7 +249,7 @@ function start(): void {
     last = now;
     // Events of key presses and of time are collected here once per frame (A32).
     for (const event of game.takeEvents()) audio.play(event);
-    audio.setMusic(currentScreen() === 'playing', musicTempo(game.state.level));
+    syncMusic();
     drawGame(ctx, game.state, settings);
     screens.show({
       screen: currentScreen(),
