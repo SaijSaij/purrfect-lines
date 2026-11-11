@@ -5,9 +5,24 @@ import { startGame, waitForScreen } from './support/game';
 
 const START_SCREEN = '#start-screen';
 
+/** Waits until the game has set up its test interface, then for the start screen. */
+async function waitForStartScreen(page: Page): Promise<void> {
+  await expect
+    .poll(() => page.evaluate(() => '__purrfectLines' in window), {
+      message: 'window.__purrfectLines should exist',
+    })
+    .toBe(true);
+  await waitForScreen(page, 'start');
+}
+
 async function openStartScreen(page: Page): Promise<void> {
   await page.goto('/');
-  await waitForScreen(page, 'start');
+  await waitForStartScreen(page);
+}
+
+/** The visible text of the start screen; hidden parts are left out. */
+function startScreenText(page: Page): Promise<string> {
+  return page.locator(START_SCREEN).innerText();
 }
 
 /** The language of the page, as set on the <html> element. */
@@ -45,21 +60,21 @@ test.describe('A38 switching the language', () => {
 
   test('L switches the language on the start screen, and it stays after a reload', async ({ page }) => {
     await openStartScreen(page);
-    const english = await page.locator(START_SCREEN).innerText();
+    const english = await startScreenText(page);
 
     await page.keyboard.press('l');
     await expectLanguage(page, 'de');
-    await expect(page.locator(START_SCREEN)).not.toHaveText(english);
-    const german = await page.locator(START_SCREEN).innerText();
+    await expect.poll(() => startScreenText(page)).not.toBe(english);
+    const german = await startScreenText(page);
 
     await page.reload();
-    await waitForScreen(page, 'start');
+    await waitForStartScreen(page);
     await expectLanguage(page, 'de');
-    await expect(page.locator(START_SCREEN)).toHaveText(german);
+    await expect.poll(() => startScreenText(page)).toBe(german);
 
     await page.keyboard.press('L');
     await expectLanguage(page, 'en');
-    await expect(page.locator(START_SCREEN)).toHaveText(english);
+    await expect.poll(() => startScreenText(page)).toBe(english);
   });
 
   test('L does not switch the language during a game or in the pause', async ({ page }) => {
