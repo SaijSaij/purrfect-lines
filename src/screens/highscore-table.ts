@@ -1,10 +1,8 @@
 // The high score list as an HTML table (A28). Names are set as text, never as HTML.
 import type { HighscoreEntry } from '../highscores/highscores';
-import { text, type TextKey } from '../i18n/texts';
+import { formatDate } from '../i18n/format';
+import { currentLanguage, text, type TextKey } from '../i18n/texts';
 import { PALETTE } from '../render/palette';
-
-/** The language for dates; English only until the language switch arrives (A38). */
-const DATE_LOCALE = 'en';
 
 const COLUMNS: readonly TextKey[] = ['rank', 'name', 'score', 'lines', 'level', 'date'];
 
@@ -19,10 +17,6 @@ function cell(tag: 'th' | 'td', content: string, alignLeft: boolean): HTMLElemen
   return el;
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(DATE_LOCALE);
-}
-
 function row(entry: HighscoreEntry, rank: number, highlighted: boolean): HTMLElement {
   const tr = document.createElement('tr');
   const values = [
@@ -31,7 +25,7 @@ function row(entry: HighscoreEntry, rank: number, highlighted: boolean): HTMLEle
     String(entry.score),
     String(entry.lines),
     String(entry.level),
-    formatDate(entry.date),
+    formatDate(entry.date, currentLanguage()),
   ];
   values.forEach((value, i) => tr.append(cell('td', value, i === 1)));
   if (highlighted) {

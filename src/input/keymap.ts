@@ -56,6 +56,5 @@ export function soundToggleForKey(key: string): SoundToggle | null {
 
 /** L switches the language on the start screen (A38), matched like actionForKey. */
 export function isLanguageKey(key: string): boolean {
-  void key;
-  return false;
+  return key.toLowerCase() === 'l';
 }

@@ -95,7 +95,8 @@ e.g. http://localhost:5173/?seed=1&level=10&debug.
 The high score list and the settings are in the browser's localStorage under
 `purrfect-lines.highscores` and `purrfect-lines.settings`, as JSON. The
 settings hold `lastName` (the name entered last, text), `music` and `sounds`
-(true or false). Every origin has its own storage, so the
+(true or false), and `language` (`"en"` or `"de"`) once a language was chosen
+with L; without it the game follows the browser language. Every origin has its own storage, so the
 development server (port 5173) and `npm run preview` (port 4173) keep separate
 lists. To start over, delete both keys in the browser's developer tools
 (Application → Local storage) or run `localStorage.clear()` in the console of
@@ -143,7 +144,12 @@ pieces share a color, if a piece's hue is within 40° of its usual hue in the
 genre (the table `GENRE_HUES` in the test), or if a source file refers to an
 image file. The paw print and the cat head are drawn in
 [src/render/decor.ts](../src/render/decor.ts). All visible texts are in
-[src/i18n/texts.ts](../src/i18n/texts.ts). The volumes of the mix (master,
+[src/i18n/texts.ts](../src/i18n/texts.ts), one table per language with the
+same keys; a unit test fails if a key is missing or empty in a language.
+`text(key)` returns the text in the current language. The canvas reads it
+anew every frame, the HTML screens are rebuilt when L switches the language.
+The date format per language is in
+[src/i18n/format.ts](../src/i18n/format.ts). The volumes of the mix (master,
 music, sounds) and of each kind of sound are at the top of
 [src/audio/audio.ts](../src/audio/audio.ts); melody and bass volume, the
 tempo (`BPM`) and the notes of the music are at the top of
@@ -155,7 +161,7 @@ tempo (`BPM`) and the notes of the music are at the top of
 |---|---|
 | `src/game/` | Game rules without browser APIs, unit-tested; `testing.ts` holds helpers for the unit tests only |
 | `src/input/` | Key → action mapping, held keys |
-| `src/i18n/` | All in-game texts |
+| `src/i18n/` | All in-game texts in English and German, choosing the start language, date format |
 | `src/render/` | Drawing on the canvas, scaling to the window, color palette; `decor.ts` holds the paw print (canvas) and the cat head (SVG element for the start screen) |
 | `src/highscores/` | High score list rules (who enters, order, names), unit-tested |
 | `src/storage/` | Saving the list and the settings in localStorage, unit-tested with a fake storage |

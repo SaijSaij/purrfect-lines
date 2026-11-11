@@ -5,9 +5,10 @@ import { createAudio } from './audio/audio';
 import { musicTempo, toggleSound } from './audio/sound-rules';
 import { createGame, type Action, type Game } from './game/game';
 import { addEntry, normalizeName, qualifies, type HighscoreEntry } from './highscores/highscores';
-import { text } from './i18n/texts';
+import { nextLanguage, startLanguage } from './i18n/language';
+import { currentLanguage, setLanguage, text, type Language } from './i18n/texts';
 import { HeldKeys } from './input/held-keys';
-import { actionForKey, menuActionForKey, soundToggleForKey } from './input/keymap';
+import { actionForKey, isLanguageKey, menuActionForKey, soundToggleForKey } from './input/keymap';
 import { fitToWindow } from './render/fit';
 import { PALETTE } from './render/palette';
 import { drawGame } from './render/renderer';
@@ -41,6 +42,13 @@ const persistence = createPersistence(browserStore());
 let highscores: readonly HighscoreEntry[] = persistence.loadHighscores();
 /** Kept in memory like the list; changes are saved at once (A27, A34). */
 let settings = persistence.loadSettings();
+/** Sets the language of all texts and of the page (A38). */
+function applyLanguage(language: Language): void {
+  setLanguage(language);
+  document.documentElement.lang = language;
+}
+
+applyLanguage(startLanguage(settings.language, navigator.language));
 const audio = createAudio();
 audio.setEnabled(settings.music, settings.sounds);
 /** Position of the entry saved last, highlighted on the high score screen (A27). */
@@ -164,6 +172,22 @@ function onSoundKey(event: KeyboardEvent): boolean {
 }
 
 /**
+ * L on the start screen switches the language, saves the choice and shows
+ * the screens in the new language (A38). Returns whether the key was L.
+ */
+function onLanguageKey(event: KeyboardEvent): boolean {
+  if (!isLanguageKey(event.key)) return false;
+  event.preventDefault();
+  if (event.repeat) return true;
+  const language = nextLanguage(currentLanguage());
+  applyLanguage(language);
+  settings = { ...settings, language };
+  persistence.saveSettings({ language });
+  screens.relabel();
+  return true;
+}
+
+/**
  * In the name field only Enter (save) and Esc (skip, nothing is saved) do
  * something; every other key, also Space or Q, is text (A27).
  */
@@ -183,6 +207,7 @@ function onKeyDown(event: KeyboardEvent): void {
     return;
   }
   if (onSoundKey(event)) return;
+  if (screen === 'start' && onLanguageKey(event)) return;
   const action = actionForKey(event.key);
   if (action === null) return;
   event.preventDefault(); // e.g. the space bar must not scroll the page (A21)

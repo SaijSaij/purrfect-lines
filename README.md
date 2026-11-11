@@ -4,7 +4,7 @@ A cosy falling-block puzzle for the browser, with a cat's touch.
 
 ![Pieces fall, slide into place and complete the bottom row, which lights up and disappears](docs/images/gameplay.apng.png)
 
-[Play](#play) · [High scores](#high-scores) · [Sound](#sound) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
+[Play](#play) · [High scores](#high-scores) · [Sound](#sound) · [Language](#language) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
 
 ## What it is
 
@@ -17,8 +17,8 @@ terracotta, raspberry, mustard, teal, olive, plum and light sage, a small paw
 print on every block and a cat head next to the title. Everything is drawn by
 the game itself; there are no image files.
 
-This is an early version (milestone 7 of 8). It has start, pause and game over
-screens, a high score list, sounds and music, but no German texts yet.
+All eight milestones are done: the game has start, pause and game over
+screens, a high score list, sounds and music, and speaks English and German.
 
 | Start | Pause | Game over |
 |---|---|---|
@@ -65,13 +65,15 @@ ahead.
   entry highlighted, and Enter again leads to the start screen. Esc skips the
   entry, saves nothing and leads to the start screen. Spaces at the start and
   end are removed (spaces at the start count towards the 12 characters), and
-  an empty name is saved as "Kitty". Next time the field
+  an empty name is saved as "Kitty" (in German: "Katze"); entries saved
+  earlier keep their name when you switch the language. Next time the field
   holds what you typed last (empty if you left it empty).
-- **Saving:** the list, your last name and the sound settings are stored in
+- **Saving:** the list, your last name, the sound settings and the language
+  you chose with L are stored in
   the browser (localStorage) for http://localhost:5173 and survive a reload. The release
   version on port 4173 keeps its own list. If the browser does not allow
   saving (for example when site data is blocked), the game still runs, the
-  list and the sound settings last only until the page is reloaded, and the
+  list and the settings last only until the page is reloaded, and the
   start screen says so.
   Invalid stored entries are dropped; if nothing can be read, the list starts
   empty.
@@ -110,6 +112,19 @@ the game runs; there are no audio files.
   muted. If the browser cannot play sound at all, the game stays silent and
   runs as usual.
 
+## Language
+
+The game speaks English and German. On the first start it uses German if
+your browser's language is German (any language code starting with `de`,
+e.g. `de-DE` or `de-AT`), otherwise English.
+
+- **L** on the start screen switches between English and German; the line
+  "L: Deutsch" or "L: English" there names the other language. The choice is
+  saved like the high score list and wins over the browser language from then
+  on. Until you press L, the game follows the browser language.
+- Dates in the high score list follow the language: German as DD.MM.YYYY
+  (e.g. 11.11.2026), English in the browser's short form (e.g. 11/11/2026).
+
 ## Controls
 
 | Key | Action |
@@ -124,6 +139,7 @@ the game runs; there are no audio files.
 | Enter | Start screen: start a game. Pause menu: confirm. Game over: on to the name entry or the start screen. Name entry: save. High score list: back to the start screen |
 | Esc | Name entry: skip without saving |
 | M / N | Music / sounds on and off (not in the name entry) |
+| L | Start screen: switch between English and German |
 
 Letters work in upper and lower case and are recognised by the character they
 type, so Y is the key labelled Y on any Latin keyboard layout (on a German

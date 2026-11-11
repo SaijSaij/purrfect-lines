@@ -2,7 +2,7 @@
 // localStorage is passed in as a KeyValueStore, so tests can use a fake one.
 import { HIGHSCORE_SIZE, NAME_MAX_LENGTH } from '../game/constants';
 import type { HighscoreEntry } from '../highscores/highscores';
-import type { Language } from '../i18n/texts';
+import { LANGUAGES, type Language } from '../i18n/texts';
 
 /** The part of the Storage interface (localStorage) the game uses. Both methods may throw. */
 export interface KeyValueStore {
@@ -76,10 +76,14 @@ function toHighscores(data: unknown): HighscoreEntry[] {
   return entries.sort((a, b) => b.score - a.score).slice(0, HIGHSCORE_SIZE);
 }
 
-/** Keeps every valid setting; a missing or invalid one gets its default. */
+function isLanguage(value: unknown): value is Language {
+  return LANGUAGES.some((language) => language === value);
+}
+
+/** Keeps every valid setting; a missing or invalid one gets its default, an invalid language is left out. */
 function toSettings(data: unknown): Settings {
   if (typeof data !== 'object' || data === null) return DEFAULT_SETTINGS;
-  const { lastName, music, sounds } = data as Record<string, unknown>;
+  const { lastName, music, sounds, language } = data as Record<string, unknown>;
   return {
     lastName:
       typeof lastName === 'string' && lastName.length <= NAME_MAX_LENGTH
@@ -87,6 +91,7 @@ function toSettings(data: unknown): Settings {
         : DEFAULT_SETTINGS.lastName,
     music: typeof music === 'boolean' ? music : DEFAULT_SETTINGS.music,
     sounds: typeof sounds === 'boolean' ? sounds : DEFAULT_SETTINGS.sounds,
+    ...(isLanguage(language) ? { language } : {}),
   };
 }
 

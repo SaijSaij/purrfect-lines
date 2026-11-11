@@ -31,6 +31,8 @@ export interface Screens {
   openNameEntry(name: string): void;
   /** The text in the name field. */
   enteredName(): string;
+  /** Builds all screens again in the current language (A38); the name field is emptied. */
+  relabel(): void;
 }
 
 function element(tag: string, key?: TextKey, id?: string): HTMLElement {
@@ -92,6 +94,7 @@ function startScreen(): { el: HTMLElement; table: HTMLElement; storageHint: HTML
     'keysHardDrop',
     'keysPause',
     'keysSound',
+    'keysLanguage',
   ];
   for (const key of keys) el.append(hint(key));
   const table = tableSlot();
@@ -156,16 +159,31 @@ function highscoreScreen(): { el: HTMLElement; table: HTMLElement } {
   return { el, table };
 }
 
-export function createScreens(container: HTMLElement): Screens {
-  const start = startScreen();
-  const pause = pauseScreen();
-  const gameOver = gameOverScreen();
-  const nameEntry = nameEntryScreen();
-  const highscores = highscoreScreen();
-  container.append(start.el, pause.el, gameOver.el, nameEntry.el, highscores.el);
-  const toggle = (el: HTMLElement, visible: boolean, display = 'flex'): void => {
-    el.style.display = visible ? display : 'none';
+/** All screens; their texts are set when they are built. */
+function buildScreens(): {
+  start: ReturnType<typeof startScreen>;
+  pause: ReturnType<typeof pauseScreen>;
+  gameOver: ReturnType<typeof gameOverScreen>;
+  nameEntry: ReturnType<typeof nameEntryScreen>;
+  highscores: ReturnType<typeof highscoreScreen>;
+} {
+  return {
+    start: startScreen(),
+    pause: pauseScreen(),
+    gameOver: gameOverScreen(),
+    nameEntry: nameEntryScreen(),
+    highscores: highscoreScreen(),
   };
+}
+
+function toggle(el: HTMLElement, visible: boolean, display = 'flex'): void {
+  el.style.display = visible ? display : 'none';
+}
+
+export function createScreens(container: HTMLElement): Screens {
+  let built = buildScreens();
+  const elements = (): HTMLElement[] => Object.values(built).map((part) => part.el);
+  container.append(...elements());
   let shownList: readonly HighscoreEntry[] | null = null;
   let shownHighlight: number | null = null;
 
@@ -173,12 +191,13 @@ export function createScreens(container: HTMLElement): Screens {
     if (list === shownList && highlight === shownHighlight) return;
     shownList = list;
     shownHighlight = highlight;
-    start.table.replaceChildren(highscoreTable(list, null));
-    highscores.table.replaceChildren(highscoreTable(list, highlight));
+    built.start.table.replaceChildren(highscoreTable(list, null));
+    built.highscores.table.replaceChildren(highscoreTable(list, highlight));
   };
 
   return {
     show(view) {
+      const { start, pause, gameOver, nameEntry, highscores } = built;
       const { screen, state } = view;
       toggle(start.el, screen === 'start');
       toggle(pause.el, screen === 'paused');
@@ -199,10 +218,17 @@ export function createScreens(container: HTMLElement): Screens {
       if (screen !== 'nameEntry' && focused) nameEntry.input.blur();
     },
     openNameEntry(name) {
-      nameEntry.input.value = name;
-      toggle(nameEntry.el, true);
-      nameEntry.input.focus();
+      const { input, el } = built.nameEntry;
+      input.value = name;
+      toggle(el, true);
+      input.focus();
     },
-    enteredName: () => nameEntry.input.value,
+    enteredName: () => built.nameEntry.input.value,
+    relabel() {
+      for (const el of elements()) el.remove();
+      built = buildScreens();
+      container.append(...elements());
+      shownList = null; // the tables are built again in the next show()
+    },
   };
 }

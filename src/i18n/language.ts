@@ -6,12 +6,11 @@ import type { Language } from './texts';
  * German if the browser language starts with "de", else English.
  */
 export function startLanguage(saved: Language | undefined, browserLanguage: string): Language {
-  void saved;
-  void browserLanguage;
-  return 'en';
+  if (saved !== undefined) return saved;
+  return browserLanguage.toLowerCase().startsWith('de') ? 'de' : 'en';
 }
 
 /** The language L switches to on the start screen. */
 export function nextLanguage(language: Language): Language {
-  return language;
+  return language === 'en' ? 'de' : 'en';
 }
