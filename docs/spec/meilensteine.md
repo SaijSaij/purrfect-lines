@@ -182,7 +182,7 @@ grün. E2E-Test 7 grün.
 
 ## M7 – Gestaltung
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit aac6118)
 
 **Ziel:** Das Spiel sieht nach Purrfect Lines aus: warm, eigen, mit dezentem
 Katzenbezug.
@@ -193,13 +193,13 @@ Katzenbezug.
 Repo findet keinen fremden Markennamen.
 
 **Abnahme-Checkliste:**
-- [ ] Die sieben Formen sind auf einen Blick unterscheidbar.
-- [ ] Die Farben wirken warm und stimmig. Der Stab ist nicht hellblau, und
+- [x] Die sieben Formen sind auf einen Blick unterscheidbar.
+- [x] Die Farben wirken warm und stimmig. Der Stab ist nicht hellblau, und
       keine Form hat die im Genre übliche Farbe.
-- [ ] Pfotenabdrücke sind erkennbar, aber nicht unruhig.
-- [ ] Der Katzenkopf im Titel gefällt mir.
-- [ ] Geisterstein ist klar von echten Blöcken zu unterscheiden.
-- [ ] Texte sind auf allen Bildschirmen gut lesbar. Geprüft in einem kleinen
+- [x] Pfotenabdrücke sind erkennbar, aber nicht unruhig.
+- [x] Der Katzenkopf im Titel gefällt mir.
+- [x] Geisterstein ist klar von echten Blöcken zu unterscheiden.
+- [x] Texte sind auf allen Bildschirmen gut lesbar. Geprüft in einem kleinen
       Fenster (etwa halbe Bildschirmhöhe): Startbildschirm mit voller Liste
       (10 Einträge), Startbildschirm mit Speicherhinweis (Website-Daten
       gesperrt), Spielfeld mit Seitenleiste, Pause, Spielende, Namenseingabe,
