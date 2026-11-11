@@ -55,7 +55,7 @@ existiert und ist grün.
 
 ## M2 – Steuerung mit gutem Gefühl
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit b1ed5f2)
 
 **Ziel:** Die Steuerung fühlt sich flüssig und fair an.
 
@@ -66,14 +66,14 @@ A21 (alle Spieltasten inklusive WASD, Q, Y).
 gesteuerter Zeit.
 
 **Abnahme-Checkliste:**
-- [ ] ← gedrückt halten: kurze Pause, dann gleichmäßig schnelles Gleiten bis
+- [x] ← gedrückt halten: kurze Pause, dann gleichmäßig schnelles Gleiten bis
       zur Wand.
-- [ ] Beide Richtungen gleichzeitig: Die zuletzt gedrückte gewinnt.
-- [ ] Senkrechter Stab direkt an der Wand lässt sich drehen.
-- [ ] Q und Y drehen gegen den Uhrzeigersinn, W und X im Uhrzeigersinn.
-- [ ] Aufliegende Form lässt sich noch kurz schieben, rastet aber nicht
+- [x] Beide Richtungen gleichzeitig: Die zuletzt gedrückte gewinnt.
+- [x] Senkrechter Stab direkt an der Wand lässt sich drehen.
+- [x] Q und Y drehen gegen den Uhrzeigersinn, W und X im Uhrzeigersinn.
+- [x] Aufliegende Form lässt sich noch kurz schieben, rastet aber nicht
       endlos spät ein.
-- [ ] WASD funktioniert genauso wie die Pfeile.
+- [x] WASD funktioniert genauso wie die Pfeile.
 
 ## M3 – Punkte, Level, Tempo, Hilfen
 
