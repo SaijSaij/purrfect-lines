@@ -225,9 +225,10 @@ class GameSession implements Game {
         this.hardDrop();
         break;
       case 'softDrop':
-        // The shorter interval applies while held (A11). Restart the timer so
-        // time collected at normal speed does not turn into several steps.
-        this.fallTimerMs = 0;
+        // The shorter interval applies while held (A11). Cap the timer so time
+        // collected at normal speed gives at most one step, but keep it, so
+        // quick taps cannot hold the piece in the air.
+        this.fallTimerMs = Math.min(this.fallTimerMs, this.fallInterval() - 1);
         break;
     }
   }
