@@ -1,59 +1,60 @@
 # Purrfect Lines
 
-A falling-block puzzle game for the browser. Pieces made of four blocks fall
-into a 10 × 20 field; move and rotate them so they complete rows. Full rows
-disappear. The game ends when the stack reaches the top.
+A cosy falling-block puzzle for the browser, with a cat's touch.
 
-This is an early version (milestone 4 of 8): it has start, pause and game
-over screens, but no high scores, sound or German texts yet. The plan is in
-[SPEC.md](SPEC.md), the numbered requirements (A1, A2, …) that code comments
-refer to are in [docs/spec/anforderungen.md](docs/spec/anforderungen.md). Both
-are in German.
+![Pieces fall, slide into place and complete the bottom row, which lights up and disappears](docs/images/gameplay.apng.png)
 
-## Requirements
+[Play](#play) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
 
-- Windows (the setup is only tested there) and Node.js 26 LTS
-  (`winget install OpenJS.NodeJS.LTS`)
-- Free ports 5173 (dev server, also used by `npm run e2e`) and 4173 (`npm run preview`)
-- For browser tests: Playwright's Chromium, installed once (and again after
-  upgrading `@playwright/test`) with `npx playwright install chromium`
+## What it is
 
-## Start
+Pieces made of four blocks fall into a field of 10 × 20 cells. Move and rotate
+them so they complete rows: full rows light up and disappear. The game gets
+faster as you clear rows, and it ends when the stack reaches the top.
+
+This is an early version (milestone 4 of 8). It has start, pause and game over
+screens, but no high scores, sound or German texts yet.
+
+| Start | Pause | Game over |
+|---|---|---|
+| ![Start screen with title and keys](docs/images/start-screen.png) | ![Pause menu with Resume and Give up](docs/images/pause.png) | ![Game over screen with score, lines and level](docs/images/game-over.png) |
+
+## Play
+
+You need Windows (the setup is only tested there) and Node.js 26 LTS
+(`winget install OpenJS.NodeJS.LTS`). In the project folder, install once:
 
 ```bash
 npm ci
 ```
 
+Then start the game:
+
 ```bash
 npm run serve
 ```
 
-Then open http://localhost:5173. The start screen shows the title and the
-keys; press Enter to start. A framed field appears, and a piece falls from
-the top centre by about one row per second. A pale outline (the ghost piece)
-shows where the piece will land. The sidebar on the right shows the next
-piece, the score, the cleared rows (lines) and the level. Full rows light up
-briefly before they disappear. When the stack reaches the top, the game over
-screen shows score, lines and level; Enter leads back to the start screen.
+Open http://localhost:5173. The start screen shows the title and the keys;
+press Enter to start. A piece falls from the top centre by about one row per
+second, and a pale outline (the ghost piece) shows where it will land. The
+sidebar shows the next piece, the score, the cleared rows (lines) and the
+level. When the stack reaches the top, the game over screen shows your score,
+lines and level; Enter leads back to the start screen.
 
-The game area is centred and scaled to fill the browser window as far as its
-fixed aspect ratio allows. It adapts at once when the window size changes and
-stays sharp on scaled displays (e.g. 125 % or 150 %).
+The game area fills the browser window as far as its fixed shape allows. It
+adapts at once when you resize the window and stays sharp on scaled displays
+(e.g. 125 % or 150 %).
 
-To build the release version into `dist/`:
+To play the release version instead, build it and serve it, then open
+http://localhost:4173:
 
 ```bash
 npm run build
 ```
 
-To play the built version, serve `dist/` and open http://localhost:4173:
-
 ```bash
 npm run preview
 ```
-
-Opening `dist/index.html` directly as a file does not work, because browsers do
-not load JavaScript modules from `file://`.
 
 ## Controls
 
@@ -68,34 +69,28 @@ not load JavaScript modules from `file://`.
 | ↑ / ↓ or W / S | Choose in the pause menu |
 | Enter | Start screen: start a game. Pause menu: confirm. Game over: back to the start screen |
 
-During a pause the field is hidden and time stands still. The pause menu
-offers "Resume" and "Give up"; giving up ends the game like a regular game
-over. Continuing picks up exactly where the game stopped. While full rows
-light up, only pausing works; other game keys are ignored.
-
 Letters work in upper and lower case and are recognised by the character they
 type, so Y is the key labelled Y on any Latin keyboard layout (on a German
 keyboard it sits where Z is on an English one).
 
-Holding a move key moves the piece once, then after a short pause it keeps
-sliding until you let go (A7). If both directions are held, the one pressed
-last wins; letting it go hands over to the other one after the same short
-pause. When the game window loses focus or the tab is hidden, all held keys
-count as released and a running game pauses; it stays paused when you come
-back.
+- **Pause:** the field is hidden and time stands still. The menu offers
+  "Resume" and "Give up"; giving up ends the game like a regular game over.
+  Continuing picks up exactly where the game stopped. When the window loses
+  focus or the tab is hidden, a running game pauses by itself and stays
+  paused when you come back.
+- **Holding a move key** moves the piece once, then after a short pause it
+  keeps sliding until you let go. If both directions are held, the one pressed
+  last wins.
+- **Turning at a wall:** a piece that cannot turn in place (for example a
+  vertical bar at the wall) is shifted to the nearest position that makes
+  room; if none fits, it does not turn.
+- **Landing:** a piece that lands does not lock at once. For half a second you
+  can still move or rotate it, and each move restarts that time, up to 15
+  times per piece. A hard drop locks at once.
+- **Clearing rows:** full rows light up briefly before they disappear. During
+  that time only pausing works.
 
-A piece that cannot turn in place (for example a vertical bar at the wall) is
-shifted by the first of up to four other positions that makes room, as listed
-in the wall kick tables of A9; if none fits, the piece does not turn.
-
-A piece that lands does not lock at once: for half a second you can still
-move or rotate it (A13). Each move or rotation while the piece rests (or that
-lifts it off) restarts that time, but only 15 times per piece; the count
-starts again when the piece reaches a lower row than before. After that the
-piece locks as soon as it rests. Soft drop does not shorten that time; a hard
-drop locks at once.
-
-## Points and levels
+## Scoring and levels
 
 | Event | Points |
 |---|---|
@@ -111,46 +106,13 @@ The game starts on level 1. Every 10 cleared rows the level rises by one, and
 pieces fall faster: from one row per second on level 1 down to one row every
 50 ms from level 15 on. The level keeps rising after that, the speed does not.
 
-The timings (fall intervals per level, repeat delay and interval, lock delay,
-number of restarts) and the points are in
-[src/game/constants.ts](src/game/constants.ts).
+## License
 
-## Test helpers (development server only)
+No license yet: all rights reserved.
 
-These only work with `npm run serve`. The release build does not contain them.
-Helpers can be combined with `&`, e.g. http://localhost:5173/?seed=1&level=10&debug.
+## Development
 
-| Helper | Effect |
-|---|---|
-| `?seed=<integer>`, e.g. http://localhost:5173/?seed=1 | Fixed piece sequence: the same seed always gives the same pieces, also for new games started with Enter. Invalid values are ignored and reported in the browser console. |
-| `?level=<1–99>`, e.g. http://localhost:5173/?level=15 | Every game starts on this level; the level still rises every 10 rows from there. Only whole numbers from 1 to 99; anything else is ignored and reported in the console. |
-| `?slow=<1–10>`, e.g. http://localhost:5173/?slow=4 | The whole game runs this many times slower: falling, lock delay, key repeat and the line clear animation. Only whole numbers from 1 to 10; anything else is ignored and reported in the console. |
-| `?debug` | Shows internal values as text at the top left: level, fall interval, time left until the resting piece locks and restarts used, the pieces left in the current bag, the seed, the slow motion factor and frames per second. Times are game time, so with `?slow` they stay the same while the game runs slower. |
-| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. While full rows light up (300 ms), they are still in `board`, `active` is `null`, and `score` and `lines` already count them. On the start screen, `board` and `active` belong to a throwaway game that Enter replaces. Try `window.__purrfectLines.screen` in the browser console. |
-
-## Checks
-
-| Command | What it does |
-|---|---|
-| `npm test` | Unit tests of the game logic (Vitest) |
-| `npm run e2e` | Browser tests (Playwright, Chromium; needs Chromium, see Requirements); starts the dev server itself, or reuses one already running on port 5173 |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript type check |
-| `npm run check` | Type check, lint and unit tests together |
-| `npm run check:release` | Builds the game (overwrites `dist/`) and verifies that no test helper code is in it |
-
-## Project layout
-
-| Folder | Content |
-|---|---|
-| `src/game/` | Game rules without browser APIs, fully unit-tested |
-| `src/input/` | Key → action mapping |
-| `src/i18n/` | All in-game texts |
-| `src/render/` | Drawing on the canvas, scaling to the window, color palette |
-| `src/screens/` | Start, pause and game over screens (HTML over the canvas) and the pause menu |
-| `src/main.ts` | Entry point: keyboard, screens, game loop and drawing; loads `src/debug/` only on the development server |
-| `src/debug/` | Test helpers, development server only |
-| `e2e/` | Browser tests |
-| `scripts/` | Release check |
-| `docs/spec/` | Requirements, milestones and test strategy (German), part of [SPEC.md](SPEC.md) |
-| `index.html` | The page that loads the game |
+How to run the tests, use the test helpers and find your way around the code
+is in [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). The plan and the numbered
+requirements (A1, A2, …) are in [SPEC.md](SPEC.md) and
+[docs/spec/](docs/spec/) (in German).
