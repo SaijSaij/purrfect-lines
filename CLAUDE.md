@@ -33,7 +33,9 @@ Run project commands via the npm scripts from the project root, never via npx,
 and without cd, pipes or redirects. The one exception is
 `npx playwright install chromium` (see Pitfalls): the user runs it, not Claude.
 Run each command as its own tool call. Write commit messages with several `-m`
-flags, never with a heredoc.
+flags, never with a heredoc. Write pull request descriptions to a file in the
+scratchpad and pass it with `gh pr create --body-file`; never use `--body`
+with quoted text, because PowerShell fails on quotes and backticks.
 
 ## Rules
 
