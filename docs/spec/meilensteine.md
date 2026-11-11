@@ -263,7 +263,7 @@ Requests.
 
 ## M10 – Lizenz, Quellcode-Link, Tastatur-Hinweis
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit 69fdd04)
 
 **Ziel:** Das Projekt ist bereit, öffentlich zu werden.
 
@@ -278,26 +278,26 @@ Schlüsseln grün. E2E-Tests für A46 und A47 grün. Die CI im Pull Request ist
 grün.
 
 **Abnahme-Checkliste** (Start: `npm run serve`, http://localhost:5173):
-- [ ] Fenster groß und klein ziehen: Unter dem Spiel steht dezent
+- [x] Fenster groß und klein ziehen: Unter dem Spiel steht dezent
       „Purrfect Lines · Source code · GPL-3.0“, das Spiel bleibt ganz sichtbar,
       es gibt keine Bildlaufleisten.
-- [ ] L auf dem Startbildschirm: Die Zeile zeigt „Quellcode“.
-- [ ] Im Spiel „Source code“ anklicken: Ein neuer Tab zeigt das Repo, das
+- [x] L auf dem Startbildschirm: Die Zeile zeigt „Quellcode“.
+- [x] Im Spiel „Source code“ anklicken: Ein neuer Tab zeigt das Repo, das
       Spiel ist pausiert.
-- [ ] Zum Spiel-Tab zurückkehren und Enter drücken: Das Spiel läuft weiter, es
+- [x] Zum Spiel-Tab zurückkehren und Enter drücken: Das Spiel läuft weiter, es
       öffnet sich kein weiterer Tab.
-- [ ] In der Namenseingabe den Link anklicken, zurückkehren und tippen: Die
+- [x] In der Namenseingabe den Link anklicken, zurückkehren und tippen: Die
       Zeichen erscheinen im Namensfeld.
-- [ ] Auf dem Startbildschirm Tab, dann Enter drücken: Das Spiel startet, der
+- [x] Auf dem Startbildschirm Tab, dann Enter drücken: Das Spiel startet, der
       Link wird nicht geöffnet.
-- [ ] DevTools-Gerätemodus (ein Handy wählen, Hochformat) und neu laden:
+- [x] DevTools-Gerätemodus (ein Handy wählen, Hochformat) und neu laden:
       Anstelle von „Enter startet“ steht „This game is played with a physical
       keyboard – best opened on a computer.“ Gerätemodus aus und neu laden:
       Wieder „Enter startet“.
-- [ ] Gerätemodus Hochformat, volle Bestenliste (10 Einträge), Website-Daten
+- [x] Gerätemodus Hochformat, volle Bestenliste (10 Einträge), Website-Daten
       gesperrt, auf Englisch und auf Deutsch: Der Hinweis ist vollständig
       lesbar, nichts ist abgeschnitten oder überlagert.
-- [ ] Browser-Tab: zeigt den Katzenkopf als Symbol.
+- [x] Browser-Tab: zeigt den Katzenkopf als Symbol.
 
 Die Lizenz-Anzeige bei GitHub („GPL-3.0“ rechts auf der Repo-Seite) prüft M11
 in Stufe 1. GitHub erkennt die Lizenz nur auf dem Standard-Branch, vor dem
