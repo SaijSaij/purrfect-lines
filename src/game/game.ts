@@ -1,7 +1,13 @@
 // Game rules without DOM, canvas, audio or clock. Input arrives as actions,
 // time as elapsed milliseconds (update), so tests can control both.
 import { clearFullRows, createBoard, isOccupied, placeCells, type Board } from './board';
-import { BOARD_WIDTH, GRAVITY_MS, SOFT_DROP_FACTOR } from './constants';
+import {
+  BOARD_WIDTH,
+  GRAVITY_MS,
+  LOCK_DELAY_MS,
+  LOCK_RESETS_MAX,
+  SOFT_DROP_FACTOR,
+} from './constants';
 import { KeyRepeat } from './key-repeat';
 import { kickOffsets } from './kicks';
 import { boxSize, pieceCells, type CellOffset, type PieceType, type Rotation } from './pieces';
@@ -56,6 +62,11 @@ export function absoluteCells(piece: ActivePiece): CellOffset[] {
   }));
 }
 
+/** Lowest board row a block of the piece is in. */
+function bottomRow(piece: ActivePiece): number {
+  return Math.max(...absoluteCells(piece).map((cell) => cell.y));
+}
+
 function fits(board: Board, piece: ActivePiece): boolean {
   return absoluteCells(piece).every(({ x, y }) => !isOccupied(board, x, y));
 }
@@ -78,6 +89,11 @@ class GameSession implements Game {
   private readonly level = 1;
   private lines = 0;
   private fallTimerMs = 0;
+  /** Time the piece has rested since the last restart of the lock delay (A13). */
+  private lockTimerMs = 0;
+  private lockResets = 0;
+  /** Lowest block row the current piece has reached so far. */
+  private lowestRow = 0;
   private readonly held = new Set<Action>();
   private readonly repeat = new KeyRepeat();
 
@@ -129,34 +145,40 @@ class GameSession implements Game {
   }
 
   private msUntilNextEvent(): number {
-    return Math.min(this.repeat.msUntilNext(), this.fallInterval() - this.fallTimerMs);
+    const lockMs = this.isGrounded() ? LOCK_DELAY_MS - this.lockTimerMs : Infinity;
+    return Math.min(this.repeat.msUntilNext(), this.fallInterval() - this.fallTimerMs, lockMs);
   }
 
-  /** Advances all timers and runs the events that are due, in a fixed order. */
+  /**
+   * Advances all timers and runs the events that are due, in a fixed order:
+   * key repeat, fall step, locking. The lock delay only runs while the piece rests.
+   */
   private advance(ms: number): void {
+    if (this.isGrounded()) this.lockTimerMs += ms;
     this.fallTimerMs += ms;
     const direction = this.repeat.advance(ms);
-    if (direction !== null) this.tryMove(direction === 'left' ? -1 : 1, 0);
+    if (direction !== null) this.playerMove(direction === 'left' ? -1 : 1);
     const interval = this.fallInterval();
     if (this.fallTimerMs >= interval) {
       this.fallTimerMs -= interval;
       this.fallStep();
     }
+    if (this.isGrounded() && this.lockTimerMs >= LOCK_DELAY_MS) this.lock();
   }
 
   private apply(action: Action): void {
     switch (action) {
       case 'left':
-        this.tryMove(-1, 0);
+        this.playerMove(-1);
         break;
       case 'right':
-        this.tryMove(1, 0);
+        this.playerMove(1);
         break;
       case 'rotateCW':
-        this.tryRotate(1);
+        if (this.tryRotate(1)) this.afterPlayerMove();
         break;
       case 'rotateCCW':
-        this.tryRotate(3);
+        if (this.tryRotate(3)) this.afterPlayerMove();
         break;
       case 'hardDrop':
         this.hardDrop();
@@ -197,9 +219,48 @@ class GameSession implements Game {
     return false;
   }
 
-  /** One gravity step. A resting piece locks at once (transition until lock delay exists). */
+  private playerMove(dx: number): void {
+    if (this.tryMove(dx, 0)) this.afterPlayerMove();
+  }
+
+  /** Whether the piece rests on blocks or the floor. */
+  private isGrounded(): boolean {
+    const piece = this.active;
+    return piece !== null && !fits(this.board, { ...piece, y: piece.y + 1 });
+  }
+
+  /** A13: reaching a lower row than ever before gives the piece all restarts back. */
+  private trackLowestRow(): void {
+    if (this.active === null) return;
+    const bottom = bottomRow(this.active);
+    if (bottom > this.lowestRow) {
+      this.lowestRow = bottom;
+      this.lockResets = 0;
+    }
+  }
+
+  /**
+   * A13: a successful move or rotation restarts the lock delay, at most
+   * LOCK_RESETS_MAX times. With no restarts left, a resting piece locks at once.
+   * A piece lifted off the ground does not count down until it rests again.
+   */
+  private afterPlayerMove(): void {
+    this.trackLowestRow();
+    this.lockTimerMs = 0;
+    if (!this.isGrounded()) return;
+    if (this.lockResets >= LOCK_RESETS_MAX) {
+      this.lock();
+      return;
+    }
+    this.lockResets += 1;
+  }
+
+  /** One gravity or soft drop step. A resting piece is left to the lock delay (A13). */
   private fallStep(): void {
-    if (!this.tryMove(0, 1)) this.lock();
+    if (!this.tryMove(0, 1)) return;
+    this.trackLowestRow();
+    this.lockTimerMs = 0;
+    if (this.isGrounded() && this.lockResets >= LOCK_RESETS_MAX) this.lock();
   }
 
   private hardDrop(): void {
@@ -227,6 +288,9 @@ class GameSession implements Game {
   private spawn(): void {
     const piece = spawnPiece(this.source.next());
     this.fallTimerMs = 0;
+    this.lockTimerMs = 0;
+    this.lockResets = 0;
+    this.lowestRow = bottomRow(piece);
     if (!fits(this.board, piece)) {
       this.status = 'gameOver'; // A5, case 1: the piece is not placed
       return;
