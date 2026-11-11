@@ -4,7 +4,7 @@
 // of each frame is copied as it is, nothing is decoded or encoded again.
 //
 // Frame files are named "<index>-<milliseconds since the first frame>.png".
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { crc32 } from 'node:zlib';
 
@@ -50,9 +50,11 @@ function frameControl(sequence, width, height, delayMs) {
   return chunk('fcTL', Buffer.concat([uint32s(sequence, width, height, 0, 0), tail]));
 }
 
-const files = readdirSync(FRAMES)
-  .filter((name) => name.endsWith('.png'))
-  .sort();
+const files = existsSync(FRAMES)
+  ? readdirSync(FRAMES)
+      .filter((name) => name.endsWith('.png'))
+      .sort()
+  : [];
 if (files.length === 0) {
   console.error(`No frames in ${FRAMES}. Run the screenshot tests first.`);
   process.exit(1);

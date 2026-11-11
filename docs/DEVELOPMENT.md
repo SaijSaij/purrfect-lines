@@ -13,6 +13,8 @@ Rules, commands and the workflow that Claude Code follows are in
 - Windows (the setup is only tested there) and Node.js 26 LTS
   (`winget install OpenJS.NodeJS.LTS`). The exact versions are listed under
   [Versions in CLAUDE.md](../CLAUDE.md#versions).
+- Git for Windows: its Git Bash runs the stop hook of Claude Code
+  (`.claude/hooks/stop-check.sh`).
 - Free ports 5173 (dev server, also used by the browser tests and
   `npm run screenshots`) and 4173 (`npm run preview`).
 - Playwright's Chromium for the browser tests, installed once (and again after
@@ -22,13 +24,14 @@ Rules, commands and the workflow that Claude Code follows are in
   npx playwright install chromium
   ```
 
-  `npm ci` does not install it, because `.npmrc` sets `ignore-scripts=true`:
-  packages never run install scripts.
+  Playwright downloads browsers only through this command, not through
+  `npm ci`.
 
 ## Commands
 
-All commands are npm scripts, run from the project root. The full list is in
-[Commands in CLAUDE.md](../CLAUDE.md#commands). Good to know beyond that list:
+All commands are npm scripts, run from the project root. The list is in
+[Commands in CLAUDE.md](../CLAUDE.md#commands), except `npm run screenshots`
+(see [Screenshots](#screenshots)). Good to know beyond that list:
 
 - `npm run check` runs typecheck, lint and unit tests. It does not run the
   browser tests or the release check.
@@ -47,6 +50,9 @@ is covered by unit tests (Vitest, `src/**/*.test.ts`) with controlled time.
 Browser tests (Playwright, `e2e/`) cover what only works together: screens,
 keys, focus and window size. They read the game state through the test
 interface below instead of comparing pixels.
+
+To run one test file, pass it after `--`, e.g. `npm test -- src/game/pause.test.ts`
+or `npm run e2e -- e2e/screens.spec.ts`.
 
 Which requirement is checked how is in
 [docs/spec/teststrategie.md](spec/teststrategie.md).
@@ -76,9 +82,13 @@ screen, a game in progress, a row lighting up, the pause menu and the game
 over screen, plus the animated `gameplay.apng.png` for the README. The scenes
 are in `scripts/screenshots.spec.ts`. They use `?seed=1` and, where a piece
 falls, `?slow=10`, so the still pictures come out the same on every run. The
-animation runs at normal speed and its timing varies a little.
-`scripts/make-apng.js` joins its frames using only Node itself. The command is
-not part of `npm run check`; run it when the look of the game changes.
+animation runs at normal speed and its timing varies a little; the run fails
+if its row is not cleared. Its frames go to `test-results/screenshots/`
+(git-ignored), where `scripts/make-apng.js` joins them using only Node itself,
+so that script only works after the screenshot tests. The README uses the
+animation and three of the stills; `gameplay.png` and `line-clear.png` are
+spare. The command is not part of `npm run check`; run it when the look of the
+game changes.
 
 ## Tuning
 
@@ -103,7 +113,7 @@ names, never to the numbers. All colors are in
 | `e2e/` | Browser tests; `e2e/support/` reads the test interface |
 | `scripts/` | Release check and screenshots |
 | `docs/spec/` | Requirements, milestones and test strategy (German), part of [SPEC.md](../SPEC.md) |
-| `docs/images/` | Pictures for the README, made by `npm run screenshots` |
+| `docs/images/` | Pictures for the README and spare stills, made by `npm run screenshots` |
 | `.claude/` | Claude Code setup: stop hook, review agents, rules |
 | `index.html` | The page that loads the game |
 | `vite.config.ts`, `playwright.config.ts`, `playwright.screenshots.config.ts`, `eslint.config.js`, `tsconfig.json` | Tool configuration |

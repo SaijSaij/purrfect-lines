@@ -21,8 +21,10 @@ screens, but no high scores, sound or German texts yet.
 
 ## Play
 
-You need Windows (the setup is only tested there) and Node.js 26 LTS
-(`winget install OpenJS.NodeJS.LTS`). In the project folder, install once:
+You need Windows (the setup is only tested there), Node.js 26 LTS
+(`winget install OpenJS.NodeJS.LTS`, then check in a new terminal with
+`node --version`), a keyboard and a current desktop browser based on Chromium
+or Firefox. Clone the repository, and in the project folder install once:
 
 ```bash
 npm ci
@@ -33,6 +35,9 @@ Then start the game:
 ```bash
 npm run serve
 ```
+
+The server keeps running in the terminal until you stop it with Ctrl+C. If
+port 5173 is already taken, it stops with an error; free the port first.
 
 Open http://localhost:5173. The start screen shows the title and the keys;
 press Enter to start. A piece falls from the top centre by about one row per
@@ -82,8 +87,8 @@ keyboard it sits where Z is on an English one).
   keeps sliding until you let go. If both directions are held, the one pressed
   last wins.
 - **Turning at a wall:** a piece that cannot turn in place (for example a
-  vertical bar at the wall) is shifted to the nearest position that makes
-  room; if none fits, it does not turn.
+  vertical bar at the wall) tries a few shifted positions in a fixed order
+  (sideways, sometimes up or down); if none fits, it does not turn.
 - **Landing:** a piece that lands does not lock at once. For half a second you
   can still move or rotate it, and each move restarts that time, up to 15
   times per piece. A hard drop locks at once.
