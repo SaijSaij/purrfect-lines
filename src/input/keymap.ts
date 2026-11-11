@@ -53,3 +53,9 @@ const SOUND_KEYS: Readonly<Record<string, SoundToggle>> = {
 export function soundToggleForKey(key: string): SoundToggle | null {
   return SOUND_KEYS[key.toLowerCase()] ?? null;
 }
+
+/** L switches the language on the start screen (A38), matched like actionForKey. */
+export function isLanguageKey(key: string): boolean {
+  void key;
+  return false;
+}

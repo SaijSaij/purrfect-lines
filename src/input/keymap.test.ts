@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { actionForKey, menuActionForKey, soundToggleForKey } from './keymap';
+import { actionForKey, isLanguageKey, menuActionForKey, soundToggleForKey } from './keymap';
 
 // Keys are given as KeyboardEvent.key values.
 describe('A21 key mapping', () => {
@@ -79,5 +79,16 @@ describe('A34 keys for sound', () => {
 
   it('ignores other keys', () => {
     for (const key of ['p', 'Enter', ' ', 'ArrowUp', 'x']) expect(soundToggleForKey(key)).toBeNull();
+  });
+});
+
+describe('A38 key for the language', () => {
+  it('recognises L, in lower and upper case', () => {
+    expect(isLanguageKey('l')).toBe(true);
+    expect(isLanguageKey('L')).toBe(true);
+  });
+
+  it('ignores other keys', () => {
+    for (const key of ['m', 'n', 'Enter', ' ', 'ArrowLeft']) expect(isLanguageKey(key)).toBe(false);
   });
 });

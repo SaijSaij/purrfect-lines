@@ -38,9 +38,23 @@ const EN = {
 
 export type TextKey = keyof typeof EN;
 
+/** The languages of the game (A38). */
+export const LANGUAGES = ['en', 'de'] as const;
+export type Language = (typeof LANGUAGES)[number];
+
 export const TEXTS: Readonly<Record<'en', Readonly<Record<TextKey, string>>>> = {
   en: EN,
 };
+
+/** Sets the language of every text from now on (A38). */
+export function setLanguage(language: Language): void {
+  void language;
+}
+
+/** The language set last; English before the first call. */
+export function currentLanguage(): Language {
+  return 'en';
+}
 
 export function text(key: TextKey): string {
   return TEXTS.en[key];

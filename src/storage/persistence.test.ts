@@ -197,3 +197,35 @@ describe('A30 unreadable data', () => {
     expect(persistence.available).toBe(true);
   });
 });
+
+describe('A38 saving the language', () => {
+  it('has no saved language at the first start', () => {
+    expect(createPersistence(new FakeStore()).loadSettings().language).toBeUndefined();
+  });
+
+  it('loads the chosen language again after a reload', () => {
+    const store = new FakeStore();
+    createPersistence(store).saveSettings({ language: 'de' });
+    expect(createPersistence(store).loadSettings().language).toBe('de');
+  });
+
+  it('keeps the language when saving another setting', () => {
+    const store = new FakeStore();
+    createPersistence(store).saveSettings({ language: 'de' });
+    createPersistence(store).saveSettings({ music: false });
+    expect(createPersistence(store).loadSettings()).toEqual({
+      lastName: DEFAULT_SETTINGS.lastName,
+      music: false,
+      sounds: DEFAULT_SETTINGS.sounds,
+      language: 'de',
+    });
+  });
+
+  it('drops an unknown language and keeps the other settings', () => {
+    const store = new FakeStore();
+    store.data.set(SETTINGS_KEY, JSON.stringify({ lastName: 'Mia', music: false, sounds: true, language: 'fr' }));
+    const settings = createPersistence(store).loadSettings();
+    expect(settings.language).toBeUndefined();
+    expect(settings).toEqual({ lastName: 'Mia', music: false, sounds: true });
+  });
+});

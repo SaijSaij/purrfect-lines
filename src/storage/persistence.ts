@@ -2,6 +2,7 @@
 // localStorage is passed in as a KeyValueStore, so tests can use a fake one.
 import { HIGHSCORE_SIZE, NAME_MAX_LENGTH } from '../game/constants';
 import type { HighscoreEntry } from '../highscores/highscores';
+import type { Language } from '../i18n/texts';
 
 /** The part of the Storage interface (localStorage) the game uses. Both methods may throw. */
 export interface KeyValueStore {
@@ -12,7 +13,7 @@ export interface KeyValueStore {
 export const HIGHSCORES_KEY = 'purrfect-lines.highscores';
 export const SETTINGS_KEY = 'purrfect-lines.settings';
 
-/** Saved settings. The language (A38) follows in a later milestone. */
+/** Saved settings. */
 export interface Settings {
   /** The name entered last, to prefill the name entry (A27). */
   readonly lastName: string;
@@ -20,6 +21,8 @@ export interface Settings {
   readonly music: boolean;
   /** Whether the sounds play (A34). */
   readonly sounds: boolean;
+  /** The language chosen with L (A38); missing until a language was chosen. */
+  readonly language?: Language;
 }
 
 /** On the first start the name is empty, music and sounds are on (A27, A34). */
