@@ -31,9 +31,14 @@ and without cd, pipes or redirects. The one exception is
   change. Apply it only after my approval, in its own commit.
 - Tests only for behaviour that stays valid in later milestones. Transitional
   behaviour gets no automated test; it goes on the milestone's manual checklist.
-- While writing tests before the implementation, create `.claude/.tests-first`
-  so the stop hook allows failing tests. Delete it before implementing. Never
-  implement just to silence the hook.
+- While writing tests before the implementation, create `.claude/.tests-first`.
+  With the marker the stop hook still runs typecheck and lint and blocks on
+  their errors; only unit tests may fail. Add stubs first: types, constants
+  (with their spec values) and function signatures without behaviour. A stub
+  returns a neutral value (e.g. the unchanged state) where that is natural,
+  otherwise it throws. Tests must fail on their assertions, not on missing
+  names. Delete the marker before implementing. Never implement just to
+  silence the hook.
 - Changes to SPEC.md, docs/spec/ and CLAUDE.md that reviewers suggest are my
   decision. Propose them, do not apply them on your own.
 - No new dependency without asking me first.
@@ -44,8 +49,9 @@ and without cd, pipes or redirects. The one exception is
 ## Workflow per milestone
 
 1. Create a branch `m<N>-<short-name>` for the milestone (e.g. `m2-controls`).
-2. Create `.claude/.tests-first`, write the tests first (they must fail) and
-   commit them.
+2. Create `.claude/.tests-first`, add the stubs, then write the tests.
+   Typecheck and lint must pass, only the new tests fail. Explain every new
+   test that already passes, one by one. Commit stubs and tests together.
 3. Plan in plan mode.
 4. Delete `.claude/.tests-first`, then implement and commit.
 5. Always run `code-reviewer` with the list of changed files. If documentation
