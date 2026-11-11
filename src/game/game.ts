@@ -21,7 +21,7 @@ export type Action = 'left' | 'right' | 'softDrop' | 'hardDrop' | 'rotateCW' | '
 /** Where new pieces come from. Usually a seeded bag sequence (A3). */
 export type PieceSource = PieceSequence;
 
-export type GameStatus = 'playing' | 'gameOver';
+export type GameStatus = 'playing' | 'paused' | 'gameOver';
 
 export interface ActivePiece {
   readonly type: PieceType;
@@ -40,6 +40,8 @@ export interface GameState {
   readonly level: number;
   readonly score: number;
   readonly lines: number;
+  /** Board rows (0-based, top to bottom) that light up before they disappear (A16). */
+  readonly clearingRows: readonly number[];
 }
 
 /** Internal values for the debug display (A42). */
@@ -60,6 +62,12 @@ export interface Game {
   press(action: Action): void;
   release(action: Action): void;
   update(deltaMs: number): void;
+  /** Stops time and input of a running game (A23, A24). */
+  pause(): void;
+  /** Continues a paused game exactly where it stopped (A23). */
+  resume(): void;
+  /** Ends a running or paused game like a regular game over (A25). */
+  giveUp(): void;
 }
 
 export interface GameOptions {
@@ -145,7 +153,20 @@ class GameSession implements Game {
       level: this.level,
       score: this.score,
       lines: this.lines,
+      clearingRows: [],
     };
+  }
+
+  pause(): void {
+    // Not implemented yet (A23).
+  }
+
+  resume(): void {
+    // Not implemented yet (A23).
+  }
+
+  giveUp(): void {
+    // Not implemented yet (A25).
   }
 
   get diagnostics(): GameDiagnostics {

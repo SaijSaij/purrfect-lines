@@ -1,7 +1,7 @@
 // Key → action mapping (A21). Pure function, keys are KeyboardEvent.key values.
 import type { Action } from '../game/game';
 
-export type KeyAction = Action | 'confirm';
+export type KeyAction = Action | 'confirm' | 'pause';
 
 const KEYS: Readonly<Record<string, KeyAction>> = {
   arrowleft: 'left',

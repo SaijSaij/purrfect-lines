@@ -54,6 +54,9 @@ export function slowMotion(game: Game, factor: number): Game {
     press: (action) => game.press(action),
     release: (action) => game.release(action),
     update: (deltaMs) => game.update(deltaMs / factor),
+    pause: () => game.pause(),
+    resume: () => game.resume(),
+    giveUp: () => game.giveUp(),
   };
 }
 

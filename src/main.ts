@@ -44,6 +44,7 @@ function onKeyDown(event: KeyboardEvent): void {
     if (game.state.status === 'gameOver') game = newGame();
     return;
   }
+  if (action === 'pause') return; // not implemented yet (A23)
   if (!heldKeys.down(event.code, action)) return; // key repeat of the operating system
   // Another key for the same action may still be held: every new key is a new press.
   game.release(action);

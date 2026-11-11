@@ -26,6 +26,9 @@ export const REPEAT_DELAY_MS = 170;
 /** After the first repeat, a held move key repeats at this interval (A7). */
 export const REPEAT_INTERVAL_MS = 50;
 
+/** Full rows light up for this long before they disappear (A16). */
+export const LINE_CLEAR_MS = 300;
+
 /** Points for every row fallen by soft drop, not multiplied by the level (A11). */
 export const SOFT_DROP_POINTS = 1;
 

@@ -46,6 +46,10 @@ describe('A21 key mapping for all game keys', () => {
     for (const key of ['q', 'Q', 'y', 'Y']) expect(actionForKey(key)).toBe('rotateCCW');
   });
 
+  it('maps P and Esc to pause (A23)', () => {
+    for (const key of ['p', 'P', 'Escape']) expect(actionForKey(key)).toBe('pause');
+  });
+
   it('recognises letters by the typed character, so Z is not Y', () => {
     expect(actionForKey('z')).toBeNull();
     expect(actionForKey('Z')).toBeNull();
