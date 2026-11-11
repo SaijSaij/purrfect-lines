@@ -429,8 +429,9 @@ describe('A13 lock delay', () => {
     expect(activePiece(game).y).toBe(2);
   }
 
-  // Seven cycles use 14 restarts because LOCK_RESETS_MAX is 15.
-  function useFourteenRestarts(game: Game): void {
+  // Each cycle uses two restarts, so this needs an odd LOCK_RESETS_MAX.
+  function useAllButOneRestart(game: Game): void {
+    expect(LOCK_RESETS_MAX % 2).toBe(1);
     for (let i = 0; i < (LOCK_RESETS_MAX - 1) / 2; i++) {
       rotationCycle(game, i % 2 === 0 ? 'rotateCW' : 'rotateCCW');
     }
@@ -439,8 +440,8 @@ describe('A13 lock delay', () => {
 
   it('counts a move that lifts the piece off the ground as a restart', () => {
     const game = landedT();
-    useFourteenRestarts(game);
-    tap(game, 'rotateCW'); // restart 15, still resting
+    useAllButOneRestart(game);
+    tap(game, 'rotateCW'); // last restart, still resting
     expect(activePiece(game).rotation).toBe(1);
     tap(game, 'right'); // one move too many
     game.update(1);
@@ -449,8 +450,8 @@ describe('A13 lock delay', () => {
 
   it('locks at once when the piece lands again with no restarts left', () => {
     const game = landedT();
-    useFourteenRestarts(game);
-    tap(game, 'rotateCW'); // restart 15, still resting
+    useAllButOneRestart(game);
+    tap(game, 'rotateCW'); // last restart, still resting
     tap(game, 'rotateCCW'); // lifts the piece off
     expect(activePiece(game).y).toBe(1);
     expect(blockCount(game)).toBe(FLOOR_BLOCKS);

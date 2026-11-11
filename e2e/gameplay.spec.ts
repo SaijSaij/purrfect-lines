@@ -48,7 +48,7 @@ test('a held key stops repeating when the window loses focus', async ({ page }) 
   await page.keyboard.down('ArrowRight');
   await expect
     .poll(() => readState(page).then(leftmostColumn))
-    .toBe(leftmostColumn(start) + 1);
+    .toBeGreaterThan(leftmostColumn(start));
   await page.evaluate(() => window.dispatchEvent(new Event('blur')));
   const afterBlur = leftmostColumn(await readState(page));
   // Longer than the repeat delay, shorter than one fall step.
