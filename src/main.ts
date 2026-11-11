@@ -10,6 +10,8 @@ let seed: number | undefined;
 let startLevel: number | undefined;
 /** Development builds may wrap every new game, e.g. in slow motion (A41). */
 let adapt = (created: Game): Game => created;
+/** Development builds may show internal values once per frame (A42). */
+let onFrame: (frameMs: number) => void = () => undefined;
 let game: Game;
 
 if (import.meta.env.DEV) {
@@ -19,6 +21,10 @@ if (import.meta.env.DEV) {
   startLevel = devTools.levelFromUrl(search);
   const slow = devTools.slowFromUrl(search);
   if (slow !== undefined) adapt = (created) => devTools.slowMotion(created, slow);
+  if (devTools.debugFromUrl(search)) {
+    const showDebug = devTools.createDebugOverlay();
+    onFrame = (frameMs) => showDebug(game, frameMs);
+  }
   devTools.installTestInterface(() => game);
 }
 
@@ -71,9 +77,11 @@ function start(): void {
 
   let last = performance.now();
   const frame = (now: number): void => {
-    game.update(now - last);
+    const frameMs = now - last;
+    game.update(frameMs);
     last = now;
     drawGame(ctx, game.state);
+    onFrame(frameMs);
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);

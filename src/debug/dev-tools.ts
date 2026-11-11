@@ -2,7 +2,9 @@
 // when import.meta.env.DEV is true, so it is not part of the release bundle.
 // `npm run check:release` verifies that via the markers "__purrfectLines" and
 // "purrfect-lines-debug".
+import { LOCK_RESETS_MAX } from '../game/constants';
 import { absoluteCells, type Game } from '../game/game';
+import { PALETTE } from '../render/palette';
 
 const LOG_PREFIX = '[purrfect-lines-debug]';
 
@@ -46,9 +48,67 @@ export function slowMotion(game: Game, factor: number): Game {
     get state() {
       return game.state;
     },
+    get diagnostics() {
+      return game.diagnostics;
+    },
     press: (action) => game.press(action),
     release: (action) => game.release(action),
     update: (deltaMs) => game.update(deltaMs / factor),
+  };
+}
+
+/** Whether ?debug is given (A42). */
+export function debugFromUrl(search: string): boolean {
+  return new URLSearchParams(search).has('debug');
+}
+
+function debugLines(game: Game, fps: number): string[] {
+  const { level } = game.state;
+  const d = game.diagnostics;
+  const lock = d.lockRemainingMs === null ? '–' : `${Math.round(d.lockRemainingMs)} ms`;
+  return [
+    `level      ${level}`,
+    `fall       ${Math.round(d.fallIntervalMs * 10) / 10} ms`,
+    `lock left  ${lock}`,
+    `resets     ${d.lockResets}/${LOCK_RESETS_MAX}`,
+    `bag        ${d.bag.join(' ')}`,
+    `seed       ${d.seed ?? '–'}`,
+    `fps        ${fps}`,
+  ];
+}
+
+/**
+ * Shows internal values as text at the left edge (A42). Returns a function to
+ * call once per frame with the real frame time. Labels are developer-only and
+ * therefore not in the text table.
+ */
+export function createDebugOverlay(): (game: Game, frameMs: number) => void {
+  const panel = document.createElement('pre');
+  panel.id = 'purrfect-lines-debug';
+  Object.assign(panel.style, {
+    position: 'fixed',
+    top: '8px',
+    left: '8px',
+    margin: '0',
+    padding: '6px 8px',
+    font: '12px monospace',
+    color: PALETTE.text,
+    background: PALETTE.overlay,
+    pointerEvents: 'none',
+  });
+  document.body.append(panel);
+  let frames = 0;
+  let elapsedMs = 0;
+  let fps = 0;
+  return (game, frameMs) => {
+    frames += 1;
+    elapsedMs += frameMs;
+    if (elapsedMs >= 1000) {
+      fps = Math.round((frames * 1000) / elapsedMs);
+      frames = 0;
+      elapsedMs = 0;
+    }
+    panel.textContent = debugLines(game, fps).join('\n');
   };
 }
 

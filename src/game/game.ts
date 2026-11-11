@@ -42,8 +42,21 @@ export interface GameState {
   readonly lines: number;
 }
 
+/** Internal values for the debug display (A42). */
+export interface GameDiagnostics {
+  readonly fallIntervalMs: number;
+  /** Time left until the resting piece locks, or null while it does not rest (A13). */
+  readonly lockRemainingMs: number | null;
+  readonly lockResets: number;
+  /** Pieces left in the current bag; empty if the source does not tell. */
+  readonly bag: readonly PieceType[];
+  /** Seed of the piece sequence, or null for a given sequence. */
+  readonly seed: number | null;
+}
+
 export interface Game {
   readonly state: GameState;
+  readonly diagnostics: GameDiagnostics;
   press(action: Action): void;
   release(action: Action): void;
   update(deltaMs: number): void;
@@ -113,6 +126,7 @@ class GameSession implements Game {
     private readonly source: PieceSource,
     board: Board,
     private readonly startLevel: number,
+    private readonly seed: number | null,
   ) {
     this.board = board;
     this.spawn();
@@ -131,6 +145,16 @@ class GameSession implements Game {
       level: this.level,
       score: this.score,
       lines: this.lines,
+    };
+  }
+
+  get diagnostics(): GameDiagnostics {
+    return {
+      fallIntervalMs: this.fallInterval(),
+      lockRemainingMs: this.isGrounded() ? Math.max(0, LOCK_DELAY_MS - this.lockTimerMs) : null,
+      lockResets: this.lockResets,
+      bag: this.source.upcoming?.() ?? [],
+      seed: this.seed,
     };
   }
 
@@ -333,6 +357,7 @@ class GameSession implements Game {
 }
 
 export function createGame(options: GameOptions = {}): Game {
-  const source = options.sequence ?? createPieceSequence(options.seed ?? randomSeed());
-  return new GameSession(source, options.board ?? createBoard(), options.startLevel ?? 1);
+  const seed = options.sequence === undefined ? (options.seed ?? randomSeed()) : null;
+  const source = options.sequence ?? createPieceSequence(seed ?? randomSeed());
+  return new GameSession(source, options.board ?? createBoard(), options.startLevel ?? 1, seed);
 }

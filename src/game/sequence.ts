@@ -7,6 +7,8 @@ export interface PieceSequence {
   next(): PieceType;
   /** Shows the next piece without taking it. */
   peek(): PieceType;
+  /** The pieces left in the current bag, next first; for the debug display (A42). */
+  upcoming?(): readonly PieceType[];
 }
 
 function shuffledBag(random: () => number): PieceType[] {
@@ -34,6 +36,10 @@ export function createPieceSequence(seed: number): PieceSequence {
   };
   return {
     peek,
+    upcoming: () => {
+      peek(); // refills an empty bag
+      return [...queue];
+    },
     next: () => {
       const piece = peek();
       queue.shift();
