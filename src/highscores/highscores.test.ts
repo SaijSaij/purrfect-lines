@@ -119,6 +119,11 @@ describe('A27 name entry', () => {
     expect(normalizeName(name, DEFAULT)).toBe(name);
   });
 
+  it('cuts to NAME_MAX_LENGTH before removing spaces, like the name field does', () => {
+    const typed = `  ${'A'.repeat(NAME_MAX_LENGTH)}`;
+    expect(normalizeName(typed, DEFAULT)).toBe('A'.repeat(NAME_MAX_LENGTH - 2));
+  });
+
   it('has "Kitty" as the English default name in the text table', () => {
     expect(TEXTS.en.defaultName).toBe('Kitty');
   });

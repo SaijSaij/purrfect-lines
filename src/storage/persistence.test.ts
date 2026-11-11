@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { HIGHSCORE_SIZE } from '../game/constants';
+import { HIGHSCORE_SIZE, NAME_MAX_LENGTH } from '../game/constants';
 import type { HighscoreEntry } from '../highscores/highscores';
 import {
   createPersistence,
@@ -40,7 +40,8 @@ describe('A30 saving the high score list and settings', () => {
 
   it('loads a saved list again after a reload', () => {
     const store = new FakeStore();
-    const list = [entry(500, 'Mia'), entry(200, 'Kitty')];
+    // Equal scores: the older entry stays ahead after a reload (A29).
+    const list = [entry(500, 'Mia'), entry(200, 'Older'), entry(200, 'Newer')];
     createPersistence(store).saveHighscores(list);
     expect(createPersistence(store).loadHighscores()).toEqual(list);
   });
@@ -118,6 +119,11 @@ describe('A30 unreadable data', () => {
       { ...entry(350), score: '350' },
       { ...entry(300), name: 42 },
       { ...entry(250), date: 'yesterday' },
+      { ...entry(0) },
+      { ...entry(260), name: '' },
+      { ...entry(270), name: 'N'.repeat(NAME_MAX_LENGTH + 1) },
+      { ...entry(280), score: 280.5 },
+      { ...entry(290), level: 0 },
       { name: 'Half', score: 240 },
       null,
       'text',
