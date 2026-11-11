@@ -160,6 +160,11 @@ grün. E2E-Test 7 grün.
 - [ ] Auf dem Startbildschirm ist es still; Enter startet das Spiel, und die
       Musik setzt ein.
 - [ ] Drehen, Einrasten, harter Fall und Reihen klingen unterschiedlich.
+- [ ] Schieben ist still. Spielende (nur Leertaste drücken, bis der Stapel
+      oben ist) und Aufgeben klingen absteigend. ↑/↓ im Pausemenü klicken
+      leise.
+- [ ] Nach 10 Reihen (normal spielen) erklingt beim Level-Aufstieg eine
+      kurze Tonfolge.
 - [ ] Vier Reihen auf einmal klingen nach Katze: http://localhost:5173/?seed=8&slow=4
       laden, Enter, dann je Form diese Tasten kurz antippen:
       L: → → → Leertaste · I: ← Leertaste · Z: ↑ ← ← ← Leertaste ·
@@ -169,8 +174,10 @@ grün. E2E-Test 7 grün.
       vier Reihen auf einmal auf.
 - [ ] Nacheinander `?level=1` und `?level=15` laden: Bei Level 15 läuft die
       Musik deutlich schneller (+40 %).
-- [ ] In der Pause ist die Musik still und läuft danach weiter.
-- [ ] M und N schalten getrennt, der Zustand bleibt nach dem Neuladen.
+- [ ] In der Pause ist die Musik sofort still, auch nach einem Wechsel in
+      einen anderen Tab, und läuft nach dem Fortsetzen weiter.
+- [ ] M und N schalten getrennt stumm, die Seitenleiste zeigt den Zustand,
+      und er bleibt nach dem Neuladen.
 - [ ] Die Melodie erinnert an kein bekanntes Stück.
 
 ## M7 – Gestaltung

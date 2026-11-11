@@ -240,12 +240,14 @@ auf dem jeweiligen Bildschirm nicht. Die Spieltasten im Spiel stehen in A21.
 | Namenseingabe | Esc | Start, nichts gespeichert |
 | Namenseingabe | jede andere Taste | bleibt, Zeichen im Textfeld |
 | Bestenliste | Enter | Start |
+| alle außer Namenseingabe | M, N | bleibt; schaltet Musik bzw. Klänge (A34) |
 
 **A22 Startbildschirm.** Beim Öffnen erscheint der Startbildschirm mit Titel,
 dem Hinweis „Enter startet“, einer kurzen Tastenübersicht und der Bestenliste
 (A28). Enter startet ein neues Spiel.
 *Präzisierung:* Die Tastenübersicht nennt Schieben, Drehen, weichen Fall,
-harten Fall und Pause. Die Menütasten stehen nicht darin.
+harten Fall, Pause sowie Musik und Klänge (M / N). Die Menütasten stehen nicht
+darin.
 *Prüfung:* E2E (Startbildschirm sichtbar; Enter startet, eine Form fällt).
 
 **A23 Pause.** P oder Esc pausiert ein laufendes Spiel. Während der Pause ist
@@ -321,7 +323,7 @@ fehlschlägt. Er bleibt bis zum Neuladen.
 | Schlüssel | Inhalt |
 |---|---|
 | `purrfect-lines.highscores` | Liste der Einträge mit den Feldern unten |
-| `purrfect-lines.settings` | Objekt mit `lastName`. Ton (A34) und Sprache (A38) kommen als weitere Felder dazu. Fehlt ein Feld oder ist es ungültig, gilt sein Standardwert. |
+| `purrfect-lines.settings` | Objekt mit `lastName` (Text), `music` und `sounds` (Wahrheitswerte, Standard `true`). Die Sprache (A38) kommt als weiteres Feld dazu. Fehlt ein Feld oder ist es ungültig, gilt sein Standardwert. |
 
 *Gültiger Eintrag der Bestenliste:*
 
