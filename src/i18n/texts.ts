@@ -19,6 +19,15 @@ const EN = {
   next: 'Next',
   /** Used when the name entry stays empty (A27). */
   defaultName: 'Kitty',
+  highscores: 'High scores',
+  noEntries: 'No entries yet',
+  storageUnavailable: 'Saving is not possible: high scores last until reload',
+  newHighscore: 'New high score!',
+  enterName: 'Enter your name:',
+  nameEntryKeys: 'Enter: save · Esc: skip',
+  rank: '#',
+  name: 'Name',
+  date: 'Date',
 };
 
 export type TextKey = keyof typeof EN;

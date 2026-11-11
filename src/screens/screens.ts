@@ -1,15 +1,35 @@
-// Start, pause and game over screens (A22, A23, A26) as HTML over the canvas.
-// They cover the whole game area with an opaque background.
+// Start, pause, game over, name entry and high score screens (A22, A23,
+// A26–A28) as HTML over the canvas. They cover the whole game area with an
+// opaque background.
 import type { GameState } from '../game/game';
+import { NAME_MAX_LENGTH } from '../game/constants';
+import type { HighscoreEntry } from '../highscores/highscores';
 import { text, type TextKey } from '../i18n/texts';
 import { PALETTE } from '../render/palette';
+import { highscoreTable } from './highscore-table';
 import { PAUSE_MENU } from './pause-menu';
 
-export type Screen = 'start' | 'playing' | 'paused' | 'gameOver';
+export type Screen = 'start' | 'playing' | 'paused' | 'gameOver' | 'nameEntry' | 'highscores';
+
+/** Everything the screens show. */
+export interface ScreenView {
+  readonly screen: Screen;
+  readonly state: GameState;
+  readonly menuIndex: number;
+  readonly highscores: readonly HighscoreEntry[];
+  /** Position of the entry just saved, highlighted on the high score screen. */
+  readonly highlight: number | null;
+  /** False if saving does not work; the start screen then shows a hint (A30). */
+  readonly storageAvailable: boolean;
+}
 
 export interface Screens {
   /** Shows the element of the given screen and hides the others. */
-  show(screen: Screen, state: GameState, menuIndex: number): void;
+  show(view: ScreenView): void;
+  /** Fills the name field with `name` and focuses it (A27). */
+  openNameEntry(name: string): void;
+  /** The text in the name field. */
+  enteredName(): string;
 }
 
 function element(tag: string, key?: TextKey, id?: string): HTMLElement {
@@ -37,24 +57,36 @@ function screenElement(id: string): HTMLElement {
   return el;
 }
 
-function heading(key: TextKey): HTMLElement {
-  const el = element('h1', key);
-  Object.assign(el.style, { margin: '0 0 0.5em', fontSize: '2em' });
+function heading(key: TextKey, tag = 'h1'): HTMLElement {
+  const el = element(tag, key);
+  Object.assign(el.style, tag === 'h1' ? { margin: '0 0 0.5em', fontSize: '2em' } : { margin: '0.4em 0 0', fontSize: '1.2em' });
   return el;
 }
 
-function hint(key: TextKey): HTMLElement {
-  const el = element('p', key);
+function hint(key: TextKey, id?: string): HTMLElement {
+  const el = element('p', key, id);
   Object.assign(el.style, { margin: '0', color: PALETTE.label });
   return el;
 }
 
-function startScreen(): HTMLElement {
+/** A place for the high score table, rebuilt only when the list changes. */
+function tableSlot(): HTMLElement {
+  const el = element('div');
+  el.style.fontSize = '0.85em';
+  return el;
+}
+
+function startScreen(): { el: HTMLElement; table: HTMLElement; storageHint: HTMLElement } {
   const el = screenElement('start-screen');
+  el.style.gap = '0.5em';
   el.append(heading('title'), element('p', 'pressEnterToStart'));
   const keys: TextKey[] = ['keysMove', 'keysRotate', 'keysSoftDrop', 'keysHardDrop', 'keysPause'];
   for (const key of keys) el.append(hint(key));
-  return el;
+  const table = tableSlot();
+  const storageHint = hint('storageUnavailable', 'storage-hint');
+  Object.assign(storageHint.style, { fontSize: '0.85em', color: PALETTE.highlight });
+  el.append(heading('highscores', 'h2'), table, storageHint);
+  return { el, table, storageHint };
 }
 
 function pauseScreen(): { el: HTMLElement; entries: HTMLElement[] } {
@@ -82,25 +114,83 @@ function gameOverScreen(): { el: HTMLElement; values: Record<'score' | 'lines' |
   return { el, values: { score: score.value, lines: lines.value, level: level.value } };
 }
 
+function nameEntryScreen(): { el: HTMLElement; input: HTMLInputElement } {
+  const el = screenElement('name-entry-screen');
+  const input = document.createElement('input');
+  input.id = 'name-input';
+  input.type = 'text';
+  input.maxLength = NAME_MAX_LENGTH;
+  input.autocomplete = 'off';
+  input.spellcheck = false;
+  input.setAttribute('aria-label', text('enterName'));
+  Object.assign(input.style, {
+    font: '1.2em sans-serif',
+    width: `${NAME_MAX_LENGTH + 1}ch`,
+    padding: '0.2em 0.4em',
+    textAlign: 'center',
+    color: PALETTE.text,
+    background: PALETTE.field,
+    border: `2px solid ${PALETTE.frame}`,
+    outline: 'none',
+  });
+  el.append(heading('newHighscore'), element('p', 'enterName'), input, hint('nameEntryKeys'));
+  return { el, input };
+}
+
+function highscoreScreen(): { el: HTMLElement; table: HTMLElement } {
+  const el = screenElement('highscore-screen');
+  const table = tableSlot();
+  el.append(heading('highscores'), table, hint('pressEnter'));
+  return { el, table };
+}
+
 export function createScreens(container: HTMLElement): Screens {
   const start = startScreen();
   const pause = pauseScreen();
   const gameOver = gameOverScreen();
-  container.append(start, pause.el, gameOver.el);
-  const toggle = (el: HTMLElement, visible: boolean): void => {
-    el.style.display = visible ? 'flex' : 'none';
+  const nameEntry = nameEntryScreen();
+  const highscores = highscoreScreen();
+  container.append(start.el, pause.el, gameOver.el, nameEntry.el, highscores.el);
+  const toggle = (el: HTMLElement, visible: boolean, display = 'flex'): void => {
+    el.style.display = visible ? display : 'none';
   };
+  let shownList: readonly HighscoreEntry[] | null = null;
+  let shownHighlight: number | null = null;
+
+  const updateTables = (list: readonly HighscoreEntry[], highlight: number | null): void => {
+    if (list === shownList && highlight === shownHighlight) return;
+    shownList = list;
+    shownHighlight = highlight;
+    start.table.replaceChildren(highscoreTable(list, null));
+    highscores.table.replaceChildren(highscoreTable(list, highlight));
+  };
+
   return {
-    show(screen, state, menuIndex) {
-      toggle(start, screen === 'start');
+    show(view) {
+      const { screen, state } = view;
+      toggle(start.el, screen === 'start');
       toggle(pause.el, screen === 'paused');
       toggle(gameOver.el, screen === 'gameOver');
+      toggle(nameEntry.el, screen === 'nameEntry');
+      toggle(highscores.el, screen === 'highscores');
       pause.entries.forEach((entry, i) => {
-        entry.style.color = i === menuIndex ? PALETTE.highlight : PALETTE.text;
+        entry.style.color = i === view.menuIndex ? PALETTE.highlight : PALETTE.text;
       });
       gameOver.values.score.textContent = String(state.score);
       gameOver.values.lines.textContent = String(state.lines);
       gameOver.values.level.textContent = String(state.level);
+      updateTables(view.highscores, view.highlight);
+      toggle(start.storageHint, !view.storageAvailable, 'block');
+      // Typing must always reach the name field, also after a click elsewhere (A27).
+      const focused = document.activeElement === nameEntry.input;
+      if (screen === 'nameEntry' && !focused) nameEntry.input.focus();
+      if (screen !== 'nameEntry' && focused) nameEntry.input.blur();
     },
+    openNameEntry(name) {
+      nameEntry.input.value = name.slice(0, NAME_MAX_LENGTH);
+      toggle(nameEntry.el, true);
+      nameEntry.input.focus();
+    },
+    enteredName: () => nameEntry.input.value,
   };
 }
