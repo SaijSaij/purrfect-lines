@@ -2,6 +2,7 @@
 // time as elapsed milliseconds (update), so tests can control both.
 import { clearFullRows, createBoard, isOccupied, placeCells, type Board } from './board';
 import { BOARD_WIDTH, GRAVITY_MS, SOFT_DROP_FACTOR } from './constants';
+import { kickOffsets } from './kicks';
 import { boxSize, pieceCells, type CellOffset, type PieceType, type Rotation } from './pieces';
 import { randomSeed } from './random';
 import { createPieceSequence, type PieceSequence } from './sequence';
@@ -129,10 +130,10 @@ class GameSession implements Game {
         this.tryMove(1, 0);
         break;
       case 'rotateCW':
-        this.tryRotate();
+        this.tryRotate(1);
         break;
       case 'rotateCCW':
-        // Stub: no effect yet, the state stays unchanged.
+        this.tryRotate(3);
         break;
       case 'hardDrop':
         this.hardDrop();
@@ -158,11 +159,19 @@ class GameSession implements Game {
     return true;
   }
 
-  private tryRotate(): void {
-    if (this.active === null) return;
-    const rotation = ((this.active.rotation + 1) % 4) as Rotation;
-    const rotated = { ...this.active, rotation };
-    if (fits(this.board, rotated)) this.active = rotated;
+  /** Turns by a quarter (1) or three quarters (3, i.e. counter-clockwise), trying the wall kicks (A9). */
+  private tryRotate(quarterTurns: 1 | 3): boolean {
+    const piece = this.active;
+    if (piece === null) return false;
+    const rotation = ((piece.rotation + quarterTurns) % 4) as Rotation;
+    for (const kick of kickOffsets(piece.type, piece.rotation, rotation)) {
+      const rotated = { ...piece, rotation, x: piece.x + kick.x, y: piece.y + kick.y };
+      if (fits(this.board, rotated)) {
+        this.active = rotated;
+        return true;
+      }
+    }
+    return false;
   }
 
   /** One gravity step. A resting piece locks at once (transition until lock delay exists). */
