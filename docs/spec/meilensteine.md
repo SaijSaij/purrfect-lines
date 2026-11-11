@@ -141,7 +141,8 @@ grün.
 - [ ] Esc in der Namenseingabe speichert nichts.
 - [ ] Der neue Eintrag ist in der Liste hervorgehoben.
 - [ ] Nach dem Neuladen ist die Liste noch da.
-- [ ] Im privaten Fenster läuft das Spiel, mit Hinweis zum Speichern.
+- [ ] Mit gesperrten Website-Daten für localhost läuft das Spiel, mit
+      Hinweis zum Speichern.
 
 ## M6 – Ton und Musik
 
