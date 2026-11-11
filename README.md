@@ -4,7 +4,7 @@ A cosy falling-block puzzle for the browser, with a cat's touch.
 
 ![Pieces fall, slide into place and complete the bottom row, which lights up and disappears](docs/images/gameplay.apng.png)
 
-[Play](#play) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
+[Play](#play) · [High scores](#high-scores) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
 
 ## What it is
 
@@ -12,12 +12,12 @@ Pieces made of four blocks fall into a field of 10 × 20 cells. Move and rotate
 them so they complete rows: full rows light up and disappear. The game gets
 faster as you clear rows, and it ends when the stack reaches the top.
 
-This is an early version (milestone 4 of 8). It has start, pause and game over
-screens, but no high scores, sound or German texts yet.
+This is an early version (milestone 5 of 8). It has start, pause and game over
+screens and a high score list, but no sound or German texts yet.
 
 | Start | Pause | Game over |
 |---|---|---|
-| ![Start screen with title and keys](docs/images/start-screen.png) | ![Pause menu with Resume and Give up](docs/images/pause.png) | ![Game over screen with score, lines and level](docs/images/game-over.png) |
+| ![Start screen with title, keys and the empty high score list](docs/images/start-screen.png) | ![Pause menu with Resume and Give up](docs/images/pause.png) | ![Game over screen with score, lines and level](docs/images/game-over.png) |
 
 ## Play
 
@@ -39,12 +39,33 @@ npm run serve
 The server keeps running in the terminal until you stop it with Ctrl+C. If
 port 5173 is already taken, it stops with an error; free the port first.
 
-Open http://localhost:5173. The start screen shows the title and the keys;
-press Enter to start. A piece falls from the top centre by about one row per
-second, and a pale outline (the ghost piece) shows where it will land. The
-sidebar shows the next piece, the score, the cleared rows (lines) and the
-level. When the stack reaches the top, the game over screen shows your score,
-lines and level; Enter leads back to the start screen.
+Open http://localhost:5173. The start screen shows the title, the keys and the
+high score list; press Enter to start. A piece falls from the top centre by
+about one row per second, and a pale outline (the ghost piece) shows where it
+will land. The sidebar shows the next piece, the score, the cleared rows
+(lines) and the level. When the stack reaches the top, the game over screen
+shows your score, lines and level. Press Enter: if the score makes it into the
+high score list, you enter your name next, otherwise you are back on the start
+screen.
+
+## High scores
+
+The list keeps the 10 best games with name, score, lines, level and date. A
+game enters it if it scored more than 0 points and the list has fewer than 10
+entries or the score beats the last one; on equal scores the older entry stays
+ahead.
+
+- **Name entry:** type up to 12 characters; all keys, including Space and the
+  game keys, are just text here. Enter saves and shows the list with your new
+  entry highlighted, and Enter again leads to the start screen. Esc skips the
+  entry and saves nothing. An empty name is saved as "Kitty". Next time the
+  field already holds the name you typed last.
+- **Saving:** the list and your last name are stored in the browser
+  (localStorage) for http://localhost:5173 and survive a reload. The release
+  version on port 4173 keeps its own list. If the browser does not allow
+  saving (for example when site data is blocked), the game still runs, the
+  list lasts only until the page is reloaded, and the start screen says so.
+  Stored data that cannot be read is dropped and replaced by an empty list.
 
 The game area fills the browser window as far as its fixed shape allows. It
 adapts at once when you resize the window and stays sharp on scaled displays
@@ -72,7 +93,8 @@ npm run preview
 | Space | Hard drop: fall to the bottom and lock at once |
 | P or Esc | Pause / continue |
 | ↑ / ↓ or W / S | Choose in the pause menu |
-| Enter | Start screen: start a game. Pause menu: confirm. Game over: back to the start screen |
+| Enter | Start screen: start a game. Pause menu: confirm. Game over: on to the name entry or the start screen. Name entry: save. High score list: back to the start screen |
+| Esc | Name entry: skip without saving |
 
 Letters work in upper and lower case and are recognised by the character they
 type, so Y is the key labelled Y on any Latin keyboard layout (on a German

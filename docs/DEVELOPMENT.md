@@ -68,7 +68,24 @@ e.g. http://localhost:5173/?seed=1&level=10&debug.
 | `?level=<1–99>`, e.g. http://localhost:5173/?level=15 | Every game starts on this level; the level still rises every 10 rows from there. Only whole numbers from 1 to 99; anything else is ignored and reported in the console. |
 | `?slow=<1–10>`, e.g. http://localhost:5173/?slow=4 | The whole game runs this many times slower: falling, lock delay, key repeat and the line clear animation. Only whole numbers from 1 to 10; anything else is ignored and reported in the console. |
 | `?debug` | Shows internal values as text at the top left: level, fall interval, time left until the resting piece locks and restarts used, the pieces left in the current bag, the seed, the slow motion factor and frames per second. Times are game time, so with `?slow` they stay the same while the game runs slower. |
-| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. While full rows light up (300 ms), they are still in `board`, `active` is `null`, and `score` and `lines` already count them. On the start screen, `board` and `active` belong to a throwaway game that Enter replaces. Try `window.__purrfectLines.screen` in the browser console. |
+| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"`, `"gameOver"`, `"nameEntry"` or `"highscores"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. While full rows light up (300 ms), they are still in `board`, `active` is `null`, and `score` and `lines` already count them. On the start screen, `board` and `active` belong to a throwaway game that Enter replaces. Try `window.__purrfectLines.screen` in the browser console. |
+
+## Saved data
+
+The high score list and the settings (so far only the last entered name) are
+in the browser's localStorage under `purrfect-lines.highscores` and
+`purrfect-lines.settings`, as JSON. Every origin has its own storage, so the
+development server (port 5173) and `npm run preview` (port 4173) keep separate
+lists. To start over, delete both keys in the browser's developer tools
+(Application → Local storage) or run `localStorage.clear()` in the console of
+the game's tab, which empties the storage of that origin.
+Browser tests start with an empty storage in every test.
+
+All storage access goes through `src/storage/persistence.ts`, which never
+throws: unreadable data is replaced by an empty list or the default settings,
+and if the storage is blocked or full the game keeps the list in memory and
+the start screen shows a hint. To see that hint, block site data for
+localhost in the browser settings.
 
 ## Screenshots
 
@@ -92,7 +109,8 @@ game changes.
 ## Tuning
 
 The timings (fall intervals per level, repeat delay and interval, lock delay
-and its restarts, line clear animation) and the points are in
+and its restarts, line clear animation), the points, the maximum name length
+and the size of the high score list are in
 [src/game/constants.ts](../src/game/constants.ts). Tests refer to these
 names, never to the numbers. All colors are in
 [src/render/palette.ts](../src/render/palette.ts), all visible texts in
@@ -106,8 +124,10 @@ names, never to the numbers. All colors are in
 | `src/input/` | Key → action mapping, held keys |
 | `src/i18n/` | All in-game texts |
 | `src/render/` | Drawing on the canvas, scaling to the window, color palette |
-| `src/screens/` | Start, pause and game over screens (HTML over the canvas) and the pause menu |
-| `src/main.ts` | Entry point: keyboard, screens, game loop and drawing; loads `src/debug/` only on the development server |
+| `src/highscores/` | High score list rules (who enters, order, names), unit-tested |
+| `src/storage/` | Saving the list and the settings in localStorage, unit-tested with a fake storage |
+| `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas), the high score table and the pause menu |
+| `src/main.ts` | Entry point: keyboard, screens, storage, game loop and drawing; loads `src/debug/` only on the development server |
 | `src/debug/` | Test helpers, development server only |
 | `e2e/` | Browser tests; `e2e/support/` reads the test interface |
 | `scripts/` | Release check and screenshots |
