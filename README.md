@@ -4,7 +4,7 @@ A cosy falling-block puzzle for the browser, with a cat's touch.
 
 ![Pieces fall, slide into place and complete the bottom row, which lights up and disappears](docs/images/gameplay.apng.png)
 
-[Play](#play) · [High scores](#high-scores) · [Sound](#sound) · [Language](#language) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [Development](docs/DEVELOPMENT.md)
+[Play](#play) · [High scores](#high-scores) · [Sound](#sound) · [Language](#language) · [Controls](#controls) · [Scoring and levels](#scoring-and-levels) · [License](#license) · [Development](docs/DEVELOPMENT.md)
 
 ## What it is
 
@@ -17,8 +17,13 @@ terracotta, raspberry, mustard, teal, olive, plum and light sage, a small paw
 print on every block and a cat head next to the title. Everything is drawn by
 the game itself; there are no image files.
 
-All eight milestones are done: the game has start, pause and game over
-screens, a high score list, sounds and music, and speaks English and German.
+The game has start, pause and game over screens, a high score list, sounds
+and music, and speaks English and German. A thin line under the game area
+names the game, links to its source code and names its license.
+
+**You need a physical keyboard.** The game has no touch controls. On a phone
+or tablet without a mouse, the start screen says so instead of "Press Enter
+to start"; with a keyboard attached, Enter still starts the game.
 
 | Start | Pause | Game over |
 |---|---|---|
@@ -180,7 +185,11 @@ pieces fall faster: from one row per second on level 1 down to one row every
 
 ## License
 
-No license yet: all rights reserved.
+Purrfect Lines is free software under the GNU General Public License,
+version 3 or (at your option) any later version (GPL-3.0-or-later). You may
+use, change and pass it on; if you pass on a changed version, you must share
+its source code under the same license. The full text is in
+[LICENSE](LICENSE). The line under the game links to the source code.
 
 ## Development
 

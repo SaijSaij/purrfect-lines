@@ -71,6 +71,14 @@ unit-tested, like the date format and the completeness of the text tables
 browser language with Playwright's `locale` option and read the page language
 from `<html lang>`.
 
+The keyboard hint for phones and tablets depends on the media query
+`(any-pointer: fine)`. The browser tests in `e2e/publishing.spec.ts` emulate a
+touch device with Playwright's `hasTouch` and `isMobile` options; by hand,
+use the device mode of the browser's developer tools and reload, because the
+query is read when the screens are built. The same file checks the source
+code line; a click on its link opens a tab that the test answers with an
+empty page, so no network is needed.
+
 Checklist items with a long key sequence (e.g. clearing four rows at once with
 a fixed seed) can be replayed and checked by a script instead of by hand. With
 `npm run serve` running, the browser console of the game's tab can load the
@@ -200,7 +208,13 @@ names, never to the numbers. All colors are in
 pieces share a color, if a piece's hue is within 40° of its usual hue in the
 genre (the table `GENRE_HUES` in the test), or if a source file refers to an
 image file. The paw print and the cat head are drawn in
-[src/render/decor.ts](../src/render/decor.ts). All visible texts are in
+[src/render/decor.ts](../src/render/decor.ts). The cat head is also the
+favicon: a small plugin in [vite.config.ts](../vite.config.ts) turns it into
+an SVG data URI in `index.html`, on the development server and in the build,
+so `index.html` itself holds no colors. Because the Vite config loads
+`decor.ts`, that file and the files it imports (`palette.ts`,
+`src/game/pieces.ts`) are imported with a `.ts` extension; without it, Vite
+warns on every run. All visible texts are in
 [src/i18n/texts.ts](../src/i18n/texts.ts), one table per language with the
 same keys; a unit test fails if a key is missing or empty in a language.
 `text(key)` returns the text in the current language. The canvas reads it
@@ -222,7 +236,7 @@ tempo (`BPM`) and the notes of the music are at the top of
 | `src/render/` | Drawing on the canvas, scaling to the window, color palette; `decor.ts` holds the paw print (canvas) and the cat head (SVG element for the start screen) |
 | `src/highscores/` | High score list rules (who enters, order, names), unit-tested |
 | `src/storage/` | Saving the list and the settings in localStorage, unit-tested with a fake storage |
-| `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas; the start screen's title carries the cat head), the high score table and the pause menu |
+| `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas; the start screen's title carries the cat head), the high score table, the pause menu and the line under the game with the source code link (`source-line.ts`, which also holds the repository address) |
 | `src/audio/` | Sound with the Web Audio API (browser only): `audio.ts` (sounds, switching, volumes), `music.ts` (music loop), `synth.ts` (tone helper); `sound-rules.ts` holds the unit-tested rules (music tempo, switching) |
 | `src/main.ts` | Entry point: keyboard, screens, storage, sound, game loop and drawing; loads `src/debug/` only on the development server |
 | `src/debug/` | Test helpers, development server only |
@@ -233,7 +247,8 @@ tempo (`BPM`) and the notes of the music are at the top of
 | `.claude/` | Claude Code setup: stop hook, review agents, rules |
 | `.github/workflows/` | CI workflow (`ci.yml`) |
 | `.node-version` | Exact Node.js version: the one to install locally, read by the CI |
-| `index.html` | The page that loads the game |
+| `index.html` | The page that loads the game, with the description for shared links |
+| `LICENSE` | GPL-3.0 license text, fetched unchanged with `gh api licenses/gpl-3.0` |
 | `vite.config.ts`, `playwright.config.ts`, `playwright.screenshots.config.ts`, `eslint.config.js`, `tsconfig.json` | Tool configuration |
 
 ## Workflow
