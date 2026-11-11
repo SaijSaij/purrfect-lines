@@ -2,6 +2,7 @@
 // time as elapsed milliseconds (update), so tests can control both.
 import { clearFullRows, createBoard, isOccupied, placeCells, type Board } from './board';
 import { BOARD_WIDTH, GRAVITY_MS, SOFT_DROP_FACTOR } from './constants';
+import { KeyRepeat } from './key-repeat';
 import { kickOffsets } from './kicks';
 import { boxSize, pieceCells, type CellOffset, type PieceType, type Rotation } from './pieces';
 import { randomSeed } from './random';
@@ -78,6 +79,7 @@ class GameSession implements Game {
   private lines = 0;
   private fallTimerMs = 0;
   private readonly held = new Set<Action>();
+  private readonly repeat = new KeyRepeat();
 
   constructor(
     private readonly source: PieceSource,
@@ -100,24 +102,45 @@ class GameSession implements Game {
   }
 
   press(action: Action): void {
-    // A repeated press without release is key repeat and is ignored.
+    // A repeated press without release is the operating system's key repeat
+    // and is ignored (A7, A8, A12).
     if (this.status !== 'playing' || this.held.has(action)) return;
     this.held.add(action);
+    if (action === 'left' || action === 'right') this.repeat.press(action);
     this.apply(action);
   }
 
   release(action: Action): void {
     this.held.delete(action);
+    if (action === 'left' || action === 'right') this.repeat.release(action);
   }
 
+  /**
+   * Splits the elapsed time at every due event (key repeat, fall step), so
+   * one long update gives the same result as many short ones.
+   */
   update(deltaMs: number): void {
-    if (this.status !== 'playing') return;
-    this.fallTimerMs += deltaMs;
-    let interval = this.fallInterval();
-    while (this.status === 'playing' && this.fallTimerMs >= interval) {
+    let remainingMs = deltaMs;
+    while (this.status === 'playing' && remainingMs > 0) {
+      const stepMs = Math.min(remainingMs, Math.max(0, this.msUntilNextEvent()));
+      remainingMs -= stepMs;
+      this.advance(stepMs);
+    }
+  }
+
+  private msUntilNextEvent(): number {
+    return Math.min(this.repeat.msUntilNext(), this.fallInterval() - this.fallTimerMs);
+  }
+
+  /** Advances all timers and runs the events that are due, in a fixed order. */
+  private advance(ms: number): void {
+    this.fallTimerMs += ms;
+    const direction = this.repeat.advance(ms);
+    if (direction !== null) this.tryMove(direction === 'left' ? -1 : 1, 0);
+    const interval = this.fallInterval();
+    if (this.fallTimerMs >= interval) {
       this.fallTimerMs -= interval;
       this.fallStep();
-      interval = this.fallInterval();
     }
   }
 
