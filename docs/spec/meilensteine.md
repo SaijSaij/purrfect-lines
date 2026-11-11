@@ -77,7 +77,7 @@ gesteuerter Zeit.
 
 ## M3 – Punkte, Level, Tempo, Hilfen
 
-**Status:** offen
+**Status:** erledigt am 2026-11-11 (Commit da5f239)
 
 **Ziel:** Das Spiel zählt Punkte, wird schneller und zeigt Vorschau und
 Geisterstein.
@@ -92,12 +92,12 @@ in schlichter Gestaltung.
 A40, A41 grün. E2E-Test 2 prüft jetzt auch die Punkte.
 
 **Abnahme-Checkliste:**
-- [ ] Vorschau zeigt die Form, die tatsächlich als nächste kommt.
-- [ ] Geisterstein zeigt die Landeposition und wandert mit.
-- [ ] Vier Reihen auf einmal geben deutlich mehr Punkte als vier einzelne.
-- [ ] Nach 10 Reihen steigt das Level, die Formen fallen spürbar schneller.
-- [ ] `?level=15` ist schnell, aber noch spielbar.
-- [ ] `?slow=4` läuft deutlich langsamer, `?debug` zeigt die Werte.
+- [x] Vorschau zeigt die Form, die tatsächlich als nächste kommt.
+- [x] Geisterstein zeigt die Landeposition und wandert mit.
+- [x] Vier Reihen auf einmal geben deutlich mehr Punkte als vier einzelne.
+- [x] Nach 10 Reihen steigt das Level, die Formen fallen spürbar schneller.
+- [x] `?level=15` ist schnell, aber noch spielbar.
+- [x] `?slow=4` läuft deutlich langsamer, `?debug` zeigt die Werte.
 
 ## M4 – Bildschirme und Ablauf
 
