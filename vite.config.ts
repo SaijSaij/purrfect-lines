@@ -21,6 +21,9 @@ function favicon(): Plugin {
 }
 
 export default defineConfig({
+  // Relative paths in the build, so it runs under /purrfect-lines/ on GitHub
+  // Pages as well as under / with `npm run preview` (A48).
+  base: './',
   plugins: [favicon()],
   server: {
     port: 5173,
