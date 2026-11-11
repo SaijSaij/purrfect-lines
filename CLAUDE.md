@@ -79,6 +79,8 @@ flags, never with a heredoc.
 5. Always run `code-reviewer` with the list of changed files. If documentation
    changed (README, docs/, SPEC.md, CLAUDE.md), also run `docs-reviewer` with
    the same list. Present each finding separately and wait for my decision.
+   Tests that a review suggests after the implementation go in their own
+   commit, and its message says that they were never red.
 6. Before asking for my acceptance, show me the start command, the
    milestone's checklist with action and expected result for each item, and
    the transitional behaviour. If nothing needs checking by hand, say so.
