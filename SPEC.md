@@ -291,7 +291,8 @@ Ein Meilenstein ist fertig, wenn alles davon zutrifft:
 4. `npm run check:release` ist grün (ab M1, siehe A44).
 5. Der `code-reviewer` hat die geänderten Dateien geprüft, und es gibt keine
    offenen MUSS-Punkte.
-6. Die README beschreibt Start, Steuerung und Testhilfen auf dem neuen Stand.
+6. README und docs/DEVELOPMENT.md beschreiben Start, Steuerung und
+   Testhilfen auf dem neuen Stand.
 7. Wurde Doku geändert (README, docs/, SPEC.md, CLAUDE.md), hat der
    `docs-reviewer` sie mit der Liste der geänderten Dateien geprüft, und seine
    Punkte sind erledigt oder bewusst verworfen.

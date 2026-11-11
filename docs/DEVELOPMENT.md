@@ -29,9 +29,8 @@ Rules, commands and the workflow that Claude Code follows are in
 
 ## Commands
 
-All commands are npm scripts, run from the project root. The list is in
-[Commands in CLAUDE.md](../CLAUDE.md#commands), except `npm run screenshots`
-(see [Screenshots](#screenshots)). Good to know beyond that list:
+All commands are npm scripts, run from the project root. The full list is in
+[Commands in CLAUDE.md](../CLAUDE.md#commands). Good to know beyond that list:
 
 - `npm run check` runs typecheck, lint and unit tests. It does not run the
   browser tests or the release check.

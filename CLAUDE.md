@@ -19,6 +19,10 @@ hook).
 - `npm run check` – typecheck + lint + unit tests (what the stop hook runs)
 - `npm run check:release` – build and verify that no debug code is in `dist/`
   (part of the Definition of Done)
+- `npm run screenshots` – render the pictures in `docs/images/` (not part of
+  `npm run check`)
+
+Developer documentation for humans: `docs/DEVELOPMENT.md`.
 
 Run project commands via the npm scripts from the project root, never via npx,
 and without cd, pipes or redirects. The one exception is
