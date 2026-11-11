@@ -358,7 +358,11 @@ class GameSession implements Game {
 }
 
 export function createGame(options: GameOptions = {}): Game {
-  const seed = options.sequence === undefined ? (options.seed ?? randomSeed()) : null;
-  const source = options.sequence ?? createPieceSequence(seed ?? randomSeed());
-  return new GameSession(source, options.board ?? createBoard(), options.startLevel ?? 1, seed);
+  const board = options.board ?? createBoard();
+  const startLevel = options.startLevel ?? 1;
+  if (options.sequence !== undefined) {
+    return new GameSession(options.sequence, board, startLevel, null);
+  }
+  const seed = options.seed ?? randomSeed();
+  return new GameSession(createPieceSequence(seed), board, startLevel, seed);
 }
