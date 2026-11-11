@@ -37,17 +37,35 @@ to start"; with a keyboard attached, Enter still starts the game.
 ## Play
 
 Open https://saijsaij.github.io/purrfect-lines/ in a current desktop browser
-based on Chromium or Firefox. The online version is always the latest checked
-state of the main branch. Everything below about the game applies to it as
-well.
+based on Chromium or Firefox. The online version is normally the latest
+checked state of the main branch.
+
+The start screen shows the title, the keys and the
+high score list; press Enter to start. A piece falls from the top centre by
+about one row per second, and a thin outline in the piece's color (the ghost piece) shows where it
+will land. The sidebar shows the next piece, the score, the cleared rows
+(lines) and the level. When the stack reaches the top, the game over screen
+shows your score, lines and level. Press Enter: if the score makes it into the
+high score list, you enter your name next, otherwise you are back on the start
+screen.
 
 ### Play locally
 
 To run the game on your own computer instead,
-you need Windows (the setup is only tested there), Node.js 26 LTS
+you need Windows (the setup is only tested there), Git, Node.js 26 LTS
 (`winget install OpenJS.NodeJS.LTS`, then check in a new terminal with
 `node --version`), a keyboard and a current desktop browser based on Chromium
-or Firefox. Clone the repository, and in the project folder install once:
+or Firefox. Clone the repository and change into its folder:
+
+```bash
+git clone https://github.com/SaijSaij/purrfect-lines.git
+```
+
+```bash
+cd purrfect-lines
+```
+
+Install once:
 
 ```bash
 npm ci
@@ -62,14 +80,18 @@ npm run serve
 The server keeps running in the terminal until you stop it with Ctrl+C. If
 port 5173 is already taken, it stops with an error; free the port first.
 
-Open http://localhost:5173. The start screen shows the title, the keys and the
-high score list; press Enter to start. A piece falls from the top centre by
-about one row per second, and a thin outline in the piece's color (the ghost piece) shows where it
-will land. The sidebar shows the next piece, the score, the cleared rows
-(lines) and the level. When the stack reaches the top, the game over screen
-shows your score, lines and level. Press Enter: if the score makes it into the
-high score list, you enter your name next, otherwise you are back on the start
-screen.
+Open http://localhost:5173.
+
+To play the release version instead, build it and serve it, then open
+http://localhost:4173:
+
+```bash
+npm run build
+```
+
+```bash
+npm run preview
+```
 
 ## High scores
 
@@ -100,17 +122,6 @@ ahead.
 The game area fills the browser window as far as its fixed shape allows. It
 adapts at once when you resize the window and stays sharp on scaled displays
 (e.g. 125 % or 150 %).
-
-To play the release version instead, build it and serve it, then open
-http://localhost:4173:
-
-```bash
-npm run build
-```
-
-```bash
-npm run preview
-```
 
 ## Sound
 

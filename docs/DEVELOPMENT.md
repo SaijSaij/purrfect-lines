@@ -117,8 +117,8 @@ The high score list and the settings are in the browser's localStorage under
 settings hold `lastName` (the name entered last, text), `music` and `sounds`
 (true or false), and `language` (`"en"` or `"de"`) once a language was chosen
 with L; without it the game follows the browser language. Every origin has
-its own storage, so the development server (port 5173) and `npm run preview`
-(port 4173) keep separate lists. To start over, delete both keys in the
+its own storage, so the development server (port 5173), `npm run preview`
+(port 4173) and the online version keep separate lists. To start over, delete both keys in the
 browser's developer tools (Application → Local storage) or run
 `localStorage.clear()` in the console of the game's tab, which empties the
 storage of that origin. Browser tests start with an empty storage in every
