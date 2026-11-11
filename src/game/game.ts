@@ -175,10 +175,10 @@ class GameSession implements Game {
         this.playerMove(1);
         break;
       case 'rotateCW':
-        if (this.tryRotate(1)) this.afterPlayerMove();
+        this.playerRotate(1);
         break;
       case 'rotateCCW':
-        if (this.tryRotate(3)) this.afterPlayerMove();
+        this.playerRotate(3);
         break;
       case 'hardDrop':
         this.hardDrop();
@@ -220,7 +220,13 @@ class GameSession implements Game {
   }
 
   private playerMove(dx: number): void {
-    if (this.tryMove(dx, 0)) this.afterPlayerMove();
+    const wasGrounded = this.isGrounded();
+    if (this.tryMove(dx, 0)) this.afterPlayerMove(wasGrounded);
+  }
+
+  private playerRotate(quarterTurns: 1 | 3): void {
+    const wasGrounded = this.isGrounded();
+    if (this.tryRotate(quarterTurns)) this.afterPlayerMove(wasGrounded);
   }
 
   /** Whether the piece rests on blocks or the floor. */
@@ -240,19 +246,21 @@ class GameSession implements Game {
   }
 
   /**
-   * A13: a successful move or rotation restarts the lock delay, at most
-   * LOCK_RESETS_MAX times. With no restarts left, a resting piece locks at once.
+   * A13: a successful move or rotation of a piece that rests before or after
+   * it restarts the lock delay, at most LOCK_RESETS_MAX times; lifting the
+   * piece off counts too. With no restarts left, a resting piece locks at once.
    * A piece lifted off the ground does not count down until it rests again.
    */
-  private afterPlayerMove(): void {
+  private afterPlayerMove(wasGrounded: boolean): void {
     this.trackLowestRow();
     this.lockTimerMs = 0;
-    if (!this.isGrounded()) return;
-    if (this.lockResets >= LOCK_RESETS_MAX) {
-      this.lock();
+    const grounded = this.isGrounded();
+    if (!wasGrounded && !grounded) return; // a move in the air
+    if (this.lockResets < LOCK_RESETS_MAX) {
+      this.lockResets += 1;
       return;
     }
-    this.lockResets += 1;
+    if (grounded) this.lock();
   }
 
   /** One gravity or soft drop step. A resting piece is left to the lock delay (A13). */

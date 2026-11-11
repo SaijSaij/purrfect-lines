@@ -415,4 +415,46 @@ describe('A13 lock delay', () => {
     game.update(1);
     expect(blockCount(game)).toBe(LEDGE_BLOCKS + 4);
   });
+
+  // On the flat floor a rotation of the T kicks it one row up and it still
+  // rests (a restart). Rotating back leaves it floating one row above the
+  // floor (another restart, the piece is lifted off), and gravity puts it down
+  // on the same row again. A clockwise cycle moves the box one column left, a
+  // counter-clockwise cycle one column right, so alternating keeps it in place.
+  function rotationCycle(game: Game, first: 'rotateCW' | 'rotateCCW'): void {
+    tap(game, first);
+    tap(game, first === 'rotateCW' ? 'rotateCCW' : 'rotateCW');
+    expect(activePiece(game).y).toBe(1);
+    fall(game, 1);
+    expect(activePiece(game).y).toBe(2);
+  }
+
+  // Seven cycles use 14 restarts because LOCK_RESETS_MAX is 15.
+  function useFourteenRestarts(game: Game): void {
+    for (let i = 0; i < (LOCK_RESETS_MAX - 1) / 2; i++) {
+      rotationCycle(game, i % 2 === 0 ? 'rotateCW' : 'rotateCCW');
+    }
+    expect(blockCount(game)).toBe(FLOOR_BLOCKS);
+  }
+
+  it('counts a move that lifts the piece off the ground as a restart', () => {
+    const game = landedT();
+    useFourteenRestarts(game);
+    tap(game, 'rotateCW'); // restart 15, still resting
+    expect(activePiece(game).rotation).toBe(1);
+    tap(game, 'right'); // one move too many
+    game.update(1);
+    expect(blockCount(game)).toBe(FLOOR_BLOCKS + 4);
+  });
+
+  it('locks at once when the piece lands again with no restarts left', () => {
+    const game = landedT();
+    useFourteenRestarts(game);
+    tap(game, 'rotateCW'); // restart 15, still resting
+    tap(game, 'rotateCCW'); // lifts the piece off
+    expect(activePiece(game).y).toBe(1);
+    expect(blockCount(game)).toBe(FLOOR_BLOCKS);
+    fall(game, 1); // lands on a row it has reached before
+    expect(blockCount(game)).toBe(FLOOR_BLOCKS + 4);
+  });
 });
