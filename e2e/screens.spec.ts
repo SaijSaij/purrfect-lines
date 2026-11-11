@@ -91,6 +91,19 @@ test.describe('A23 pause', () => {
     await page.keyboard.press('Enter');
     await waitForScreen(page, 'playing');
   });
+
+  test('holding P after continuing does not pause again', async ({ page }) => {
+    await startGame(page, '/?seed=1');
+    await page.keyboard.press('p');
+    await waitForScreen(page, 'paused');
+    await page.keyboard.down('p');
+    await waitForScreen(page, 'playing');
+    // A second down without up is the key repeat of the operating system.
+    await page.keyboard.down('p');
+    await page.waitForTimeout(200);
+    expect((await readState(page)).screen).toBe('playing');
+    await page.keyboard.up('p');
+  });
 });
 
 test.describe('A24 pause on focus loss', () => {
@@ -142,6 +155,30 @@ test.describe('A26 game over screen', () => {
     await expect(page.locator('#game-over-score')).toHaveText(String(state.score));
     await expect(page.locator('#game-over-lines')).toHaveText(String(state.lines));
     await expect(page.locator('#game-over-level')).toHaveText(String(state.level));
+  });
+
+  // A game without points never enters the high score list (A29), so this
+  // path stays valid once name entry exists.
+  test('Enter after a game without points leads to the start screen, Enter again starts a fresh game', async ({
+    page,
+  }) => {
+    await startGame(page, '/?seed=1');
+    await page.keyboard.press('p');
+    await waitForScreen(page, 'paused');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await waitForScreen(page, 'gameOver');
+    expect((await readState(page)).score).toBe(0);
+
+    await page.keyboard.press('Enter');
+    await waitForScreen(page, 'start');
+    await expect(page.locator(START_SCREEN)).toBeVisible();
+
+    await page.keyboard.press('Enter');
+    await waitForScreen(page, 'playing');
+    const fresh = await readState(page);
+    expect(fresh.score).toBe(0);
+    expect(fresh.active).not.toBeNull();
   });
 });
 
