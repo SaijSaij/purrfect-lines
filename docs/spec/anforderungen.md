@@ -137,6 +137,7 @@ lässt eine Form sichtbar unten landen).
 **A13 Gnadenfrist beim Einrasten.** Liegt die Form auf, rastet sie nach
 `LOCK_DELAY_MS` (500 ms) ein. Jede erfolgreiche Bewegung oder Drehung in dieser
 Zeit startet die Frist neu, höchstens `LOCK_RESETS_MAX` (15) Mal pro Form.
+Auch eine Bewegung, die die Form vom Boden abhebt, zählt als Neustart.
 Erreicht die Form eine tiefere Reihe als je zuvor, wird der Zähler wieder auf
 0 gesetzt. Ist der Zähler aufgebraucht, rastet die Form ein, sobald sie
 aufliegt. Hebt eine Bewegung die Form vom Boden ab (über eine Kante), läuft
