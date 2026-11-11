@@ -39,10 +39,20 @@ export interface ClearResult {
   readonly cleared: number;
 }
 
+/** Indices of all full rows, from top to bottom. */
+export function fullRows(board: Board): number[] {
+  return board.flatMap((row, y) => (row.every((cell) => cell !== null) ? [y] : []));
+}
+
+/** Removes the given rows; everything above moves down by the number of rows removed below it. */
+export function removeRows(board: Board, rows: readonly number[]): Board {
+  const remaining = board.filter((_, y) => !rows.includes(y));
+  const newRows = Array.from({ length: board.length - remaining.length }, emptyRow);
+  return [...newRows, ...remaining];
+}
+
 /** Removes all full rows; everything above moves down by the number of rows removed below it. */
 export function clearFullRows(board: Board): ClearResult {
-  const remaining = board.filter((row) => row.some((cell) => cell === null));
-  const cleared = board.length - remaining.length;
-  const newRows = Array.from({ length: cleared }, emptyRow);
-  return { board: [...newRows, ...remaining], cleared };
+  const rows = fullRows(board);
+  return { board: removeRows(board, rows), cleared: rows.length };
 }

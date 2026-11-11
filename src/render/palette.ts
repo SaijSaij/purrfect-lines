@@ -18,6 +18,12 @@ export const PALETTE = {
   field: '#241e2b',
   sidebar: '#1d1823',
   overlay: 'rgba(0, 0, 0, 0.7)',
+  /** Background of the start, pause and game over screens; opaque so the field is hidden (A23). */
+  screen: '#241e2b',
+  /** Full rows light up in this color before they disappear (A16). */
+  flash: '#fff8f0',
+  /** The chosen menu entry. */
+  highlight: '#edae49',
   text: '#fff8f0',
   label: '#b9a99a',
 } as const;

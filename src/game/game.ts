@@ -1,9 +1,10 @@
 // Game rules without DOM, canvas, audio or clock. Input arrives as actions,
 // time as elapsed milliseconds (update), so tests can control both.
-import { clearFullRows, createBoard, isOccupied, placeCells, type Board } from './board';
+import { createBoard, fullRows, isOccupied, placeCells, removeRows, type Board } from './board';
 import {
   BOARD_WIDTH,
   HARD_DROP_POINTS,
+  LINE_CLEAR_MS,
   LOCK_DELAY_MS,
   LOCK_RESETS_MAX,
   SOFT_DROP_FACTOR,
@@ -127,6 +128,9 @@ class GameSession implements Game {
   private lockResets = 0;
   /** Lowest block row the current piece has reached so far. */
   private lowestRow = 0;
+  /** Full rows that light up before they disappear (A16); empty otherwise. */
+  private clearing: number[] = [];
+  private clearTimerMs = 0;
   private readonly held = new Set<Action>();
   private readonly repeat = new KeyRepeat();
 
@@ -153,20 +157,23 @@ class GameSession implements Game {
       level: this.level,
       score: this.score,
       lines: this.lines,
-      clearingRows: [],
+      clearingRows: [...this.clearing],
     };
   }
 
+  /** All timers keep their values, so resuming continues exactly where the game stopped (A23). */
   pause(): void {
-    // Not implemented yet (A23).
+    if (this.status === 'playing') this.status = 'paused';
   }
 
   resume(): void {
-    // Not implemented yet (A23).
+    if (this.status === 'paused') this.status = 'playing';
   }
 
   giveUp(): void {
-    // Not implemented yet (A25).
+    if (this.status === 'gameOver') return;
+    this.active = null;
+    this.status = 'gameOver';
   }
 
   get diagnostics(): GameDiagnostics {
@@ -181,8 +188,8 @@ class GameSession implements Game {
 
   press(action: Action): void {
     // A repeated press without release is the operating system's key repeat
-    // and is ignored (A7, A8, A12).
-    if (this.status !== 'playing' || this.held.has(action)) return;
+    // and is ignored (A7, A8, A12). While rows light up, game keys do nothing (A16).
+    if (this.status !== 'playing' || this.isClearing() || this.held.has(action)) return;
     this.held.add(action);
     if (action === 'left' || action === 'right') this.repeat.press(action);
     this.apply(action);
@@ -206,7 +213,12 @@ class GameSession implements Game {
     }
   }
 
+  private isClearing(): boolean {
+    return this.clearing.length > 0;
+  }
+
   private msUntilNextEvent(): number {
+    if (this.isClearing()) return LINE_CLEAR_MS - this.clearTimerMs;
     const lockMs = this.isGrounded() ? LOCK_DELAY_MS - this.lockTimerMs : Infinity;
     return Math.min(this.repeat.msUntilNext(), this.fallInterval() - this.fallTimerMs, lockMs);
   }
@@ -216,6 +228,10 @@ class GameSession implements Game {
    * key repeat, fall step, locking. The lock delay only runs while the piece rests.
    */
   private advance(ms: number): void {
+    if (this.isClearing()) {
+      this.advanceClear(ms);
+      return;
+    }
     if (this.isGrounded()) this.lockTimerMs += ms;
     this.fallTimerMs += ms;
     const direction = this.repeat.advance(ms);
@@ -226,6 +242,15 @@ class GameSession implements Game {
       this.fallStep();
     }
     if (this.isGrounded() && this.lockTimerMs >= LOCK_DELAY_MS) this.lock();
+  }
+
+  /** A16: after LINE_CLEAR_MS the lit rows disappear, the rest moves down and the next piece appears. */
+  private advanceClear(ms: number): void {
+    this.clearTimerMs += ms;
+    if (this.clearTimerMs < LINE_CLEAR_MS) return;
+    this.board = removeRows(this.board, this.clearing);
+    this.clearing = [];
+    this.spawn();
   }
 
   private apply(action: Action): void {
@@ -356,12 +381,18 @@ class GameSession implements Game {
       this.status = 'gameOver'; // A5, case 2
       return;
     }
-    const result = clearFullRows(this.board);
-    this.board = result.board;
-    // Points use the level before the clear, even if the clear raises it (A17).
-    this.score += linePoints(result.cleared, this.level);
-    this.lines += result.cleared;
-    this.spawn();
+    const rows = fullRows(this.board);
+    // Points and lines count at once (A16). Points use the level before the
+    // clear, even if the clear raises it (A17).
+    this.score += linePoints(rows.length, this.level);
+    this.lines += rows.length;
+    if (rows.length === 0) {
+      this.spawn();
+      return;
+    }
+    // The rows stay on the board and light up; advanceClear removes them (A16).
+    this.clearing = rows;
+    this.clearTimerMs = 0;
   }
 
   private spawn(): void {

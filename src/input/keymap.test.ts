@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { actionForKey } from './keymap';
+import { actionForKey, menuActionForKey } from './keymap';
 
 // Keys are given as KeyboardEvent.key values.
 describe('A21 key mapping', () => {
@@ -48,6 +48,16 @@ describe('A21 key mapping for all game keys', () => {
 
   it('maps P and Esc to pause (A23)', () => {
     for (const key of ['p', 'P', 'Escape']) expect(actionForKey(key)).toBe('pause');
+  });
+
+  it('maps the menu keys: ↑ and W up, ↓ and S down, Enter confirms', () => {
+    for (const key of ['ArrowUp', 'w', 'W']) expect(menuActionForKey(key)).toBe('up');
+    for (const key of ['ArrowDown', 's', 'S']) expect(menuActionForKey(key)).toBe('down');
+    expect(menuActionForKey('Enter')).toBe('confirm');
+  });
+
+  it('ignores other keys in menus, e.g. X and Q', () => {
+    for (const key of ['x', 'q', ' ', 'ArrowLeft']) expect(menuActionForKey(key)).toBeNull();
   });
 
   it('recognises letters by the typed character, so Z is not Y', () => {

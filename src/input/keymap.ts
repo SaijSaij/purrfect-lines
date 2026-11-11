@@ -17,9 +17,26 @@ const KEYS: Readonly<Record<string, KeyAction>> = {
   y: 'rotateCCW',
   ' ': 'hardDrop',
   enter: 'confirm',
+  p: 'pause',
+  escape: 'pause',
 };
 
 /** Letters are matched by the typed character, ignoring case. */
 export function actionForKey(key: string): KeyAction | null {
   return KEYS[key.toLowerCase()] ?? null;
+}
+
+export type MenuAction = 'up' | 'down' | 'confirm';
+
+const MENU_KEYS: Readonly<Record<string, MenuAction>> = {
+  arrowup: 'up',
+  w: 'up',
+  arrowdown: 'down',
+  s: 'down',
+  enter: 'confirm',
+};
+
+/** Keys for choosing in menus (A21), matched like actionForKey. */
+export function menuActionForKey(key: string): MenuAction | null {
+  return MENU_KEYS[key.toLowerCase()] ?? null;
 }

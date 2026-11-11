@@ -1,7 +1,18 @@
 // All visible in-game texts, by language (A37). No visible text elsewhere in the code.
 
 const EN = {
-  gameOver: 'Game over – press Enter',
+  title: 'Purrfect Lines',
+  pressEnterToStart: 'Press Enter to start',
+  keysMove: '← → / A D: move',
+  keysRotate: '↑ W X / Q Y: rotate',
+  keysSoftDrop: '↓ / S: soft drop',
+  keysHardDrop: 'Space: hard drop',
+  keysPause: 'P / Esc: pause',
+  paused: 'Paused',
+  resume: 'Resume',
+  giveUp: 'Give up',
+  gameOver: 'Game over',
+  pressEnter: 'Press Enter',
   score: 'Score',
   lines: 'Lines',
   level: 'Level',

@@ -116,10 +116,16 @@ export function createDebugOverlay(slow = 1): (game: Game, frameMs: number) => v
   };
 }
 
-function snapshot(game: Game): unknown {
+/** What the test interface reads: the screen shown and the current game. */
+export interface TestView {
+  readonly screen: string;
+  readonly game: Game;
+}
+
+function snapshot({ screen, game }: TestView): unknown {
   const state = game.state;
   return {
-    screen: state.status,
+    screen,
     board: state.board.map((row) => [...row]),
     active:
       state.active === null
@@ -132,10 +138,10 @@ function snapshot(game: Game): unknown {
   };
 }
 
-/** Exposes a read-only view of the current game as window.__purrfectLines (A43). */
-export function installTestInterface(currentGame: () => Game): void {
+/** Exposes a read-only view of the current screen and game as window.__purrfectLines (A43). */
+export function installTestInterface(current: () => TestView): void {
   Object.defineProperty(window, '__purrfectLines', {
-    get: () => snapshot(currentGame()),
+    get: () => snapshot(current()),
     configurable: true,
   });
 }

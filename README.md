@@ -4,8 +4,8 @@ A falling-block puzzle game for the browser. Pieces made of four blocks fall
 into a 10 × 20 field; move and rotate them so they complete rows. Full rows
 disappear. The game ends when the stack reaches the top.
 
-This is an early version (milestone 3 of 8): it starts right away when the
-page loads, has no menus, high scores or sound yet. The plan is in
+This is an early version (milestone 4 of 8): it has start, pause and game
+over screens, but no high scores, sound or German texts yet. The plan is in
 [SPEC.md](SPEC.md), the numbered requirements (A1, A2, …) that code comments
 refer to are in [docs/spec/anforderungen.md](docs/spec/anforderungen.md). Both
 are in German.
@@ -28,12 +28,17 @@ npm ci
 npm run serve
 ```
 
-Then open http://localhost:5173. The game starts immediately: a framed field
-appears, and a piece falls from the top centre by about one row per second.
-A pale outline (the ghost piece) shows where the piece will
-land. The sidebar on the right shows the next piece, the score, the cleared
-rows (lines) and the level. When the stack reaches the top, "Game over –
-press Enter" is shown over the field.
+Then open http://localhost:5173. The start screen shows the title and the
+keys; press Enter to start. A framed field appears, and a piece falls from
+the top centre by about one row per second. A pale outline (the ghost piece)
+shows where the piece will land. The sidebar on the right shows the next
+piece, the score, the cleared rows (lines) and the level. Full rows light up
+briefly before they disappear. When the stack reaches the top, the game over
+screen shows score, lines and level; Enter leads back to the start screen.
+
+The game area is centred and scaled to fill the browser window as far as its
+fixed aspect ratio allows. It adapts at once when the window size changes and
+stays sharp on scaled displays (e.g. 125 % or 150 %).
 
 To build the release version into `dist/`:
 
@@ -59,7 +64,14 @@ not load JavaScript modules from `file://`.
 | ↑, W or X | Rotate clockwise |
 | Q or Y | Rotate counter-clockwise |
 | Space | Hard drop: fall to the bottom and lock at once |
-| Enter | After game over: start a new game |
+| P or Esc | Pause / continue |
+| ↑ / ↓ or W / S | Choose in the pause menu |
+| Enter | Start screen: start a game. Pause menu: confirm. Game over: back to the start screen |
+
+During a pause the field is hidden and time stands still. The pause menu
+offers "Resume" and "Give up"; giving up ends the game like a regular game
+over. Continuing picks up exactly where the game stopped. While full rows
+light up, only pausing works; other game keys are ignored.
 
 Letters work in upper and lower case and are recognised by the character they
 type, so Y is the key labelled Y on any Latin keyboard layout (on a German
@@ -68,7 +80,9 @@ keyboard it sits where Z is on an English one).
 Holding a move key moves the piece once, then after a short pause it keeps
 sliding until you let go (A7). If both directions are held, the one pressed
 last wins; letting it go hands over to the other one after the same short
-pause. When the game window loses focus, all held keys count as released.
+pause. When the game window loses focus or the tab is hidden, all held keys
+count as released and a running game pauses; it stays paused when you come
+back.
 
 A piece that cannot turn in place (for example a vertical bar at the wall) is
 shifted by the first of up to four other positions that makes room, as listed
@@ -112,7 +126,7 @@ Helpers can be combined with `&`, e.g. http://localhost:5173/?seed=1&level=10&de
 | `?level=<1–99>`, e.g. http://localhost:5173/?level=15 | Every game starts on this level; the level still rises every 10 rows from there. Only whole numbers from 1 to 99; anything else is ignored and reported in the console. |
 | `?slow=<1–10>`, e.g. http://localhost:5173/?slow=4 | The whole game runs this many times slower: falling, lock delay and key repeat. Only whole numbers from 1 to 10; anything else is ignored and reported in the console. |
 | `?debug` | Shows internal values as text at the top left: level, fall interval, time left until the resting piece locks and restarts used, the pieces left in the current bag, the seed, the slow motion factor and frames per second. Times are game time, so with `?slow` they stay the same while the game runs slower. |
-| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"playing"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. Try `window.__purrfectLines.screen` in the browser console. |
+| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. Try `window.__purrfectLines.screen` in the browser console. |
 
 ## Checks
 
@@ -132,8 +146,9 @@ Helpers can be combined with `&`, e.g. http://localhost:5173/?seed=1&level=10&de
 | `src/game/` | Game rules without browser APIs, fully unit-tested |
 | `src/input/` | Key → action mapping |
 | `src/i18n/` | All in-game texts |
-| `src/render/` | Drawing on the canvas, color palette |
-| `src/main.ts` | Entry point: keyboard, game loop and drawing; loads `src/debug/` only on the development server |
+| `src/render/` | Drawing on the canvas, scaling to the window, color palette |
+| `src/screens/` | Start, pause and game over screens (HTML over the canvas) and the pause menu |
+| `src/main.ts` | Entry point: keyboard, screens, game loop and drawing; loads `src/debug/` only on the development server |
 | `src/debug/` | Test helpers, development server only |
 | `e2e/` | Browser tests |
 | `scripts/` | Release check |

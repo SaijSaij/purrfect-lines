@@ -1,5 +1,6 @@
 // Draws the game state onto a canvas. Plain interim look: framed field with
-// ghost piece, and a sidebar with score, lines, level and the next piece.
+// ghost piece and lit full rows, and a sidebar with score, lines, level and
+// the next piece. Start, pause and game over screens are HTML (screens.ts).
 import { BOARD_HEIGHT, BOARD_WIDTH } from '../game/constants';
 import { absoluteCells, landingPosition, type ActivePiece, type GameState } from '../game/game';
 import { pieceCells, type PieceType } from '../game/pieces';
@@ -46,6 +47,12 @@ function drawGhost(ctx: CanvasRenderingContext2D, state: GameState, piece: Activ
   ctx.restore();
 }
 
+/** Full rows light up before they disappear (A16). */
+function drawClearingRows(ctx: CanvasRenderingContext2D, rows: readonly number[]): void {
+  ctx.fillStyle = PALETTE.flash;
+  for (const y of rows) ctx.fillRect(BORDER_PX, cellTop(y), FIELD_WIDTH_PX, CELL_PX);
+}
+
 function drawField(ctx: CanvasRenderingContext2D, state: GameState): void {
   ctx.fillStyle = PALETTE.frame;
   ctx.fillRect(0, 0, SIDEBAR_LEFT_PX, CANVAS_HEIGHT);
@@ -56,6 +63,7 @@ function drawField(ctx: CanvasRenderingContext2D, state: GameState): void {
       if (cell !== null) drawBlock(ctx, x, y, cell);
     });
   });
+  drawClearingRows(ctx, state.clearingRows);
   if (state.active !== null) {
     drawGhost(ctx, state, state.active);
     for (const { x, y } of absoluteCells(state.active)) drawBlock(ctx, x, y, state.active.type);
@@ -109,20 +117,10 @@ function drawSidebar(ctx: CanvasRenderingContext2D, state: GameState): void {
   drawValue(ctx, 'level', state.level, valuesTop + 5 * CELL_PX);
 }
 
-function drawGameOver(ctx: CanvasRenderingContext2D): void {
-  const bandHeight = CELL_PX * 3;
-  const bandTop = BORDER_PX + (FIELD_HEIGHT_PX - bandHeight) / 2;
-  ctx.fillStyle = PALETTE.overlay;
-  ctx.fillRect(BORDER_PX, bandTop, FIELD_WIDTH_PX, bandHeight);
-  ctx.fillStyle = PALETTE.text;
-  ctx.font = 'bold 22px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text('gameOver'), SIDEBAR_LEFT_PX / 2, bandTop + bandHeight / 2);
-}
-
+/** Draws in logical units (CANVAS_WIDTH × CANVAS_HEIGHT), whatever the canvas size in pixels (A31). */
 export function drawGame(ctx: CanvasRenderingContext2D, state: GameState): void {
+  const canvas = ctx.canvas;
+  ctx.setTransform(canvas.width / CANVAS_WIDTH, 0, 0, canvas.height / CANVAS_HEIGHT, 0, 0);
   drawField(ctx, state);
   drawSidebar(ctx, state);
-  if (state.status === 'gameOver') drawGameOver(ctx);
 }
