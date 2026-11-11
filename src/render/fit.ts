@@ -6,10 +6,10 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from './renderer';
 const BASE_FONT_PX = 16;
 
 /**
- * `reservePx` is kept free above and below the game area, e.g. for the line
- * under it (A46); the same room on both sides keeps the game area centred.
+ * `reservePx` is kept free above and below the game area, for the line under
+ * it (A46); the same room on both sides keeps the game area centred.
  */
-export function fitToWindow(container: HTMLElement, canvas: HTMLCanvasElement, reservePx = 0): void {
+export function fitToWindow(container: HTMLElement, canvas: HTMLCanvasElement, reservePx: number): void {
   const availableHeight = Math.max(0, window.innerHeight - 2 * reservePx);
   const scale = Math.min(window.innerWidth / CANVAS_WIDTH, availableHeight / CANVAS_HEIGHT);
   const width = CANVAS_WIDTH * scale;
