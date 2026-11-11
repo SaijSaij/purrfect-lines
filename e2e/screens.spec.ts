@@ -1,7 +1,14 @@
 // Screens and flow (M4): start, pause, giving up, game over, window size.
 // Screens are HTML elements over the canvas, identified by their ids.
 import { expect, test, type Page } from '@playwright/test';
-import { readState, startGame, type CellPosition, type PurrfectLinesState } from './support/game';
+import {
+  playUntilGameOver,
+  readState,
+  startGame,
+  waitForScreen,
+  type CellPosition,
+  type PurrfectLinesState,
+} from './support/game';
 
 const START_SCREEN = '#start-screen';
 const PAUSE_SCREEN = '#pause-screen';
@@ -14,19 +21,6 @@ function lowestRow(state: PurrfectLinesState): number {
 
 function activeCells(state: PurrfectLinesState): CellPosition[] {
   return state.active?.cells ?? [];
-}
-
-async function waitForScreen(page: Page, screen: string): Promise<void> {
-  await expect.poll(() => readState(page).then((s) => s.screen)).toBe(screen);
-}
-
-/** Hard drops until the game ends; with ?seed=1 the stack reaches the top (A5). */
-async function playUntilGameOver(page: Page): Promise<void> {
-  for (let i = 0; i < 60; i++) {
-    if ((await readState(page)).screen === 'gameOver') break;
-    await page.keyboard.press('Space');
-  }
-  await waitForScreen(page, 'gameOver');
 }
 
 /** Whether the element's box covers the whole canvas. */
