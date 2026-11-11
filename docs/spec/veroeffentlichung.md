@@ -68,6 +68,11 @@ dezente Zeile „Purrfect Lines · Source code · GPL-3.0“ bzw.
   Weg per Tab-Taste, ein Mausklick gibt dem Link trotzdem den Fokus.)
 - A31 gilt weiter: Der Spielbereich wird in den Platz über der Zeile skaliert,
   es gibt keine Bildlaufleisten.
+- Die Zeile hat eine feste, kleine Schrift und skaliert nicht mit dem Spiel.
+  Der Spielbereich lässt oben und unten gleich viel Platz frei, damit er
+  zentriert bleibt. „Purrfect Lines“ und „GPL-3.0“ kommen ebenfalls aus der
+  Texttabelle, der Trenner „ · “ steht im Code. (Präzisiert nach der Umsetzung
+  von M10.)
 - Die Zeile erscheint im Entwicklungsbuild und im Release.
 
 *Prüfung:* E2E (Link vorhanden, Ziel, `target`, `rel`, `tabindex`, Text wechselt
@@ -88,6 +93,12 @@ startet“, ist mindestens so groß und im Hoch- und Querformat ohne Zoomen
 lesbar, auch neben voller Bestenliste und Speicherhinweis. Sonst ändert sich
 nichts: Mit angeschlossener Tastatur startet Enter wie gewohnt. Ein Laptop mit
 Touchpad hat einen feinen Zeiger und zeigt den Hinweis nicht.
+Die Media-Query wird beim Laden und beim Sprachwechsel ausgewertet. Ein später
+angeschlossenes oder entferntes Zeigegerät wirkt erst nach dem Neuladen. Der
+Hinweis skaliert wie der übrige Startbildschirm (A31). Im Querformat eines
+Handys (etwa 360 px Höhe) ist er deshalb klein, rund 8 px wie alle Texte dort.
+Das ist hingenommen und wird von Hand geprüft. (Präzisiert nach der Umsetzung
+von M10.)
 *Begründung:* Ein geteilter Link wird oft auf dem Handy geöffnet. Dann ist der
 Hinweis der erste Eindruck, und „Enter startet“ wäre dort eine Aufforderung,
 die niemand befolgen kann. Der Text nennt eine echte Tastatur, damit man ihn
@@ -178,7 +189,10 @@ privaten Repo nur mit bezahltem Konto, deshalb wird das Repo vor Pages
 
 **A55 Favicon und Vorschau beim Teilen.** `index.html` hat:
 - ein Favicon als Inline-SVG (Data-URI) mit dem gezeichneten Katzenkopf aus
-  A35, ohne Bilddatei;
+  A35, ohne Bilddatei. In der Quelldatei steht es nicht, weil Farben nur in
+  `palette.ts` stehen dürfen (A35). Ein Vite-Plugin in `vite.config.ts` erzeugt
+  es aus dem Katzenkopf in `decor.ts` und setzt es im Entwicklungsserver und im
+  Build in `index.html` ein. (Präzisiert nach der Umsetzung von M10.);
 - `<meta name="description">`, `og:title` und `og:description` auf Englisch.
   Beschreibung: „A cat-themed falling-block puzzle game for the browser.“
 
