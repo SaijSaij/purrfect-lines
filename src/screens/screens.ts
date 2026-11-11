@@ -187,7 +187,7 @@ export function createScreens(container: HTMLElement): Screens {
       if (screen !== 'nameEntry' && focused) nameEntry.input.blur();
     },
     openNameEntry(name) {
-      nameEntry.input.value = name.slice(0, NAME_MAX_LENGTH);
+      nameEntry.input.value = name;
       toggle(nameEntry.el, true);
       nameEntry.input.focus();
     },
