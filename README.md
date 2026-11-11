@@ -60,16 +60,26 @@ not load JavaScript modules from `file://`.
 | Enter | After game over: start a new game |
 
 Letters work in upper and lower case and are recognised by the character they
-type, so Y is the key labelled Y on any keyboard layout.
+type, so Y is the key labelled Y on any Latin keyboard layout (on a German
+keyboard it sits where Z is on an English one).
 
 Holding a move key moves the piece once, then after a short pause it keeps
-sliding until you let go. If both directions are held, the one pressed last
-wins. A piece that cannot turn in place (for example a vertical bar at the
-wall) is shifted a little if that makes room.
+sliding until you let go (A7). If both directions are held, the one pressed
+last wins; letting it go hands over to the other one after the same short
+pause. When the game window loses focus, all held keys count as released.
+
+A piece that cannot turn in place (for example a vertical bar at the wall) is
+shifted by the first of up to four other positions that makes room, as listed
+in the wall kick tables of A9.
 
 A piece that lands does not lock at once: for half a second you can still
-move or rotate it. Each move restarts that time, but only 15 times per piece,
-so it cannot be stalled forever.
+move or rotate it (A13). Each move restarts that time, but only 15 times per
+piece; the count starts again when the piece reaches a lower row than before.
+After that the piece locks as soon as it rests.
+
+The timings (repeat delay and interval, lock delay, number of restarts) are in
+[src/game/constants.ts](src/game/constants.ts). The numbered requirements are
+in [docs/spec/anforderungen.md](docs/spec/anforderungen.md).
 
 ## Test helpers (development server only)
 
