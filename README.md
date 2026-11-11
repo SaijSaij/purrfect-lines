@@ -12,12 +12,17 @@ Pieces made of four blocks fall into a field of 10 × 20 cells. Move and rotate
 them so they complete rows: full rows light up and disappear. The game gets
 faster as you clear rows, and it ends when the stack reaches the top.
 
-This is an early version (milestone 6 of 8). It has start, pause and game over
+The look is warm and its own: dark browns and cream, seven pieces in
+terracotta, raspberry, mustard, teal, olive, plum and light sage, a small paw
+print on every block and a cat head next to the title. Everything is drawn by
+the game itself; there are no image files.
+
+This is an early version (milestone 7 of 8). It has start, pause and game over
 screens, a high score list, sounds and music, but no German texts yet.
 
 | Start | Pause | Game over |
 |---|---|---|
-| ![Start screen with title, keys and the empty high score list](docs/images/start-screen.png) | ![Pause menu with Resume and Give up](docs/images/pause.png) | ![Game over screen with score, lines and level](docs/images/game-over.png) |
+| ![Start screen with cat head and title, keys and the empty high score list](docs/images/start-screen.png) | ![Pause menu with Resume and Give up](docs/images/pause.png) | ![Game over screen with score, lines and level](docs/images/game-over.png) |
 
 ## Play
 

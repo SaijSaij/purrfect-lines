@@ -5,6 +5,7 @@ import type { GameState } from '../game/game';
 import { NAME_MAX_LENGTH } from '../game/constants';
 import type { HighscoreEntry } from '../highscores/highscores';
 import { text, type TextKey } from '../i18n/texts';
+import { catHeadSvg } from '../render/decor';
 import { PALETTE } from '../render/palette';
 import { highscoreTable } from './highscore-table';
 import { PAUSE_MENU } from './pause-menu';
@@ -79,7 +80,11 @@ function tableSlot(): HTMLElement {
 function startScreen(): { el: HTMLElement; table: HTMLElement; storageHint: HTMLElement } {
   const el = screenElement('start-screen');
   el.style.gap = '0.5em';
-  el.append(heading('title'), element('p', 'pressEnterToStart'));
+  // The cat head sits left of the title, so the screen gets no taller (A35).
+  const title = heading('title');
+  Object.assign(title.style, { display: 'flex', alignItems: 'center', gap: '0.3em' });
+  title.prepend(catHeadSvg(1.3));
+  el.append(title, element('p', 'pressEnterToStart'));
   const keys: TextKey[] = [
     'keysMove',
     'keysRotate',

@@ -1,10 +1,11 @@
-// Draws the game state onto a canvas. Plain interim look: framed field with
+// Draws the game state onto a canvas: framed field with paw-printed blocks,
 // ghost piece and lit full rows, and a sidebar with score, lines, level and
 // the next piece. Start, pause and game over screens are HTML (screens.ts).
 import { BOARD_HEIGHT, BOARD_WIDTH } from '../game/constants';
 import { absoluteCells, landingPosition, type ActivePiece, type GameState } from '../game/game';
 import { pieceCells, type PieceType } from '../game/pieces';
 import { text, type TextKey } from '../i18n/texts';
+import { drawPaw } from './decor';
 import { GHOST_ALPHA, PALETTE, PIECE_COLORS } from './palette';
 
 const CELL_PX = 30;
@@ -19,6 +20,13 @@ const PREVIEW_CELL_PX = 24;
 export const CANVAS_WIDTH = SIDEBAR_LEFT_PX + SIDEBAR_WIDTH_PX;
 export const CANVAS_HEIGHT = FIELD_HEIGHT_PX + 2 * BORDER_PX;
 
+/** A square cell on the canvas, in logical units. */
+interface CellBox {
+  readonly left: number;
+  readonly top: number;
+  readonly size: number;
+}
+
 function cellLeft(x: number): number {
   return BORDER_PX + x * CELL_PX;
 }
@@ -27,10 +35,17 @@ function cellTop(y: number): number {
   return BORDER_PX + y * CELL_PX;
 }
 
+/** One block in the piece color with a paw print (A35), in the field and in the preview alike. */
+function drawPawBlock(ctx: CanvasRenderingContext2D, cell: CellBox, type: PieceType): void {
+  const { left, top, size } = cell;
+  ctx.fillStyle = PIECE_COLORS[type];
+  ctx.fillRect(left + 1, top + 1, size - 2, size - 2);
+  drawPaw(ctx, left, top, size);
+}
+
 function drawBlock(ctx: CanvasRenderingContext2D, x: number, y: number, type: PieceType): void {
   if (y < 0) return; // rows above the field are not drawn (A1)
-  ctx.fillStyle = PIECE_COLORS[type];
-  ctx.fillRect(cellLeft(x) + 1, cellTop(y) + 1, CELL_PX - 2, CELL_PX - 2);
+  drawPawBlock(ctx, { left: cellLeft(x), top: cellTop(y), size: CELL_PX }, type);
 }
 
 /** Pale outline where the piece would land; cells of the piece itself are left out (A14). */
@@ -96,11 +111,10 @@ function drawPreview(ctx: CanvasRenderingContext2D, type: PieceType, top: number
   const ys = cells.map((c) => c.y);
   const offsetX = (PREVIEW_CELLS - (Math.max(...xs) - Math.min(...xs) + 1)) / 2 - Math.min(...xs);
   const offsetY = (PREVIEW_CELLS - (Math.max(...ys) - Math.min(...ys) + 1)) / 2 - Math.min(...ys);
-  ctx.fillStyle = PIECE_COLORS[type];
   for (const { x, y } of cells) {
     const left = boxLeft + (x + offsetX) * PREVIEW_CELL_PX;
     const cellTopPx = boxTop + (y + offsetY) * PREVIEW_CELL_PX;
-    ctx.fillRect(left + 1, cellTopPx + 1, PREVIEW_CELL_PX - 2, PREVIEW_CELL_PX - 2);
+    drawPawBlock(ctx, { left, top: cellTopPx, size: PREVIEW_CELL_PX }, type);
   }
 }
 

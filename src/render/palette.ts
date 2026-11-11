@@ -1,32 +1,43 @@
-// All colors in one place (A35). A plain, distinguishable interim palette;
-// the final warm palette follows in a later milestone.
+// All colors in one place (A35): a warm palette of dark browns and cream.
+// The pieces avoid the colors they usually have in the genre; a few muted
+// cool tones (teal, sage, plum) keep the seven pieces apart.
 import type { PieceType } from '../game/pieces';
 
 export const PIECE_COLORS: Readonly<Record<PieceType, string>> = {
-  I: '#d1495b',
-  O: '#edae49',
-  T: '#00798c',
-  S: '#7a9e4f',
-  Z: '#8e5572',
-  L: '#e07a5f',
-  J: '#3d5a80',
+  I: '#c4583e', // terracotta
+  O: '#b8477a', // raspberry
+  T: '#d9a23f', // mustard
+  S: '#2f7f78', // teal
+  Z: '#7f7d22', // olive
+  L: '#7d4c96', // plum
+  J: '#9cc48f', // light sage
 };
 
 export const PALETTE = {
-  page: '#17131c',
-  frame: '#d8c3a5',
-  field: '#241e2b',
-  sidebar: '#1d1823',
-  overlay: 'rgba(0, 0, 0, 0.7)',
+  page: '#1a1310',
+  frame: '#e6d3b3',
+  field: '#2a1f1a',
+  sidebar: '#211915',
+  overlay: 'rgba(26, 19, 16, 0.75)',
   /** Background of the start, pause and game over screens; opaque so the field is hidden (A23). */
-  screen: '#241e2b',
+  screen: '#2a1f1a',
   /** Full rows light up in this color before they disappear (A16). */
-  flash: '#fff8f0',
+  flash: '#fff6e8',
   /** The chosen menu entry. */
-  highlight: '#edae49',
-  text: '#fff8f0',
-  label: '#b9a99a',
+  highlight: '#f0b45a',
+  text: '#fff6e8',
+  label: '#c2ab92',
+  /** The paw print on every block, drawn over the piece color. */
+  paw: 'rgba(255, 246, 232, 0.32)',
+  /** The cat head above the title on the start screen. */
+  cat: {
+    fur: '#e9a35a',
+    innerEar: '#f4c9a6',
+    eye: '#2a1f1a',
+    nose: '#d9707a',
+    whisker: '#fff6e8',
+  },
 } as const;
 
 /** Opacity of the ghost piece outline (A14). */
-export const GHOST_ALPHA = 0.55;
+export const GHOST_ALPHA = 0.7;

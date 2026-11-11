@@ -136,7 +136,10 @@ and its restarts, line clear animation), the points, the maximum name length,
 the size of the high score list and the music tempo steps are in
 [src/game/constants.ts](../src/game/constants.ts). Tests refer to these
 names, never to the numbers. All colors are in
-[src/render/palette.ts](../src/render/palette.ts), all visible texts in
+[src/render/palette.ts](../src/render/palette.ts) (a unit test fails if a
+color literal appears anywhere else in `src/`, or if a piece gets the color it
+usually has in the genre); the paw print and the cat head are drawn in
+[src/render/decor.ts](../src/render/decor.ts). All visible texts are in
 [src/i18n/texts.ts](../src/i18n/texts.ts). The volumes of the mix (master,
 music, sounds) and of each kind of sound are at the top of
 [src/audio/audio.ts](../src/audio/audio.ts); melody and bass volume, the
@@ -150,7 +153,7 @@ tempo (`BPM`) and the notes of the music are at the top of
 | `src/game/` | Game rules without browser APIs, unit-tested; `testing.ts` holds helpers for the unit tests only |
 | `src/input/` | Key → action mapping, held keys |
 | `src/i18n/` | All in-game texts |
-| `src/render/` | Drawing on the canvas, scaling to the window, color palette |
+| `src/render/` | Drawing on the canvas, scaling to the window, color palette, paw print and cat head (`decor.ts`) |
 | `src/highscores/` | High score list rules (who enters, order, names), unit-tested |
 | `src/storage/` | Saving the list and the settings in localStorage, unit-tested with a fake storage |
 | `src/screens/` | Start, pause, game over, name entry and high score screens (HTML over the canvas), the high score table and the pause menu |
