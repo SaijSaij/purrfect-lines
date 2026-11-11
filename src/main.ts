@@ -73,7 +73,8 @@ function onPlayingKey(event: KeyboardEvent): void {
   const action = actionForKey(event.key);
   if (action === null || action === 'confirm') return;
   if (action === 'pause') {
-    pause();
+    // A held P or Esc that just continued the game must not pause it again (A23).
+    if (!event.repeat) pause();
     return;
   }
   if (!heldKeys.down(event.code, action)) return; // key repeat of the operating system

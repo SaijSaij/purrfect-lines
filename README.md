@@ -124,16 +124,16 @@ Helpers can be combined with `&`, e.g. http://localhost:5173/?seed=1&level=10&de
 |---|---|
 | `?seed=<integer>`, e.g. http://localhost:5173/?seed=1 | Fixed piece sequence: the same seed always gives the same pieces, also for new games started with Enter. Invalid values are ignored and reported in the browser console. |
 | `?level=<1–99>`, e.g. http://localhost:5173/?level=15 | Every game starts on this level; the level still rises every 10 rows from there. Only whole numbers from 1 to 99; anything else is ignored and reported in the console. |
-| `?slow=<1–10>`, e.g. http://localhost:5173/?slow=4 | The whole game runs this many times slower: falling, lock delay and key repeat. Only whole numbers from 1 to 10; anything else is ignored and reported in the console. |
+| `?slow=<1–10>`, e.g. http://localhost:5173/?slow=4 | The whole game runs this many times slower: falling, lock delay, key repeat and the line clear animation. Only whole numbers from 1 to 10; anything else is ignored and reported in the console. |
 | `?debug` | Shows internal values as text at the top left: level, fall interval, time left until the resting piece locks and restarts used, the pieces left in the current bag, the seed, the slow motion factor and frames per second. Times are game time, so with `?slow` they stay the same while the game runs slower. |
-| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. Try `window.__purrfectLines.screen` in the browser console. |
+| `window.__purrfectLines` | Read-only game state for browser tests, a fresh copy on every read. Fields: `screen` (`"start"`, `"playing"`, `"paused"` or `"gameOver"`), `board` (20 rows × 10 cells, piece letter or `null`), `active` (`{ type, cells }` with 0-based `x`/`y`, or `null`), `next` (piece letter), `score`, `lines`, `level`. While full rows light up (300 ms), they are still in `board`, `active` is `null`, and `score` and `lines` already count them. On the start screen, `board` and `active` belong to a throwaway game that Enter replaces. Try `window.__purrfectLines.screen` in the browser console. |
 
 ## Checks
 
 | Command | What it does |
 |---|---|
 | `npm test` | Unit tests of the game logic (Vitest) |
-| `npm run e2e` | Browser tests (Playwright, Chromium); starts the dev server itself |
+| `npm run e2e` | Browser tests (Playwright, Chromium; needs Chromium, see Requirements); starts the dev server itself, or reuses one already running on port 5173 |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript type check |
 | `npm run check` | Type check, lint and unit tests together |
