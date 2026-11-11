@@ -7,16 +7,23 @@ import { PALETTE } from './render/palette';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, drawGame } from './render/renderer';
 
 let seed: number | undefined;
+let startLevel: number | undefined;
+/** Development builds may wrap every new game, e.g. in slow motion (A41). */
+let adapt = (created: Game): Game => created;
 let game: Game;
 
 if (import.meta.env.DEV) {
   const devTools = await import('./debug/dev-tools');
-  seed = devTools.seedFromUrl(window.location.search);
+  const search = window.location.search;
+  seed = devTools.seedFromUrl(search);
+  startLevel = devTools.levelFromUrl(search);
+  const slow = devTools.slowFromUrl(search);
+  if (slow !== undefined) adapt = (created) => devTools.slowMotion(created, slow);
   devTools.installTestInterface(() => game);
 }
 
 function newGame(): Game {
-  return createGame({ seed });
+  return adapt(createGame({ seed, startLevel }));
 }
 
 // Keys are recognised by the typed character (A21), but held keys are tracked
