@@ -294,7 +294,7 @@ Eintrag steht in der Liste; Esc speichert nichts).
 
 **A28 Bestenliste anzeigen.** Höchstens `HIGHSCORE_SIZE` (10) Einträge, nach
 Punkten absteigend, mit Platz, Name, Punkten, Reihen, Level und Datum (Datum
-im Format der gewählten Sprache). Ist sie leer, steht dort ein Hinweis
+im Format der gewählten Sprache: Deutsch TT.MM.JJJJ, Englisch M/T/JJJJ). Ist sie leer, steht dort ein Hinweis
 („Noch keine Einträge“).
 *Prüfung:* E2E (Liste auf dem Startbildschirm), Manuell (Lesbarkeit).
 
@@ -408,6 +408,14 @@ nicht leeren Text).
 ersten Start gilt Deutsch, wenn die Browsersprache mit `de` beginnt, sonst
 Englisch. Auf dem Startbildschirm wechselt L die Sprache. Die Wahl wird
 gespeichert (A30).
+*Präzisierung:* Die Browsersprache ist `navigator.language` (die bevorzugte
+Sprache), Groß- und Kleinschreibung zählen nicht. Gespeichert wird nur die
+Wahl mit L; bis dahin folgt das Spiel der Browsersprache. L wirkt nur auf dem
+Startbildschirm und nicht zusammen mit Strg, Alt oder Cmd. Die Zeile
+„L: Deutsch“ bzw. „L: English“ auf dem Startbildschirm nennt die andere
+Sprache. `<html lang>` folgt der gewählten Sprache. Der Standardname (A27)
+richtet sich nach der Sprache beim Speichern; gespeicherte Einträge bleiben
+unverändert.
 *Prüfung:* Unit (Auswahl der Startsprache), E2E (L wechselt die Sprache, bleibt
 nach Neuladen).
 
