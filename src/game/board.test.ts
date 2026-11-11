@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clearFullRows, createBoard, isOccupied } from './board';
+import { createBoard, fullRows, isOccupied, removeRows } from './board';
 import { BOARD_HEIGHT, BOARD_WIDTH } from './constants';
 import { at, boardFromRows, boardWith, filledCells } from './testing';
 
@@ -43,23 +43,23 @@ describe('A1 board', () => {
 describe('A15 clearing full rows', () => {
   it('removes one full row and moves everything above down by one', () => {
     const board = boardFromRows(['J.........', '..T.......', 'IIIIIIIIII']);
-    const result = clearFullRows(board);
-    expect(result.cleared).toBe(1);
-    expect(result.board).toEqual(boardFromRows(['J.........', '..T.......']));
+    const rows = fullRows(board);
+    expect(rows).toHaveLength(1);
+    expect(removeRows(board, rows)).toEqual(boardFromRows(['J.........', '..T.......']));
   });
 
   it('removes two full rows', () => {
     const board = boardFromRows(['.....S....', 'IIIIIIIIII', 'OOOOOOOOOO']);
-    const result = clearFullRows(board);
-    expect(result.cleared).toBe(2);
-    expect(result.board).toEqual(boardFromRows(['.....S....']));
+    const rows = fullRows(board);
+    expect(rows).toHaveLength(2);
+    expect(removeRows(board, rows)).toEqual(boardFromRows(['.....S....']));
   });
 
   it('removes three full rows', () => {
     const board = boardFromRows(['Z.Z.......', 'IIIIIIIIII', 'OOOOOOOOOO', 'LLLLLLLLLL']);
-    const result = clearFullRows(board);
-    expect(result.cleared).toBe(3);
-    expect(result.board).toEqual(boardFromRows(['Z.Z.......']));
+    const rows = fullRows(board);
+    expect(rows).toHaveLength(3);
+    expect(removeRows(board, rows)).toEqual(boardFromRows(['Z.Z.......']));
   });
 
   it('removes four full rows', () => {
@@ -70,9 +70,9 @@ describe('A15 clearing full rows', () => {
       'LLLLLLLLLL',
       'JJJJJJJJJJ',
     ]);
-    const result = clearFullRows(board);
-    expect(result.cleared).toBe(4);
-    expect(result.board).toEqual(boardFromRows(['.........T']));
+    const rows = fullRows(board);
+    expect(rows).toHaveLength(4);
+    expect(removeRows(board, rows)).toEqual(boardFromRows(['.........T']));
   });
 
   it('removes rows 17 and 19 while row 18 is not full', () => {
@@ -83,9 +83,10 @@ describe('A15 clearing full rows', () => {
       'OOOOOOOOOO', // row 19, full
       'LL.LL.LL.L', // row 20
     ]);
-    const result = clearFullRows(board);
-    expect(result.cleared).toBe(2);
-    expect(result.board).toEqual(
+    const rows = fullRows(board);
+    // Rows 17 and 19 are the 0-based rows 16 and 18.
+    expect(rows).toEqual([16, 18]);
+    expect(removeRows(board, rows)).toEqual(
       boardFromRows([
         'S.........', // was row 16, moved down by two
         'T.T.T.T.T.', // was row 18, moved down by one
@@ -96,16 +97,15 @@ describe('A15 clearing full rows', () => {
 
   it('does not let single blocks fall into gaps', () => {
     const board = boardFromRows(['J.........', '..........', 'IIIIIIIIII', '.OOOOOOOOO']);
-    const result = clearFullRows(board);
-    expect(filledCells(result.board)).toEqual(
+    expect(filledCells(removeRows(board, fullRows(board)))).toEqual(
       filledCells(boardFromRows(['J.........', '..........', '.OOOOOOOOO'])),
     );
   });
 
   it('leaves a board without full rows unchanged', () => {
     const board = boardFromRows(['IIIIIIIII.']);
-    const result = clearFullRows(board);
-    expect(result.cleared).toBe(0);
-    expect(result.board).toEqual(board);
+    const rows = fullRows(board);
+    expect(rows).toEqual([]);
+    expect(removeRows(board, rows)).toEqual(board);
   });
 });

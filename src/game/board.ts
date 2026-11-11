@@ -34,11 +34,6 @@ export function placeCells(board: Board, cells: readonly CellOffset[], type: Pie
   return rows;
 }
 
-export interface ClearResult {
-  readonly board: Board;
-  readonly cleared: number;
-}
-
 /** Indices of all full rows, from top to bottom. */
 export function fullRows(board: Board): number[] {
   return board.flatMap((row, y) => (row.every((cell) => cell !== null) ? [y] : []));
@@ -49,10 +44,4 @@ export function removeRows(board: Board, rows: readonly number[]): Board {
   const remaining = board.filter((_, y) => !rows.includes(y));
   const newRows = Array.from({ length: board.length - remaining.length }, emptyRow);
   return [...newRows, ...remaining];
-}
-
-/** Removes all full rows; everything above moves down by the number of rows removed below it. */
-export function clearFullRows(board: Board): ClearResult {
-  const rows = fullRows(board);
-  return { board: removeRows(board, rows), cleared: rows.length };
 }
