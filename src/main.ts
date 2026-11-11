@@ -22,7 +22,7 @@ if (import.meta.env.DEV) {
   const slow = devTools.slowFromUrl(search);
   if (slow !== undefined) adapt = (created) => devTools.slowMotion(created, slow);
   if (devTools.debugFromUrl(search)) {
-    const showDebug = devTools.createDebugOverlay();
+    const showDebug = devTools.createDebugOverlay(slow);
     onFrame = (frameMs) => showDebug(game, frameMs);
   }
   devTools.installTestInterface(() => game);

@@ -62,7 +62,7 @@ export function debugFromUrl(search: string): boolean {
   return new URLSearchParams(search).has('debug');
 }
 
-function debugLines(game: Game, fps: number): string[] {
+function debugLines(game: Game, slow: number, fps: number): string[] {
   const { level } = game.state;
   const d = game.diagnostics;
   const lock = d.lockRemainingMs === null ? '–' : `${Math.round(d.lockRemainingMs)} ms`;
@@ -73,16 +73,17 @@ function debugLines(game: Game, fps: number): string[] {
     `resets     ${d.lockResets}/${LOCK_RESETS_MAX}`,
     `bag        ${d.bag.join(' ')}`,
     `seed       ${d.seed ?? '–'}`,
+    `slow       ${slow}× (times above are game time)`,
     `fps        ${fps}`,
   ];
 }
 
 /**
  * Shows internal values as text at the left edge (A42). Returns a function to
- * call once per frame with the real frame time. Labels are developer-only and
- * therefore not in the text table.
+ * call once per frame with the real frame time. `slow` is the slow motion
+ * factor (A41). Labels are developer-only and therefore not in the text table.
  */
-export function createDebugOverlay(): (game: Game, frameMs: number) => void {
+export function createDebugOverlay(slow = 1): (game: Game, frameMs: number) => void {
   const panel = document.createElement('pre');
   panel.id = 'purrfect-lines-debug';
   Object.assign(panel.style, {
@@ -108,7 +109,7 @@ export function createDebugOverlay(): (game: Game, frameMs: number) => void {
       frames = 0;
       elapsedMs = 0;
     }
-    panel.textContent = debugLines(game, fps).join('\n');
+    panel.textContent = debugLines(game, slow, fps).join('\n');
   };
 }
 
